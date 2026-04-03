@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <h2>Dashboard</h2>
+
+    <p>Total Questions Solved: {{ total }}</p>
+
+    <canvas id="myChart"></canvas>
+
+    <br>
+    <a href="/add">➕ Add Question</a> |
+    <a href="/logout">Logout</a>
+</div>
+
+<script>
+    const labels = [{% for t in topics %}"{{ t[0] }}",{% endfor %}];
+    const data = [{% for t in topics %}{{ t[1] }},{% endfor %}];
+
+    new Chart(document.getElementById('myChart'), {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Questions Solved',
+                data: data
+            }]
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Question</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <h2>Add Question</h2>
+
+    <form method="POST">
+        <input type="text" name="title" placeholder="Question Name" required>
+
+        <select name="topic">
+            <option>Array</option>
+            <option>Linked List</option>
+            <option>Tree</option>
+            <option>Graph</option>
+        </select>
+
+        <select name="difficulty">
+            <option>Easy</option>
+            <option>Medium</option>
+            <option>Hard</option>
+        </select>
+
+        <button type="submit">Add</button>
+    </form>
+
+    <br>
+    <a href="/dashboard">⬅ Back</a>
+</div>
+
+</body>
+</html>
