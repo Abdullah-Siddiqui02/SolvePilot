@@ -1,7 +1,3 @@
-"""
-AI Solve route: generates structured coding solutions using the Groq API.
-"""
-
 from flask import Blueprint, render_template, request, redirect, session, jsonify
 from extensions import groq_client
 

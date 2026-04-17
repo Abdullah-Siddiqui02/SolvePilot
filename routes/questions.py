@@ -1,7 +1,3 @@
-"""
-Question management routes: adding new questions.
-"""
-
 from flask import Blueprint, render_template, request, redirect, session, flash
 from extensions import db, cursor
 

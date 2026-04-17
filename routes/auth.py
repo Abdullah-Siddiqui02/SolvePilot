@@ -1,7 +1,3 @@
-"""
-Authentication routes: Login, Signup, Logout.
-"""
-
 from flask import Blueprint, render_template, request, redirect, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from extensions import db, cursor
@@ -9,7 +5,7 @@ from extensions import db, cursor
 auth_bp = Blueprint("auth", __name__)
 
 
-# ── Login ───────────────────────────────────────────────
+#  Login 
 
 @auth_bp.route("/", methods=["GET", "POST"])
 def login():
@@ -32,7 +28,7 @@ def login():
     return render_template("login.html")
 
 
-# ── Signup ──────────────────────────────────────────────
+# Signup 
 
 @auth_bp.route("/signup", methods=["GET", "POST"])
 def signup():
@@ -69,7 +65,7 @@ def signup():
     return render_template("signup.html")
 
 
-# ── Logout ──────────────────────────────────────────────
+# Logout 
 
 @auth_bp.route("/logout")
 def logout():
