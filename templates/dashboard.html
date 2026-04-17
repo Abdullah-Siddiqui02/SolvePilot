@@ -130,7 +130,7 @@
 <!-- Chart Script -->
 <script>
     const labels = [{% for t in topics %}"{{ t[0] }}", {% endfor %}];
-    const data = [{% for t in topics %}{{ t[1] }}, {% endfor %}];
+    const data = [{% for t in topics %}{ { t[1] } }, {% endfor %}];
 
     if (labels.length > 0) {
         new Chart(document.getElementById('topicChart'), {

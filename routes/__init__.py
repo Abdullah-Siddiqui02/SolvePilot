@@ -1,0 +1,14 @@
+
+
+from routes.auth import auth_bp
+from routes.dashboard import dashboard_bp
+from routes.questions import questions_bp
+from routes.solve import solve_bp
+
+
+def register_blueprints(app):
+    """Attach every blueprint to the application instance."""
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(dashboard_bp)
+    app.register_blueprint(questions_bp)
+    app.register_blueprint(solve_bp)
