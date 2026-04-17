@@ -1,36 +1,52 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Add Question</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
 
-<div class="container">
-    <h2>Add Question</h2>
+{% block title %}Add Question – InterviewIQ{% endblock %}
 
-    <form method="POST">
-        <input type="text" name="title" placeholder="Question Name" required>
+{% block content %}
+<div class="form-container glass">
+    <h2>Add a Question</h2>
+    <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+        Track a new problem you've solved.
+    </p>
 
-        <select name="topic">
-            <option>Array</option>
-            <option>Linked List</option>
-            <option>Tree</option>
-            <option>Graph</option>
-        </select>
+    <form method="POST" id="add-question-form">
+        <div class="form-group">
+            <label for="title">Question Title</label>
+            <input type="text" id="title" name="title" placeholder="e.g. Two Sum" required>
+        </div>
 
-        <select name="difficulty">
-            <option>Easy</option>
-            <option>Medium</option>
-            <option>Hard</option>
-        </select>
+        <div class="form-group">
+            <label for="topic">Topic</label>
+            <select id="topic" name="topic">
+                <option value="Array">Array</option>
+                <option value="Linked List">Linked List</option>
+                <option value="Tree">Tree</option>
+                <option value="Graph">Graph</option>
+                <option value="Stack">Stack</option>
+                <option value="Queue">Queue</option>
+                <option value="Dynamic Programming">Dynamic Programming</option>
+                <option value="String">String</option>
+                <option value="Sorting">Sorting</option>
+                <option value="Binary Search">Binary Search</option>
+            </select>
+        </div>
 
-        <button type="submit">Add</button>
+        <div class="form-group">
+            <label for="difficulty">Difficulty</label>
+            <select id="difficulty" name="difficulty">
+                <option value="Easy">Easy</option>
+                <option value="Medium">Medium</option>
+                <option value="Hard">Hard</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+            Add Question
+        </button>
     </form>
 
-    <br>
-    <a href="/dashboard">⬅ Back</a>
+    <p class="auth-footer">
+        <a href="/dashboard">← Back to Dashboard</a>
+    </p>
 </div>
-
-</body>
-</html>
+{% endblock %}

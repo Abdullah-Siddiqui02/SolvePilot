@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+
+{% block title %}AI Solve – InterviewIQ{% endblock %}
+
+{% block head %}
+<!-- Markdown rendering -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<!-- Code syntax highlighting -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto;">
+
+    <h2 style="margin-bottom: 0.25rem;">🤖 AI Solution Generator</h2>
+    <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+        Enter a coding question, pick a technique, and get a detailed line-by-line solution.
+    </p>
+
+    <!-- Input Form -->
+    <div class="glass" style="padding: 2rem; border-radius: 16px; margin-bottom: 2rem;">
+        <form id="solve-form">
+            <div class="form-group">
+                <label for="question">Question / Problem Statement</label>
+                <textarea id="question" name="question" rows="4"
+                    placeholder="e.g. Given an array of integers, return indices of the two numbers such that they add up to a specific target."
+                    required
+                    style="width: 100%; padding: 0.8rem 1rem; background: rgba(15,23,42,0.8);
+                           border: 1px solid var(--surface-border); border-radius: 8px;
+                           color: var(--text-primary); font-family: var(--font-body);
+                           box-sizing: border-box; resize: vertical;
+                           transition: border-color 0.3s ease, box-shadow 0.3s ease;"></textarea>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <div class="form-group">
+                    <label for="technique">Technique / Approach</label>
+                    <select id="technique" name="technique">
+                        <option value="">Auto-detect best approach</option>
+                        <option value="Brute Force">Brute Force</option>
+                        <option value="Two Pointers">Two Pointers</option>
+                        <option value="Sliding Window">Sliding Window</option>
+                        <option value="Hash Map">Hash Map</option>
+                        <option value="Binary Search">Binary Search</option>
+                        <option value="Recursion">Recursion</option>
+                        <option value="Dynamic Programming">Dynamic Programming</option>
+                        <option value="Backtracking">Backtracking</option>
+                        <option value="BFS">BFS (Breadth-First Search)</option>
+                        <option value="DFS">DFS (Depth-First Search)</option>
+                        <option value="Greedy">Greedy</option>
+                        <option value="Divide and Conquer">Divide and Conquer</option>
+                        <option value="Stack">Stack</option>
+                        <option value="Queue">Queue</option>
+                        <option value="Linked List Manipulation">Linked List Manipulation</option>
+                        <option value="Tree Traversal">Tree Traversal</option>
+                        <option value="Graph Algorithms">Graph Algorithms</option>
+                        <option value="Bit Manipulation">Bit Manipulation</option>
+                        <option value="Math / Number Theory">Math / Number Theory</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="language">Language</label>
+                    <select id="language" name="language">
+                        <option value="Python">Python</option>
+                        <option value="Java">Java</option>
+                        <option value="C++">C++</option>
+                        <option value="JavaScript">JavaScript</option>
+                        <option value="C">C</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="solve-btn" style="width: 100%; margin-top: 0.5rem;">
+                ⚡ Generate Solution
+            </button>
+        </form>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loading" style="display: none; text-align: center; padding: 3rem 0;">
+        <div class="spinner"></div>
+        <p style="color: var(--text-secondary); margin-top: 1rem;">Generating your solution...</p>
+    </div>
+
+    <!-- Error Message -->
+    <div id="error-box" style="display: none;" class="alert alert-error"></div>
+
+    <!-- Solution Output -->
+    <div id="solution-box" style="display: none;">
+        <div class="glass" style="padding: 2rem; border-radius: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 style="margin: 0; color: var(--primary);">💡 Solution</h3>
+                <button class="btn btn-outline" onclick="copySolution()" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
+                    📋 Copy
+                </button>
+            </div>
+            <div id="solution-content" class="solution-rendered"></div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Textarea focus */
+    textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+    }
+
+    /* Spinner */
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid var(--surface-border);
+        border-top: 3px solid var(--primary);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin: 0 auto;
+    }
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Solution content styling */
+    .solution-rendered {
+        line-height: 1.8;
+        color: var(--text-primary);
+    }
+    .solution-rendered h1,
+    .solution-rendered h2,
+    .solution-rendered h3,
+    .solution-rendered h4 {
+        color: var(--primary);
+        margin-top: 1.5rem;
+    }
+    .solution-rendered p {
+        margin: 0.5rem 0;
+    }
+    .solution-rendered ul, .solution-rendered ol {
+        padding-left: 1.5rem;
+    }
+    .solution-rendered code {
+        background: rgba(0,0,0,0.4);
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+        font-size: 0.9rem;
+    }
+    .solution-rendered pre {
+        background: rgba(0,0,0,0.5);
+        padding: 1.25rem;
+        border-radius: 10px;
+        overflow-x: auto;
+        border: 1px solid var(--surface-border);
+    }
+    .solution-rendered pre code {
+        background: transparent;
+        padding: 0;
+    }
+    .solution-rendered strong {
+        color: #e2e8f0;
+    }
+    .solution-rendered blockquote {
+        border-left: 3px solid var(--primary);
+        padding-left: 1rem;
+        color: var(--text-secondary);
+        margin: 1rem 0;
+    }
+</style>
+
+<script>
+    const form      = document.getElementById('solve-form');
+    const loading   = document.getElementById('loading');
+    const errorBox  = document.getElementById('error-box');
+    const solBox    = document.getElementById('solution-box');
+    const solContent = document.getElementById('solution-content');
+    const solveBtn  = document.getElementById('solve-btn');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Reset UI
+        loading.style.display   = 'block';
+        errorBox.style.display  = 'none';
+        solBox.style.display    = 'none';
+        solveBtn.disabled       = true;
+        solveBtn.textContent    = '⏳ Generating...';
+
+        const formData = new FormData(form);
+
+        try {
+            const res = await fetch('/solve', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await res.json();
+
+            if (!res.ok || data.error) {
+                throw new Error(data.error || 'Something went wrong.');
+            }
+
+            // Render markdown
+            const rawHtml = marked.parse(data.answer);
+            solContent.innerHTML = rawHtml;
+
+            // Highlight code blocks
+            solContent.querySelectorAll('pre code').forEach(block => {
+                hljs.highlightElement(block);
+            });
+
+            solBox.style.display = 'block';
+
+        } catch (err) {
+            errorBox.textContent   = err.message;
+            errorBox.style.display = 'block';
+        } finally {
+            loading.style.display = 'none';
+            solveBtn.disabled     = false;
+            solveBtn.textContent  = '⚡ Generate Solution';
+        }
+    });
+
+    function copySolution() {
+        const text = solContent.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            const btn = document.querySelector('#solution-box .btn-outline');
+            btn.textContent = '✅ Copied!';
+            setTimeout(() => btn.textContent = '📋 Copy', 2000);
+        });
+    }
+</script>
+{% endblock %}
