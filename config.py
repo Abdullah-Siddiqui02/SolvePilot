@@ -1,8 +1,3 @@
-"""
-Application configuration.
-Loads environment variables and provides a Config class for Flask.
-"""
-
 import os
 from dotenv import load_dotenv
 
