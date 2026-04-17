@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InterviewIQ - Code IDE</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #1e1e1e;
+            color: #fff;
+        }
+
+        .navbar {
+            background-color: #2d2d2d;
+            border-bottom: 1px solid #444;
+        }
+
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .problem-pane {
+            flex: 1;
+            padding: 20px;
+            border-right: 1px solid #444;
+            overflow-y: auto;
+            background-color: #252526;
+        }
+
+        .editor-pane {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #editor {
+            flex: 1;
+        }
+
+        .console-pane {
+            height: 200px;
+            background-color: #1e1e1e;
+            border-top: 1px solid #444;
+            padding: 10px;
+            overflow-y: auto;
+            font-family: monospace;
+        }
+
+        .controls {
+            padding: 10px;
+            background-color: #2d2d2d;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .status-success {
+            color: #4CAF50;
+        }
+
+        .status-error {
+            color: #f44336;
+        }
+
+        select,
+        button {
+            background-color: #3c3c3c;
+            color: white;
+            border: 1px solid #555;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #4a4a4a;
+        }
+
+        .btn-run {
+            background-color: #0e639c;
+            border: none;
+        }
+
+        .btn-run:hover {
+            background-color: #1177bb;
+        }
+
+        .problem-card {
+            background: #333;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+
+        .problem-card:hover {
+            background: #444;
+        }
+
+        .difficulty-Easy {
+            color: #4CAF50;
+        }
+
+        .difficulty-Medium {
+            color: #FFC107;
+        }
+
+        .difficulty-Hard {
+            color: #f44336;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-dark px-3">
+        <a class="navbar-brand" href="/dashboard">InterviewIQ IDE</a>
+        <div class="d-flex">
+            <button id="btn-sync" class="btn btn-sm btn-outline-light me-2">Sync Daily Problems</button>
+            <a href="/dashboard" class="btn btn-sm btn-outline-secondary">Back to Dashboard</a>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="problem-pane" id="problem-pane">
+            <h4>Daily Problems</h4>
+            <div id="problem-list">
+                <p>Loading problems...</p>
+            </div>
+        </div>
+
+        <div class="editor-pane">
+            <div class="controls">
+                <select id="language-select">
+                    <option value="python">Python</option>
+                    <option value="cpp">C++</option>
+                    <option value="java">Java</option>
+                    <option value="javascript">JavaScript</option>
+                </select>
+                <button id="btn-run" class="btn-run">Run Code</button>
+            </div>
+
+            <div id="editor"></div>
+
+            <div class="console-pane" id="console-pane">
+                <div style="color: #888;">// Console output will appear here</div>
+            </div>
+        </div>
+    </div>
+
+    <script>var require = { paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs' } };</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/loader.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/editor/editor.main.nls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/editor/editor.main.js"></script>
+
+    <script src="{{ url_for('static', filename='js/ide.js') }}"></script>
+</body>
+
+</html>
