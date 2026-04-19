@@ -25,3 +25,28 @@ def add():
         return redirect("/dashboard")
 
     return render_template("add_question.html")
+
+
+@questions_bp.route("/api/my-questions", methods=["GET"])
+def get_my_questions():
+    if "user_id" not in session:
+        return {"error": "Unauthorized"}, 401
+    
+    user_id = session["user_id"]
+    cursor.execute(
+        "SELECT id, title, topic, difficulty FROM questions WHERE user_id = %s ORDER BY created_at DESC",
+        (user_id,)
+    )
+    rows = cursor.fetchall()
+    
+    # Map rows to list of dicts
+    questions = []
+    for r in rows:
+        questions.append({
+            "id": r[0],
+            "title": r[1],
+            "topic": r[2],
+            "difficulty": r[3]
+        })
+        
+    return {"questions": questions}
