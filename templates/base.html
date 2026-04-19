@@ -1,53 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}InterviewIQ{% endblock %}</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- Main Style -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    {% block head %}{% endblock %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}InterviewIQ{% endblock %}</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Inter:wght@400;500;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  {% block head %}{% endblock %}
 </head>
+
 <body>
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    
-    <nav class="navbar glass">
-        <div class="nav-brand">
-            <span class="logo-iq">Interview</span><span class="logo-accent">IQ</span>
-        </div>
-        <div class="nav-links">
-            {% if session.get('user_id') %}
-                <a href="/dashboard" class="nav-item">Dashboard</a>
-                <a href="/add" class="nav-item">Add Question</a>
-                <a href="/solve" class="nav-item">🤖 AI Solve</a>
-                <a href="/ide" class="nav-item">💻 IDE</a>
-                <a href="/logout" class="btn btn-outline" style="margin-left: 1rem;">Logout</a>
-            {% else %}
-                <a href="/" class="nav-item">Login</a>
-                <a href="/signup" class="btn btn-primary">Sign Up</a>
-            {% endif %}
-        </div>
-    </nav>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
 
-    <main class="main-content">
-        <!-- Flash messages -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            <div class="flash-messages">
-              {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">{{ message }}</div>
-              {% endfor %}
-            </div>
-          {% endif %}
-        {% endwith %}
+  <nav class="navbar glass">
+    <div class="nav-brand">
+      <span class="logo-iq">Interview</span><span class="logo-accent">IQ</span>
+    </div>
+    <div class="nav-links">
+      {% if session.get('user_id') %}
+      <a href="/dashboard" class="nav-item">Dashboard</a>
+      <a href="/add" class="nav-item">Add Question</a>
+      <a href="/solve" class="nav-item">🤖 AI Solve</a>
+      <a href="/ide" class="nav-item">💻 IDE</a>
+      <a href="/logout" class="btn btn-outline" style="margin-left: 1rem;">Logout</a>
+      {% else %}
+      <a href="/" class="nav-item">Login</a>
+      <a href="/signup" class="btn btn-primary">Sign Up</a>
+      {% endif %}
+    </div>
+  </nav>
 
-        {% block content %}{% endblock %}
-    </main>
+  <main class="main-content">
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
 
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block content %}{% endblock %}
+  </main>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
+
 </html>
