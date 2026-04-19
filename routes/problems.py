@@ -121,7 +121,6 @@ def get_problems():
     cursor.execute(query, tuple(params))
     problems = cursor.fetchall()
     
-    # Convert tuples/lists to dicts if cursor is not dictionary cursor
     column_names = [col[0] for col in cursor.description]
     problem_dicts = [dict(zip(column_names, row)) for row in problems]
     
