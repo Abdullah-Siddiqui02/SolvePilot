@@ -1,4 +1,3 @@
-// Setup Monaco Editor
 let editor;
 
 require(['vs/editor/editor.main'], function () {
@@ -10,12 +9,11 @@ require(['vs/editor/editor.main'], function () {
         fontSize: 14
     });
 
-    // Handle language change
-    document.getElementById('language-select').addEventListener('change', function(e) {
+    document.getElementById('language-select').addEventListener('change', function (e) {
         let lang = e.target.value;
         let monacoLang = lang;
         let defaultCode = "";
-        
+
         if (lang === 'cpp') {
             monacoLang = 'cpp';
             defaultCode = "#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << \"Hello, InterviewIQ!\" << endl;\n    return 0;\n}";
@@ -35,14 +33,13 @@ require(['vs/editor/editor.main'], function () {
     });
 });
 
-// Run Code Functionality
-document.getElementById('btn-run').addEventListener('click', async function() {
+document.getElementById('btn-run').addEventListener('click', async function () {
     const code = editor.getValue();
     const language = document.getElementById('language-select').value;
     const consolePane = document.getElementById('console-pane');
-    
+
     consolePane.innerHTML = '<div style="color: #aaa;">Running code...</div>';
-    
+
     try {
         const response = await fetch('/api/execute', {
             method: 'POST',
@@ -51,9 +48,9 @@ document.getElementById('btn-run').addEventListener('click', async function() {
             },
             body: JSON.stringify({ code: code, language: language })
         });
-        
+
         const data = await response.json();
-        
+
         if (data.error) {
             consolePane.innerHTML = `<div class="status-error">System Error: ${data.error}</div>`;
             if (data.details) {
@@ -61,30 +58,29 @@ document.getElementById('btn-run').addEventListener('click', async function() {
             }
             return;
         }
-        
+
         let outputHtml = `<div class="${data.status === 'Success' ? 'status-success' : 'status-error'}">Status: ${data.status}</div>`;
-        
+
         if (data.output) {
             outputHtml += `<pre style="margin-top: 10px; white-space: pre-wrap; word-wrap: break-word;">${data.output.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
         }
         if (data.stderr) {
             outputHtml += `<pre class="status-error" style="margin-top: 10px; white-space: pre-wrap; word-wrap: break-word;">${data.stderr.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
         }
-        
+
         consolePane.innerHTML = outputHtml;
-        
+
     } catch (err) {
         consolePane.innerHTML = `<div class="status-error">Request failed: ${err.message}</div>`;
     }
 });
 
-// Load Problems
 async function loadProblems() {
     const problemList = document.getElementById('problem-list');
     try {
         const response = await fetch('/api/problems');
         const data = await response.json();
-        
+
         if (data.problems && data.problems.length > 0) {
             problemList.innerHTML = '';
             data.problems.forEach(p => {
@@ -107,17 +103,16 @@ async function loadProblems() {
     }
 }
 
-// Sync Problems
-document.getElementById('btn-sync').addEventListener('click', async function() {
+document.getElementById('btn-sync').addEventListener('click', async function () {
     const btn = this;
     const originalText = btn.innerText;
     btn.innerText = 'Syncing...';
     btn.disabled = true;
-    
+
     try {
         const response = await fetch('/api/problems/sync', { method: 'POST' });
         const data = await response.json();
-        
+
         if (data.error) {
             alert('Error syncing: ' + data.error);
         } else {
@@ -132,5 +127,38 @@ document.getElementById('btn-sync').addEventListener('click', async function() {
     }
 });
 
-// Initial load
-window.addEventListener('DOMContentLoaded', loadProblems);
+async function loadMyQuestions() {
+    const questionList = document.getElementById('my-questions-list');
+    try {
+        const response = await fetch('/api/my-questions');
+        const data = await response.json();
+
+        if (data.questions && data.questions.length > 0) {
+            questionList.innerHTML = '';
+            data.questions.forEach(q => {
+                const card = document.createElement('div');
+                card.className = 'problem-card';
+                card.innerHTML = `
+                    <div style="font-weight: bold;">${q.title}</div>
+                    <div style="font-size: 0.9em; margin-top: 5px;">
+                        <span class="difficulty-${q.difficulty}">${q.difficulty}</span> | 
+                        <span>${q.topic}</span>
+                    </div>
+                `;
+                // Add click listener to load into editor or something?
+                // For now just display
+                questionList.appendChild(card);
+            });
+        } else {
+            questionList.innerHTML = '<p>No custom questions found.</p>';
+        }
+    } catch (err) {
+        questionList.innerHTML = `<p class="status-error">Failed to load questions: ${err.message}</p>`;
+    }
+}
+
+// Initial load my niqqa
+window.addEventListener('DOMContentLoaded', () => {
+    loadProblems();
+    loadMyQuestions();
+});
