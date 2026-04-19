@@ -7,7 +7,6 @@ from routes.execute import execute_bp
 
 
 def register_blueprints(app):
-    """Attach every blueprint to the application instance."""
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(questions_bp)
