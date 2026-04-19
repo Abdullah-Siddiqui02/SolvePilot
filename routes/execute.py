@@ -5,7 +5,6 @@ execute_bp = Blueprint("execute", __name__)
 
 WANDBOX_COMPILE_URL = "https://wandbox.org/api/compile.json"
 
-# Mapping from our language names to Wandbox compiler identifiers
 COMPILER_MAP = {
     "python":     "cpython-3.12.7",
     "javascript": "nodejs-18.20.4",
