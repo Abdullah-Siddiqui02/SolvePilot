@@ -6,15 +6,12 @@ problems_bp = Blueprint("problems", __name__)
 
 @problems_bp.route("/ide", methods=["GET"])
 def ide():
-    """Render the IDE interface."""
+    
     return render_template("ide.html")
 
 @problems_bp.route("/api/problems/sync", methods=["POST"])
 def sync_problems():
-    """
-    Fetches problems from Codeforces API and stores exactly:
-    40 Easy, 20 Medium, 40 Hard problems in the database.
-    """
+    
     try:
         response = requests.get("https://codeforces.com/api/problemset.problems")
         if response.status_code != 200:
