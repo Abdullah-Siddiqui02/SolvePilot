@@ -1,7 +1,3 @@
-"""
-Dashboard route: shows question stats for the logged-in user.
-"""
-
 from flask import Blueprint, render_template, redirect, session
 from extensions import cursor
 
