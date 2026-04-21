@@ -36,9 +36,24 @@ def dashboard():
     )
     difficulties = cursor.fetchall()
 
+    # User Collection Progress
+    cursor.execute(
+        "SELECT COUNT(*) FROM user_collection WHERE user_id=%s",
+        (user_id,),
+    )
+    total_added = cursor.fetchone()[0]
+
+    cursor.execute(
+        "SELECT COUNT(*) FROM user_collection WHERE user_id=%s AND status='solved'",
+        (user_id,),
+    )
+    total_solved = cursor.fetchone()[0]
+
     return render_template(
         "dashboard.html",
         total=total,
         topics=topics,
         difficulties=difficulties,
+        total_added=total_added,
+        total_solved=total_solved,
     )
