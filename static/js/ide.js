@@ -85,13 +85,16 @@ async function loadProblems() {
             problemList.innerHTML = '';
             data.problems.forEach(p => {
                 const card = document.createElement('div');
-                card.className = 'problem-card';
+                card.className = 'problem-card d-flex justify-content-between align-items-center';
                 card.innerHTML = `
-                    <div style="font-weight: bold;">${p.title}</div>
-                    <div style="font-size: 0.9em; margin-top: 5px;">
-                        <span class="difficulty-${p.difficulty}">${p.difficulty}</span> | 
-                        <a href="${p.url}" target="_blank" style="color: #4daaf1; text-decoration: none;">View on ${p.platform}</a>
+                    <div>
+                        <div style="font-weight: bold;">${p.title}</div>
+                        <div style="font-size: 0.9em; margin-top: 5px;">
+                            <span class="difficulty-${p.difficulty}">${p.difficulty}</span> | 
+                            <a href="${p.url}" target="_blank" style="color: #4daaf1; text-decoration: none;">View on ${p.platform}</a>
+                        </div>
                     </div>
+                    <button class="btn btn-sm btn-outline-primary" onclick="addToCollection(${p.id})">+</button>
                 `;
                 problemList.appendChild(card);
             });
@@ -102,6 +105,82 @@ async function loadProblems() {
         problemList.innerHTML = `<p class="status-error">Failed to load problems: ${err.message}</p>`;
     }
 }
+
+async function addToCollection(problemId) {
+    try {
+        const response = await fetch('/api/collection/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ problem_id: problemId })
+        });
+        const data = await response.json();
+        alert(data.message || data.error);
+        if (!data.error) {
+            loadMyCollection();
+        }
+    } catch (err) {
+        alert('Failed to add: ' + err.message);
+    }
+}
+
+async function loadMyCollection() {
+    const collectionList = document.getElementById('my-questions-list');
+    try {
+        const response = await fetch('/api/collection');
+        const data = await response.json();
+
+        if (data.problems && data.problems.length > 0) {
+            collectionList.innerHTML = '';
+            data.problems.forEach(p => {
+                const isSolved = p.status === 'solved';
+                const card = document.createElement('div');
+                card.className = 'problem-card d-flex justify-content-between align-items-center';
+                card.style.borderLeft = isSolved ? '4px solid #4CAF50' : '4px solid #555';
+                card.innerHTML = `
+                    <div>
+                        <div style="font-weight: bold;">${p.title} ${isSolved ? '✅' : ''}</div>
+                        <div style="font-size: 0.9em; margin-top: 5px;">
+                            <span class="difficulty-${p.difficulty}">${p.difficulty}</span> | 
+                            <span>${p.platform}</span>
+                        </div>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" ${isSolved ? 'checked' : ''} 
+                               onclick="toggleStatus(${p.id}, '${p.status}')">
+                    </div>
+                `;
+                collectionList.appendChild(card);
+            });
+        } else {
+            collectionList.innerHTML = '<p>Your collection is empty.</p>';
+        }
+    } catch (err) {
+        collectionList.innerHTML = `<p class="status-error">Failed to load collection: ${err.message}</p>`;
+    }
+}
+
+async function toggleStatus(problemId, currentStatus) {
+    try {
+        const response = await fetch('/api/collection/toggle-status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ problem_id: problemId, status: currentStatus })
+        });
+        const data = await response.json();
+        if (!data.error) {
+            loadMyCollection();
+        } else {
+            alert(data.error);
+        }
+    } catch (err) {
+        alert('Failed to update status: ' + err.message);
+    }
+}
+
+// Keep the old loadMyQuestions but rename the call to loadMyCollection
+// and maybe keep loadMyQuestions for user created questions if needed, 
+// but the requirement said "Store selected questions separately (user collection)".
+// I'll show both if they exist, or just focus on collection as requested.
 
 document.getElementById('btn-sync').addEventListener('click', async function () {
     const btn = this;
@@ -129,36 +208,13 @@ document.getElementById('btn-sync').addEventListener('click', async function () 
 
 async function loadMyQuestions() {
     const questionList = document.getElementById('my-questions-list');
-    try {
-        const response = await fetch('/api/my-questions');
-        const data = await response.json();
-
-        if (data.questions && data.questions.length > 0) {
-            questionList.innerHTML = '';
-            data.questions.forEach(q => {
-                const card = document.createElement('div');
-                card.className = 'problem-card';
-                card.innerHTML = `
-                    <div style="font-weight: bold;">${q.title}</div>
-                    <div style="font-size: 0.9em; margin-top: 5px;">
-                        <span class="difficulty-${q.difficulty}">${q.difficulty}</span> | 
-                        <span>${q.topic}</span>
-                    </div>
-                `;
-                // Add click listener to load into editor or something?
-                // For now just display
-                questionList.appendChild(card);
-            });
-        } else {
-            questionList.innerHTML = '<p>No custom questions found.</p>';
-        }
-    } catch (err) {
-        questionList.innerHTML = `<p class="status-error">Failed to load questions: ${err.message}</p>`;
-    }
+    // We are replacing this with loadMyCollection for the "Add Question" feature.
+    // If the user still wants their manual questions, we might need another section.
+    // But per instructions, "Dashboard shows progress = solved / total" where total is added questions.
 }
 
-// Initial load my niqqa
+// Initial load
 window.addEventListener('DOMContentLoaded', () => {
     loadProblems();
-    loadMyQuestions();
+    loadMyCollection();
 });

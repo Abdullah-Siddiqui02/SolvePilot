@@ -51,3 +51,16 @@ CREATE TABLE IF NOT EXISTS user_submissions (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (problem_id) REFERENCES global_problems(id) ON DELETE SET NULL
 );
+
+-- User Collection Table (To track problems added by user from the bank)
+CREATE TABLE IF NOT EXISTS user_collection (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    user_id     INT           NOT NULL,
+    problem_id  INT           NOT NULL,
+    status      VARCHAR(20)   DEFAULT 'added', -- 'added' or 'solved'
+    created_at  TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (problem_id) REFERENCES global_problems(id) ON DELETE CASCADE,
+    UNIQUE(user_id, problem_id)
+);
