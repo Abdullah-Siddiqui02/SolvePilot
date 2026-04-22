@@ -9,6 +9,14 @@ require(['vs/editor/editor.main'], function () {
         fontSize: 14
     });
 
+    if (ACTIVE_PROBLEM_TITLE) {
+        document.getElementById('active-problem-display').style.display = 'block';
+        document.getElementById('current-problem-title').innerText = ACTIVE_PROBLEM_TITLE;
+        
+        const header = `// Solving: ${ACTIVE_PROBLEM_TITLE}\n// ======================================\n\n`;
+        editor.setValue(header + editor.getValue());
+    }
+
     document.getElementById('language-select').addEventListener('change', function (e) {
         let lang = e.target.value;
         let monacoLang = lang;
