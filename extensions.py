@@ -1,14 +1,9 @@
-"""
-Shared extensions: database connection and Groq AI client.
-Imported by route modules that need them.
-"""
-
 import mysql.connector
 from groq import Groq
 from config import Config
 
 
-# ── Database ────────────────────────────────────────────
+# Database 
 def get_db():
     """Create and return a MySQL connection and cursor."""
     db = mysql.connector.connect(
@@ -23,5 +18,5 @@ def get_db():
 db, cursor = get_db()
 
 
-# ── AI Client ───────────────────────────────────────────
+# AI Client 
 groq_client = Groq(api_key=Config.GROQ_API_KEY)

@@ -1,3 +1,4 @@
+
 from flask import Blueprint, render_template, redirect, session
 from extensions import cursor
 
