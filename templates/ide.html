@@ -151,6 +151,9 @@
                     <option value="javascript">JavaScript</option>
                 </select>
                 <button id="btn-run" class="btn-run">Run Code</button>
+                <div id="active-problem-display" style="margin-left: auto; color: #4daaf1; font-weight: bold; display: none;">
+                    Solving: <span id="current-problem-title"></span>
+                </div>
             </div>
 
             <div id="editor"></div>
@@ -166,6 +169,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/editor/editor.main.nls.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/editor/editor.main.js"></script>
 
+    <script>
+        const ACTIVE_PROBLEM_TITLE = "{{ active_title or '' }}";
+        const ACTIVE_PROBLEM_ID = "{{ active_id or '' }}";
+    </script>
     <script src="{{ url_for('static', filename='js/ide.js') }}"></script>
 </body>
 
