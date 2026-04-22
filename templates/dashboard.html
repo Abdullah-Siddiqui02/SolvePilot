@@ -3,180 +3,256 @@
 {% block title %}Dashboard – InterviewIQ{% endblock %}
 
 {% block content %}
+<style>
+    .interactive-card {
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .interactive-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(56, 189, 248, 0.2);
+    }
+    .interactive-card.active {
+        border-color: var(--primary);
+        background: rgba(56, 189, 248, 0.1);
+    }
+    .view-content {
+        display: none;
+        animation: fadeIn 0.4s ease forwards;
+    }
+    .view-content.active {
+        display: block;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .category-section {
+        margin-bottom: 2rem;
+    }
+    .category-title {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .question-list {
+        list-style: none;
+        padding: 0;
+        display: grid;
+        gap: 1rem;
+    }
+    .question-item {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background 0.2s ease;
+        cursor: pointer;
+    }
+    .question-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: var(--primary);
+    }
+    .badge {
+        padding: 0.3rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    .badge-easy { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+    .badge-medium { background: rgba(250, 204, 21, 0.15); color: #facc15; }
+    .badge-hard { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+    .badge-topic { background: rgba(139, 92, 246, 0.15); color: #8b5cf6; }
+    
+    .topic-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+    .topic-card {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 1.5rem;
+    }
+    .topic-card h4 {
+        margin-bottom: 1rem;
+        color: var(--primary);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 0.5rem;
+    }
+</style>
+
 <!-- Header -->
 <div class="dashboard-header">
     <h2>Your Dashboard</h2>
     <a href="/add" class="btn btn-primary">+ Add Question</a>
 </div>
 
-<!-- Stat Cards -->
+<!-- Stat Cards as Navigation -->
 <div class="stat-cards">
-    <div class="stat-card glass">
+    <div class="stat-card glass interactive-card active" data-target="view-questions" onclick="switchView('view-questions')">
         <span class="stat-value">{{ total }}</span>
         <span class="stat-label">Questions Solved</span>
     </div>
-    <div class="stat-card glass">
+    <div class="stat-card glass interactive-card" data-target="view-topics" onclick="switchView('view-topics')">
         <span class="stat-value">{{ topics | length }}</span>
         <span class="stat-label">Topics Covered</span>
     </div>
-    <div class="stat-card glass">
-        <span class="stat-value">
-            {% if difficulties %}
-            {% for d in difficulties if d[0] == 'Hard' %}{{ d[1] }}{% endfor %}
-            {% else %}0{% endif %}
-        </span>
-        <span class="stat-label">Hard Problems</span>
-    </div>
-    <div class="stat-card glass" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(16, 185, 129, 0.1)); border: 1px solid rgba(56, 189, 248, 0.3);">
+    <div class="stat-card glass interactive-card" data-target="view-collection" onclick="switchView('view-collection')" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.05), rgba(16, 185, 129, 0.05));">
         <span class="stat-value">{{ total_solved }}/{{ total_added }}</span>
         <span class="stat-label">Collection Progress</span>
     </div>
 </div>
 
-<!-- Tabs Navigation -->
-<div class="tabs-nav">
-    <button class="tab-btn active" data-target="tab-overview">Overview</button>
-    <button class="tab-btn" data-target="tab-hot-topics">🔥 Hot Topics</button>
-    <button class="tab-btn" data-target="tab-contest">🏆 Daily Contest</button>
-</div>
-
-<!-- Tab 1: Overview -->
-<div class="tab-content active" id="tab-overview">
-    <div class="chart-container glass">
-        <canvas id="topicChart"></canvas>
-    </div>
-</div>
-
-<!-- Tab 2: Hot Topics / Company Questions -->
-<div class="tab-content" id="tab-hot-topics">
-    <h3 style="margin-bottom: 1.5rem;">Trending Company Questions</h3>
-    <ul class="topic-list">
-        <li class="topic-item">
-            <div>
-                <span class="topic-name">Two Sum</span>
-                <span style="color: var(--text-secondary); font-size: 0.85rem; margin-left: 1rem;">Array · Easy</span>
-            </div>
-            <span class="topic-trend">🔥 Google, Amazon</span>
-        </li>
-        <li class="topic-item">
-            <div>
-                <span class="topic-name">LRU Cache</span>
-                <span style="color: var(--text-secondary); font-size: 0.85rem; margin-left: 1rem;">Design ·
-                    Medium</span>
-            </div>
-            <span class="topic-trend">🔥 Meta, Microsoft</span>
-        </li>
-        <li class="topic-item">
-            <div>
-                <span class="topic-name">Merge Intervals</span>
-                <span style="color: var(--text-secondary); font-size: 0.85rem; margin-left: 1rem;">Array · Medium</span>
-            </div>
-            <span class="topic-trend">🔥 Amazon, Apple</span>
-        </li>
-        <li class="topic-item">
-            <div>
-                <span class="topic-name">Binary Tree Level Order Traversal</span>
-                <span style="color: var(--text-secondary); font-size: 0.85rem; margin-left: 1rem;">Tree · Medium</span>
-            </div>
-            <span class="topic-trend">🔥 Google, Samsung</span>
-        </li>
-        <li class="topic-item">
-            <div>
-                <span class="topic-name">Detect Cycle in Linked List</span>
-                <span style="color: var(--text-secondary); font-size: 0.85rem; margin-left: 1rem;">Linked List ·
-                    Easy</span>
-            </div>
-            <span class="topic-trend">🔥 Microsoft, Flipkart</span>
-        </li>
-        <li class="topic-item">
-            <div>
-                <span class="topic-name">Dijkstra's Algorithm</span>
-                <span style="color: var(--text-secondary); font-size: 0.85rem; margin-left: 1rem;">Graph · Hard</span>
-            </div>
-            <span class="topic-trend">🔥 Uber, Google</span>
-        </li>
-    </ul>
-</div>
-
-<!-- Tab 3: Daily Contest -->
-<div class="tab-content" id="tab-contest">
-    <div class="contest-card">
-        <h3>🏆 Daily Challenge</h3>
-        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
-            Solve today's problem and keep your streak alive!
-        </p>
-
-        <div
-            style="padding: 1.5rem; border-radius: 12px; background: rgba(0,0,0,0.3); margin-bottom: 1.5rem; text-align: left;">
-            <h4 style="color: var(--primary); margin-bottom: 0.5rem;">Longest Substring Without Repeating Characters
-            </h4>
-            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
-                Given a string <code style="color: var(--primary);">s</code>, find the length of the
-                <strong>longest substring</strong> without repeating characters.
-            </p>
-            <div style="display: flex; gap: 1rem;">
-                <span
-                    style="background: rgba(56,189,248,0.15); color: var(--primary); padding: 0.3rem 0.75rem; border-radius: 20px; font-size: 0.8rem;">
-                    Sliding Window
-                </span>
-                <span
-                    style="background: rgba(250,204,21,0.15); color: #facc15; padding: 0.3rem 0.75rem; border-radius: 20px; font-size: 0.8rem;">
-                    Medium
-                </span>
-            </div>
+<!-- Dynamic Content Area -->
+<div class="dashboard-content" style="margin-top: 2rem;">
+    
+    <!-- View 1: Questions Solved -->
+    <div id="view-questions" class="view-content active">
+        <h3 style="margin-bottom: 1.5rem; color: var(--text-primary);">Questions Solved (By Difficulty)</h3>
+        
+        <div class="category-section">
+            <h4 class="category-title"><span class="badge badge-easy">Easy</span></h4>
+            <ul class="question-list">
+                {% set has_easy = false %}
+                {% for q in all_questions if q[3]|lower == 'easy' %}
+                    {% set has_easy = true %}
+                    <li class="question-item" title="Double-click to solve in IDE" ondblclick="openInIde('{{ q[1] }}', '{{ q[0] }}')">
+                        <div>
+                            <strong>{{ q[1] }}</strong>
+                            <span style="color: var(--text-secondary); font-size: 0.85rem; margin-left: 1rem;">{{ q[2] }}</span>
+                        </div>
+                    </li>
+                {% endfor %}
+                {% if not has_easy %}<p style="color: var(--text-secondary); font-size: 0.9rem; padding-left: 1rem;">No easy questions solved yet.</p>{% endif %}
+            </ul>
         </div>
 
-        <div class="contest-timer" id="contest-timer">--:--:--</div>
-        <p style="color: var(--text-secondary); font-size: 0.85rem;">Time remaining today</p>
+        <div class="category-section">
+            <h4 class="category-title"><span class="badge badge-medium">Medium</span></h4>
+            <ul class="question-list">
+                {% set has_med = false %}
+                {% for q in all_questions if q[3]|lower == 'medium' %}
+                    {% set has_med = true %}
+                    <li class="question-item" title="Double-click to solve in IDE" ondblclick="openInIde('{{ q[1] }}', '{{ q[0] }}')">
+                        <div>
+                            <strong>{{ q[1] }}</strong>
+                            <span style="color: var(--text-secondary); font-size: 0.85rem; margin-left: 1rem;">{{ q[2] }}</span>
+                        </div>
+                    </li>
+                {% endfor %}
+                {% if not has_med %}<p style="color: var(--text-secondary); font-size: 0.9rem; padding-left: 1rem;">No medium questions solved yet.</p>{% endif %}
+            </ul>
+        </div>
+
+        <div class="category-section">
+            <h4 class="category-title"><span class="badge badge-hard">Hard</span></h4>
+            <ul class="question-list">
+                {% set has_hard = false %}
+                {% for q in all_questions if q[3]|lower == 'hard' %}
+                    {% set has_hard = true %}
+                    <li class="question-item" title="Double-click to solve in IDE" ondblclick="openInIde('{{ q[1] }}', '{{ q[0] }}')">
+                        <div>
+                            <strong>{{ q[1] }}</strong>
+                            <span style="color: var(--text-secondary); font-size: 0.85rem; margin-left: 1rem;">{{ q[2] }}</span>
+                        </div>
+                    </li>
+                {% endfor %}
+                {% if not has_hard %}<p style="color: var(--text-secondary); font-size: 0.9rem; padding-left: 1rem;">No hard questions solved yet.</p>{% endif %}
+            </ul>
+        </div>
     </div>
+
+    <!-- View 2: Topics Covered -->
+    <div id="view-topics" class="view-content">
+        <h3 style="margin-bottom: 1.5rem; color: var(--text-primary);">Topics Covered</h3>
+        
+        <div class="topic-grid">
+            {% for t in topics %}
+            <div class="topic-card">
+                <h4>{{ t[0] }} <span style="float:right; font-size:0.9rem; color:var(--text-secondary);">{{ t[1] }} Qs</span></h4>
+                <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+                    {% for q in all_questions if q[2] == t[0] %}
+                        <li style="font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 4px 8px; border-radius: 4px;" 
+                            title="Double-click to solve in IDE" ondblclick="openInIde('{{ q[1] }}', '{{ q[0] }}')"
+                            onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">
+                            <span>{{ q[1] }}</span>
+                            <span class="badge badge-{{ q[3]|lower }}" style="font-size: 0.7rem; padding: 0.1rem 0.5rem;">{{ q[3] }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% else %}
+            <p style="color: var(--text-secondary);">No topics covered yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- View 3: Collection Progress -->
+    <div id="view-collection" class="view-content">
+        <h3 style="margin-bottom: 1.5rem; color: var(--text-primary);">Collection Progress ({{ total_solved }}/{{ total_added }})</h3>
+        
+        <div class="category-section">
+            <h4 class="category-title" style="color: #10b981;">✓ Solved from Collection</h4>
+            <ul class="question-list">
+                {% set has_solved_col = false %}
+                {% for c in collection_details if c[2] == 'solved' %}
+                    {% set has_solved_col = true %}
+                    <li class="question-item" style="border-left: 4px solid #10b981;" title="Double-click to solve in IDE" ondblclick="openInIde('{{ c[0] }}', '{{ c[4] }}')">
+                        <div>
+                            <a href="{{ c[3] }}" target="_blank" style="color: var(--text-primary); text-decoration: none;"><strong>{{ c[0] }}</strong></a>
+                        </div>
+                        <span class="badge badge-{{ c[1]|lower }}">{{ c[1] }}</span>
+                    </li>
+                {% endfor %}
+                {% if not has_solved_col %}<p style="color: var(--text-secondary); font-size: 0.9rem; padding-left: 1rem;">No collection questions solved yet.</p>{% endif %}
+            </ul>
+        </div>
+
+        <div class="category-section">
+            <h4 class="category-title" style="color: #facc15;">⏳ Pending in Collection</h4>
+            <ul class="question-list">
+                {% set has_pending_col = false %}
+                {% for c in collection_details if c[2] == 'added' %}
+                    {% set has_pending_col = true %}
+                    <li class="question-item" style="border-left: 4px solid #facc15;" title="Double-click to solve in IDE" ondblclick="openInIde('{{ c[0] }}', '{{ c[4] }}')">
+                        <div>
+                            <a href="{{ c[3] }}" target="_blank" style="color: var(--text-primary); text-decoration: none;"><strong>{{ c[0] }}</strong></a>
+                        </div>
+                        <span class="badge badge-{{ c[1]|lower }}">{{ c[1] }}</span>
+                    </li>
+                {% endfor %}
+                {% if not has_pending_col %}<p style="color: var(--text-secondary); font-size: 0.9rem; padding-left: 1rem;">No pending questions in your collection.</p>{% endif %}
+            </ul>
+        </div>
+    </div>
+
 </div>
 
-<!-- Chart Script -->
 <script>
-    const labels = [{% for t in topics %}"{{ t[0] }}", {% endfor %}];
-    const data = [{% for t in topics %}{ { t[1] } }, {% endfor %}];
-
-    if (labels.length > 0) {
-        new Chart(document.getElementById('topicChart'), {
-            type: 'doughnut',
-            data: {
-                labels: labels,
-                datasets: [{
-                    data: data,
-                    backgroundColor: [
-                        '#38bdf8', '#8b5cf6', '#10b981',
-                        '#f59e0b', '#ef4444', '#ec4899'
-                    ],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: { color: '#94a3b8', padding: 20 }
-                    }
-                }
-            }
+    function switchView(viewId) {
+        // Update active class on stat cards
+        document.querySelectorAll('.interactive-card').forEach(card => {
+            card.classList.remove('active');
         });
+        document.querySelector(`[data-target="${viewId}"]`).classList.add('active');
+
+        // Update active class on content views
+        document.querySelectorAll('.view-content').forEach(view => {
+            view.classList.remove('active');
+        });
+        document.getElementById(viewId).classList.add('active');
     }
 
-    /* Daily Contest Countdown Timer */
-    function updateTimer() {
-        const now = new Date();
-        const end = new Date(now);
-        end.setHours(23, 59, 59, 999);
-        const diff = end - now;
-
-        const hrs = String(Math.floor(diff / 3600000)).padStart(2, '0');
-        const mins = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
-        const secs = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
-
-        const el = document.getElementById('contest-timer');
-        if (el) el.textContent = `${hrs}:${mins}:${secs}`;
+    function openInIde(title, id) {
+        window.location.href = `/ide?title=${encodeURIComponent(title)}&id=${id}`;
     }
-    updateTimer();
-    setInterval(updateTimer, 1000);
 </script>
 {% endblock %}

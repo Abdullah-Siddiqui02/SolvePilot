@@ -6,8 +6,9 @@ problems_bp = Blueprint("problems", __name__)
 
 @problems_bp.route("/ide", methods=["GET"])
 def ide():
-    
-    return render_template("ide.html")
+    title = request.args.get("title")
+    problem_id = request.args.get("id")
+    return render_template("ide.html", active_title=title, active_id=problem_id)
 
 @problems_bp.route("/api/problems/sync", methods=["POST"])
 def sync_problems():
