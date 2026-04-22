@@ -46,6 +46,26 @@ def dashboard():
     )
     total_solved = cursor.fetchone()[0]
 
+    # Fetch all custom questions solved by the user
+    cursor.execute(
+        "SELECT id, title, topic, difficulty FROM questions WHERE user_id=%s ORDER BY created_at DESC",
+        (user_id,),
+    )
+    all_questions = cursor.fetchall()
+
+    # Fetch collection details
+    cursor.execute(
+        """
+        SELECT gp.title, gp.difficulty, uc.status, gp.url, gp.id
+        FROM user_collection uc 
+        JOIN global_problems gp ON uc.problem_id = gp.id 
+        WHERE uc.user_id=%s
+        ORDER BY uc.created_at DESC
+        """,
+        (user_id,),
+    )
+    collection_details = cursor.fetchall()
+
     return render_template(
         "dashboard.html",
         total=total,
@@ -53,4 +73,6 @@ def dashboard():
         difficulties=difficulties,
         total_added=total_added,
         total_solved=total_solved,
+        all_questions=all_questions,
+        collection_details=collection_details,
     )
