@@ -1,52 +1,156 @@
 {% extends "base.html" %}
 
-{% block title %}Add Question – InterviewIQ{% endblock %}
+{% block title %}Explore Problems – InterviewIQ{% endblock %}
 
 {% block content %}
-<div class="form-container glass">
-    <h2>Add a Question</h2>
-    <p style="color: var(--text-secondary); margin-bottom: 2rem;">
-        Track a new problem you've solved.
-    </p>
-
-    <form method="POST" id="add-question-form">
-        <div class="form-group">
-            <label for="title">Question Title</label>
-            <input type="text" id="title" name="title" placeholder="e.g. Two Sum" required>
-        </div>
-
-        <div class="form-group">
-            <label for="topic">Topic</label>
-            <select id="topic" name="topic">
-                <option value="Array">Array</option>
-                <option value="Linked List">Linked List</option>
-                <option value="Tree">Tree</option>
-                <option value="Graph">Graph</option>
-                <option value="Stack">Stack</option>
-                <option value="Queue">Queue</option>
-                <option value="Dynamic Programming">Dynamic Programming</option>
-                <option value="String">String</option>
-                <option value="Sorting">Sorting</option>
-                <option value="Binary Search">Binary Search</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="difficulty">Difficulty</label>
-            <select id="difficulty" name="difficulty">
-                <option value="Easy">Easy</option>
-                <option value="Medium">Medium</option>
-                <option value="Hard">Hard</option>
-            </select>
-        </div>
-
-        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
-            Add Question
-        </button>
-    </form>
-
-    <p class="auth-footer">
-        <a href="/dashboard">← Back to Dashboard</a>
-    </p>
+<div class="explorer-header" style="margin-bottom: 2rem;">
+    <h2>Problem Explorer</h2>
+    <p style="color: var(--text-secondary);">Browse the problem bank and add questions to your collection.</p>
 </div>
+
+<div class="search-bar glass" style="padding: 1.5rem; margin-bottom: 2rem; display: flex; gap: 1rem; border: 1px solid rgba(255,255,255,0.1);">
+    <input type="text" id="problem-search" placeholder="Search by title or tag..." style="flex: 1; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 0.8rem 1rem; border-radius: 8px;">
+    <select id="difficulty-filter" style="width: 180px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 0.8rem; border-radius: 8px;">
+        <option value="">All Difficulties</option>
+        <option value="Easy">Easy</option>
+        <option value="Medium">Medium</option>
+        <option value="Hard">Hard</option>
+    </select>
+    <select id="tag-filter" style="width: 200px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 0.8rem; border-radius: 8px;">
+        <option value="">All Topics</option>
+    </select>
+</div>
+
+<div id="explorer-list" class="topic-grid">
+    <p>Loading problem bank...</p>
+</div>
+
+<script>
+    let allProblems = [];
+    let userCollectionIds = new Set();
+    let solvedIds = new Set();
+
+    async function initExplorer() {
+        await fetchCollection();
+        await fetchProblems();
+        renderExplorer();
+    }
+
+    async function fetchCollection() {
+        try {
+            const res = await fetch('/api/collection');
+            const data = await res.json();
+            userCollectionIds = new Set(data.problems.map(p => p.id));
+            solvedIds = new Set(data.problems.filter(p => p.status === 'solved').map(p => p.id));
+        } catch (e) { console.error("Failed to fetch collection", e); }
+    }
+
+    async function fetchProblems() {
+        try {
+            const res = await fetch('/api/problems');
+            const data = await res.json();
+            allProblems = data.problems;
+            populateTagFilter();
+        } catch (e) { console.error("Failed to fetch problems", e); }
+    }
+
+    function populateTagFilter() {
+        const tagSet = new Set();
+        allProblems.forEach(p => {
+            if (p.tags) {
+                p.tags.split(',').forEach(t => {
+                    const tag = t.trim().toLowerCase();
+                    if (tag) tagSet.add(tag);
+                });
+            }
+        });
+        const select = document.getElementById('tag-filter');
+        [...tagSet].sort().forEach(tag => {
+            const opt = document.createElement('option');
+            opt.value = tag;
+            opt.textContent = tag.charAt(0).toUpperCase() + tag.slice(1);
+            select.appendChild(opt);
+        });
+    }
+
+    function renderExplorer() {
+        const list = document.getElementById('explorer-list');
+        const searchTerm = document.getElementById('problem-search').value.toLowerCase();
+        const difficulty = document.getElementById('difficulty-filter').value;
+        const selectedTag = document.getElementById('tag-filter').value.toLowerCase();
+
+        const filtered = allProblems.filter(p => {
+            const titleMatch = p.title.toLowerCase().includes(searchTerm);
+            const tagMatch = p.tags && p.tags.toLowerCase().includes(searchTerm);
+            const matchesSearch = titleMatch || tagMatch;
+            const matchesDifficulty = !difficulty || p.difficulty === difficulty;
+            const matchesTag = !selectedTag || (p.tags && p.tags.toLowerCase().split(',').map(t => t.trim()).includes(selectedTag));
+            return matchesSearch && matchesDifficulty && matchesTag;
+        });
+
+        list.innerHTML = '';
+        if (filtered.length === 0) {
+            list.innerHTML = '<p style="color: var(--text-secondary); grid-column: 1/-1; text-align: center;">No problems found matching your criteria.</p>';
+            return;
+        }
+
+        filtered.forEach(p => {
+            const inCollection = userCollectionIds.has(p.id);
+            const isSolved = solvedIds.has(p.id);
+            const card = document.createElement('div');
+            card.className = 'topic-card glass';
+            card.style.display = 'flex';
+            card.style.flexDirection = 'column';
+            card.style.justifyContent = 'space-between';
+            card.style.border = inCollection ? '1px solid var(--primary)' : '1px solid rgba(255,255,255,0.05)';
+            card.style.transition = 'all 0.3s ease';
+
+            card.innerHTML = `
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <h4 style="border: none; margin-bottom: 0.5rem; color: var(--text-primary); font-size: 1.1rem;">
+                            ${p.title} ${isSolved ? '<span style="color: #10b981; font-size: 1rem; margin-left: 5px;">✅</span>' : ''}
+                        </h4>
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <span class="badge badge-${p.difficulty.toLowerCase()}">${p.difficulty}</span>
+                        <span style="color: var(--text-secondary); font-size: 0.8rem; display: block; margin-top: 0.5rem;">${p.platform} · ${p.tags || 'General'}</span>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem; margin-top: auto;">
+                    ${inCollection ? 
+                        `<button onclick="toggleCollection(${p.id}, 'remove')" class="btn btn-sm btn-outline-danger" style="flex: 1;">- Remove Q</button>` : 
+                        `<button onclick="toggleCollection(${p.id}, 'add')" class="btn btn-sm btn-primary" style="flex: 1;">+ Add Quest</button>`
+                    }
+                    <a href="/ide?id=${p.id}&title=${encodeURIComponent(p.title)}" class="btn btn-sm btn-outline-primary" style="padding: 0.5rem 1rem;">Solve</a>
+                </div>
+            `;
+            list.appendChild(card);
+        });
+    }
+
+    async function toggleCollection(problemId, action) {
+        const endpoint = action === 'add' ? '/api/collection/add' : '/api/collection/remove';
+        try {
+            const res = await fetch(endpoint, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ problem_id: problemId })
+            });
+            const data = await res.json();
+            if (data.message) {
+                await fetchCollection();
+                renderExplorer();
+            } else {
+                alert(data.error || 'Operation failed');
+            }
+        } catch (e) { alert('Request failed: ' + e.message); }
+    }
+
+    document.getElementById('problem-search').addEventListener('input', renderExplorer);
+    document.getElementById('difficulty-filter').addEventListener('change', renderExplorer);
+    document.getElementById('tag-filter').addEventListener('change', renderExplorer);
+
+    initExplorer();
+</script>
 {% endblock %}
