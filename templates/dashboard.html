@@ -4,250 +4,247 @@
 
 {% block content %}
 <style>
-    .interactive-card {
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-    .interactive-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(56, 189, 248, 0.2);
-    }
-    .interactive-card.active {
-        border-color: var(--primary);
-        background: rgba(56, 189, 248, 0.1);
-    }
-    .view-content {
-        display: none;
-        animation: fadeIn 0.4s ease forwards;
-    }
-    .view-content.active {
-        display: block;
-    }
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    .category-section {
-        margin-bottom: 2rem;
-    }
-    .category-title {
-        font-size: 1.2rem;
-        margin-bottom: 1rem;
-        color: var(--text-primary);
+    .interactive-card { cursor: pointer; transition: all 0.3s ease; }
+    .interactive-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(56, 189, 248, 0.2); }
+    .interactive-card.active { border-color: var(--primary); background: rgba(56, 189, 248, 0.1); }
+    
+    .view-content { display: none; animation: fadeIn 0.4s ease forwards; }
+    .view-content.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Progress Circles */
+    .progress-circles { display: flex; justify-content: space-around; gap: 2rem; margin: 2rem 0; flex-wrap: wrap; }
+    .progress-container { text-align: center; }
+    .progress-circle {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
         display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        background: conic-gradient(var(--p-color) calc(var(--percent) * 1%), rgba(255,255,255,0.05) 0);
+        margin-bottom: 0.5rem;
+    }
+    .progress-circle::after {
+        content: attr(data-percent) '%';
+        width: 100px;
+        height: 100px;
+        background: #0f172a;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: white;
+    }
+
+    .streak-badge {
+        background: linear-gradient(135deg, #f59e0b, #ef4444);
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        font-weight: bold;
+        display: inline-flex;
         align-items: center;
         gap: 0.5rem;
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
     }
-    .question-list {
-        list-style: none;
-        padding: 0;
-        display: grid;
-        gap: 1rem;
-    }
-    .question-item {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        padding: 1rem 1.5rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        transition: background 0.2s ease;
-        cursor: pointer;
-    }
-    .question-item:hover {
-        background: rgba(255, 255, 255, 0.08);
-        border-color: var(--primary);
-    }
-    .badge {
-        padding: 0.3rem 0.75rem;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 500;
-    }
+
+    .leaderboard-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    .leaderboard-table th, .leaderboard-table td { padding: 1rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .leaderboard-table tr:first-child { background: rgba(56, 189, 248, 0.05); }
+
+    .category-section { margin-bottom: 2.5rem; }
+    .badge { padding: 0.3rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 500; }
     .badge-easy { background: rgba(16, 185, 129, 0.15); color: #10b981; }
     .badge-medium { background: rgba(250, 204, 21, 0.15); color: #facc15; }
     .badge-hard { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
-    .badge-topic { background: rgba(139, 92, 246, 0.15); color: #8b5cf6; }
-    
-    .topic-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 1.5rem;
-    }
-    .topic-card {
-        background: rgba(0, 0, 0, 0.2);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 12px;
-        padding: 1.5rem;
-    }
-    .topic-card h4 {
-        margin-bottom: 1rem;
-        color: var(--primary);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        padding-bottom: 0.5rem;
-    }
 </style>
 
 <!-- Header -->
-<div class="dashboard-header">
-    <h2>Your Dashboard</h2>
-    <a href="/add" class="btn btn-primary">+ Add Question</a>
+<div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <h2>Welcome back!</h2>
+        <div class="streak-badge" title="Solve a problem daily to keep your streak alive!">
+            🔥 {{ user_streak }} Day Streak
+        </div>
+    </div>
+    <a href="/add" class="btn btn-primary">+ Explore Problems</a>
 </div>
 
-<!-- Stat Cards as Navigation -->
-<div class="stat-cards">
+<!-- Progress Overview -->
+<div class="progress-circles glass" style="padding: 2rem; border: 1px solid rgba(255,255,255,0.05);">
+    {% for diff, data in diff_stats.items() %}
+    <div class="progress-container">
+        <div class="progress-circle" data-percent="{{ data.percent }}" 
+             style="--percent: {{ data.percent }}; --p-color: {% if diff == 'Easy' %}#10b981{% elif diff == 'Medium' %}#facc15{% else %}#ef4444{% endif %};">
+        </div>
+        <div style="font-weight: 500;">{{ diff }}</div>
+        <div style="color: var(--text-secondary); font-size: 0.85rem;">{{ data.solved }}/{{ data.total }} Solved</div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Main Grid -->
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-top: 2rem;">
+    
+    <!-- Left Column: Contest & Content -->
+    <div>
+        <!-- Daily Challenge -->
+        <div class="category-section glass" style="padding: 2rem; border: 1px solid rgba(56, 189, 248, 0.2);">
+            <h3 style="color: var(--primary); display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+                🏆 Daily Challenge
+            </h3>
+            {% if daily_challenge %}
+            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 12px;">
+                <div>
+                    <h4 style="margin-bottom: 0.5rem;">{{ daily_challenge[1] }}</h4>
+                    <div style="display: flex; gap: 0.8rem; align-items: center;">
+                        <span class="badge badge-{{ daily_challenge[2]|lower }}">{{ daily_challenge[2] }}</span>
+                        <span style="color: var(--text-secondary); font-size: 0.85rem;">{{ daily_challenge[3] }}</span>
+                        {% if is_challenge_solved %}<span class="badge badge-easy">✅ Solved</span>{% endif %}
+                    </div>
+                </div>
+                <a href="/ide?id={{ daily_challenge[0] }}&title={{ daily_challenge[1]|urlencode }}" class="btn btn-primary">Solve Now</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Hot Topics -->
+        <div class="category-section">
+            <h3 style="margin-bottom: 1.5rem;">🔥 Hot Topics</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+                {% for topic, count, questions in hot_topics %}
+                <div class="glass" style="padding: 1.5rem; border-radius: 12px; transition: 0.3s ease;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.8rem;">
+                        <div style="font-weight: bold; font-size: 1.1rem;">{% if loop.index == 1 %}🚀{% elif loop.index == 2 %}💡{% else %}🔥{% endif %} {{ topic }}</div>
+                        <span style="color: var(--text-secondary); font-size: 0.8rem;">{{ count }} Qs</span>
+                    </div>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        {% for q in questions %}
+                        <li style="display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0; font-size: 0.85rem;">
+                            <a href="/ide?id={{ q.id }}&title={{ q.title|urlencode }}" style="color: var(--text-primary); text-decoration: none; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ q.title }}</a>
+                            <span class="badge badge-{{ q.difficulty|lower }}" style="font-size: 0.7rem; padding: 0.15rem 0.5rem; margin-left: 0.5rem;">{{ q.difficulty }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Leaderboard -->
+    <div class="glass" style="padding: 2rem; border: 1px solid rgba(255,255,255,0.05); height: fit-content;">
+        <h3 style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+            📊 Top Performers
+        </h3>
+        <table class="leaderboard-table">
+            <thead>
+                <tr>
+                    <th style="font-size: 0.8rem; color: var(--text-secondary);">User</th>
+                    <th style="font-size: 0.8rem; color: var(--text-secondary);">Solved</th>
+                    <th style="font-size: 0.8rem; color: var(--text-secondary);">Streak</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in leaderboard %}
+                <tr>
+                    <td>
+                        <span style="font-weight: 500;">{{ user[0] }}</span>
+                        {% if loop.index == 1 %} 👑{% endif %}
+                    </td>
+                    <td>{{ user[1] }}</td>
+                    <td style="color: #f59e0b;">🔥 {{ user[2] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<!-- Content Sections Tabs -->
+<div class="stat-cards" style="margin-top: 4rem;">
     <div class="stat-card glass interactive-card active" data-target="view-questions" onclick="switchView('view-questions')">
         <span class="stat-value">{{ total }}</span>
-        <span class="stat-label">Questions Solved</span>
+        <span class="stat-label">Personal Questions</span>
     </div>
     <div class="stat-card glass interactive-card" data-target="view-topics" onclick="switchView('view-topics')">
         <span class="stat-value">{{ topics | length }}</span>
-        <span class="stat-label">Topics Covered</span>
+        <span class="stat-label">Topics Explored</span>
     </div>
-    <div class="stat-card glass interactive-card" data-target="view-collection" onclick="switchView('view-collection')" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.05), rgba(16, 185, 129, 0.05));">
+    <div class="stat-card glass interactive-card" data-target="view-collection" onclick="switchView('view-collection')">
         <span class="stat-value">{{ total_solved }}/{{ total_added }}</span>
         <span class="stat-label">Collection Progress</span>
     </div>
 </div>
 
-<!-- Dynamic Content Area -->
 <div class="dashboard-content" style="margin-top: 2rem;">
-    
     <!-- View 1: Questions Solved -->
     <div id="view-questions" class="view-content active">
-        <h3 style="margin-bottom: 1.5rem; color: var(--text-primary);">Questions Solved (By Difficulty)</h3>
-        
         <div class="category-section">
-            <h4 class="category-title"><span class="badge badge-easy">Easy</span></h4>
             <ul class="question-list">
-                {% set has_easy = false %}
-                {% for q in all_questions if q[3]|lower == 'easy' %}
-                    {% set has_easy = true %}
+                {% for q in all_questions %}
                     <li class="question-item" title="Double-click to solve in IDE" ondblclick="openInIde('{{ q[1] }}', '{{ q[0] }}')">
                         <div>
                             <strong>{{ q[1] }}</strong>
-                            <span style="color: var(--text-secondary); font-size: 0.85rem; margin-left: 1rem;">{{ q[2] }}</span>
+                            <span class="badge badge-{{ q[3]|lower }}" style="margin-left: 1rem;">{{ q[3] }}</span>
                         </div>
+                        <span style="color: var(--text-secondary);">{{ q[2] }}</span>
                     </li>
                 {% endfor %}
-                {% if not has_easy %}<p style="color: var(--text-secondary); font-size: 0.9rem; padding-left: 1rem;">No easy questions solved yet.</p>{% endif %}
-            </ul>
-        </div>
-
-        <div class="category-section">
-            <h4 class="category-title"><span class="badge badge-medium">Medium</span></h4>
-            <ul class="question-list">
-                {% set has_med = false %}
-                {% for q in all_questions if q[3]|lower == 'medium' %}
-                    {% set has_med = true %}
-                    <li class="question-item" title="Double-click to solve in IDE" ondblclick="openInIde('{{ q[1] }}', '{{ q[0] }}')">
-                        <div>
-                            <strong>{{ q[1] }}</strong>
-                            <span style="color: var(--text-secondary); font-size: 0.85rem; margin-left: 1rem;">{{ q[2] }}</span>
-                        </div>
-                    </li>
-                {% endfor %}
-                {% if not has_med %}<p style="color: var(--text-secondary); font-size: 0.9rem; padding-left: 1rem;">No medium questions solved yet.</p>{% endif %}
-            </ul>
-        </div>
-
-        <div class="category-section">
-            <h4 class="category-title"><span class="badge badge-hard">Hard</span></h4>
-            <ul class="question-list">
-                {% set has_hard = false %}
-                {% for q in all_questions if q[3]|lower == 'hard' %}
-                    {% set has_hard = true %}
-                    <li class="question-item" title="Double-click to solve in IDE" ondblclick="openInIde('{{ q[1] }}', '{{ q[0] }}')">
-                        <div>
-                            <strong>{{ q[1] }}</strong>
-                            <span style="color: var(--text-secondary); font-size: 0.85rem; margin-left: 1rem;">{{ q[2] }}</span>
-                        </div>
-                    </li>
-                {% endfor %}
-                {% if not has_hard %}<p style="color: var(--text-secondary); font-size: 0.9rem; padding-left: 1rem;">No hard questions solved yet.</p>{% endif %}
             </ul>
         </div>
     </div>
 
     <!-- View 2: Topics Covered -->
     <div id="view-topics" class="view-content">
-        <h3 style="margin-bottom: 1.5rem; color: var(--text-primary);">Topics Covered</h3>
-        
-        <div class="topic-grid">
+        <div class="topic-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
             {% for t in topics %}
-            <div class="topic-card">
-                <h4>{{ t[0] }} <span style="float:right; font-size:0.9rem; color:var(--text-secondary);">{{ t[1] }} Qs</span></h4>
-                <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+            <div class="topic-card glass" style="padding: 1.5rem; border-radius: 12px;">
+                <h4 style="margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;">{{ t[0] }}</h4>
+                <ul style="list-style: none; padding: 0;">
                     {% for q in all_questions if q[2] == t[0] %}
-                        <li style="font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 4px 8px; border-radius: 4px;" 
-                            title="Double-click to solve in IDE" ondblclick="openInIde('{{ q[1] }}', '{{ q[0] }}')"
-                            onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">
-                            <span>{{ q[1] }}</span>
-                            <span class="badge badge-{{ q[3]|lower }}" style="font-size: 0.7rem; padding: 0.1rem 0.5rem;">{{ q[3] }}</span>
+                        <li style="margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.9rem;">{{ q[1] }}</span>
+                            <span class="badge badge-{{ q[3]|lower }}" style="font-size: 0.7rem;">{{ q[3] }}</span>
                         </li>
                     {% endfor %}
                 </ul>
             </div>
-            {% else %}
-            <p style="color: var(--text-secondary);">No topics covered yet.</p>
             {% endfor %}
         </div>
     </div>
 
     <!-- View 3: Collection Progress -->
     <div id="view-collection" class="view-content">
-        <h3 style="margin-bottom: 1.5rem; color: var(--text-primary);">Collection Progress ({{ total_solved }}/{{ total_added }})</h3>
-        
-        <div class="category-section">
-            <h4 class="category-title" style="color: #10b981;">✓ Solved from Collection</h4>
-            <ul class="question-list">
-                {% set has_solved_col = false %}
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+            <div>
+                <h4 style="color: #10b981; margin-bottom: 1rem;">✓ Solved</h4>
                 {% for c in collection_details if c[2] == 'solved' %}
-                    {% set has_solved_col = true %}
-                    <li class="question-item" style="border-left: 4px solid #10b981;" title="Double-click to solve in IDE" ondblclick="openInIde('{{ c[0] }}', '{{ c[4] }}')">
-                        <div>
-                            <a href="{{ c[3] }}" target="_blank" style="color: var(--text-primary); text-decoration: none;"><strong>{{ c[0] }}</strong></a>
-                        </div>
-                        <span class="badge badge-{{ c[1]|lower }}">{{ c[1] }}</span>
+                    <div class="question-item" style="margin-bottom: 0.8rem; border-left: 4px solid #10b981;" ondblclick="openInIde('{{ c[0] }}', '{{ c[4] }}')">
+                        <strong>{{ c[0] }}</strong>
                     </li>
                 {% endfor %}
-                {% if not has_solved_col %}<p style="color: var(--text-secondary); font-size: 0.9rem; padding-left: 1rem;">No collection questions solved yet.</p>{% endif %}
-            </ul>
-        </div>
-
-        <div class="category-section">
-            <h4 class="category-title" style="color: #facc15;">⏳ Pending in Collection</h4>
-            <ul class="question-list">
-                {% set has_pending_col = false %}
+            </div>
+            <div>
+                <h4 style="color: #facc15; margin-bottom: 1rem;">⏳ Pending</h4>
                 {% for c in collection_details if c[2] == 'added' %}
-                    {% set has_pending_col = true %}
-                    <li class="question-item" style="border-left: 4px solid #facc15;" title="Double-click to solve in IDE" ondblclick="openInIde('{{ c[0] }}', '{{ c[4] }}')">
-                        <div>
-                            <a href="{{ c[3] }}" target="_blank" style="color: var(--text-primary); text-decoration: none;"><strong>{{ c[0] }}</strong></a>
-                        </div>
-                        <span class="badge badge-{{ c[1]|lower }}">{{ c[1] }}</span>
+                    <div class="question-item" style="margin-bottom: 0.8rem; border-left: 4px solid #facc15;" ondblclick="openInIde('{{ c[0] }}', '{{ c[4] }}')">
+                        <strong>{{ c[0] }}</strong>
                     </li>
                 {% endfor %}
-                {% if not has_pending_col %}<p style="color: var(--text-secondary); font-size: 0.9rem; padding-left: 1rem;">No pending questions in your collection.</p>{% endif %}
-            </ul>
+            </div>
         </div>
     </div>
-
 </div>
 
 <script>
     function switchView(viewId) {
-        // Update active class on stat cards
-        document.querySelectorAll('.interactive-card').forEach(card => {
-            card.classList.remove('active');
-        });
+        document.querySelectorAll('.interactive-card').forEach(c => c.classList.remove('active'));
         document.querySelector(`[data-target="${viewId}"]`).classList.add('active');
-
-        // Update active class on content views
-        document.querySelectorAll('.view-content').forEach(view => {
-            view.classList.remove('active');
-        });
+        document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
         document.getElementById(viewId).classList.add('active');
     }
 
@@ -255,4 +252,4 @@
         window.location.href = `/ide?title=${encodeURIComponent(title)}&id=${id}`;
     }
 </script>
-{% endblock %}
+{% endblock %}
