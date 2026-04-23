@@ -75,8 +75,55 @@ def toggle_status():
             "UPDATE user_collection SET status = %s WHERE user_id = %s AND problem_id = %s",
             (new_status, user_id, problem_id)
         )
+        
+        if new_status == 'solved':
+            from datetime import date, timedelta
+            today = date.today()
+            
+            # Fetch current streak info
+            cursor.execute("SELECT last_solved_date, current_streak FROM users WHERE id = %s", (user_id,))
+            user_data = cursor.fetchone()
+            last_date = user_data[0]
+            streak = user_data[1]
+            
+            if last_date == today:
+                pass # Already solved something today
+            elif last_date == today - timedelta(days=1):
+                streak += 1
+            else:
+                streak = 1 # Streak reset or started
+            
+            cursor.execute(
+                "UPDATE users SET last_solved_date = %s, current_streak = %s WHERE id = %s",
+                (today, streak, user_id)
+            )
+
         db.commit()
         return jsonify({"message": f"Status updated to {new_status}", "new_status": new_status})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+@collection_bp.route("/api/collection/remove", methods=["POST"])
+def remove_from_collection():
+    if "user_id" not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+    
+    data = request.json
+    problem_id = data.get("problem_id")
+    user_id = session["user_id"]
+    
+    if not problem_id:
+        return jsonify({"error": "Problem ID is required"}), 400
+    
+    db, cursor = get_db()
+    try:
+        cursor.execute(
+            "DELETE FROM user_collection WHERE user_id = %s AND problem_id = %s",
+            (user_id, problem_id)
+        )
+        db.commit()
+        return jsonify({"message": "Problem removed from collection"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     finally:
