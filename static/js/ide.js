@@ -1,4 +1,6 @@
 let editor;
+let globalProblems = {}; // Store descriptions
+let solvedProblemIds = new Set();
 
 require(['vs/editor/editor.main'], function () {
     editor = monaco.editor.create(document.getElementById('editor'), {
@@ -12,7 +14,7 @@ require(['vs/editor/editor.main'], function () {
     if (ACTIVE_PROBLEM_TITLE) {
         document.getElementById('active-problem-display').style.display = 'block';
         document.getElementById('current-problem-title').innerText = ACTIVE_PROBLEM_TITLE;
-        
+
         const header = `// Solving: ${ACTIVE_PROBLEM_TITLE}\n// ======================================\n\n`;
         editor.setValue(header + editor.getValue());
     }
@@ -38,6 +40,22 @@ require(['vs/editor/editor.main'], function () {
 
         monaco.editor.setModelLanguage(editor.getModel(), monacoLang);
         editor.setValue(defaultCode);
+    });
+
+    document.getElementById('snippet-select').addEventListener('change', function(e) {
+        const val = e.target.value;
+        if (!val) return;
+
+        const snippets = {
+            'bfs': `def bfs(graph, start):\n    visited = set([start])\n    queue = collections.deque([start])\n    while queue:\n        node = queue.popleft()\n        for neighbor in graph[node]:\n            if neighbor not in visited:\n                visited.add(neighbor)\n                queue.append(neighbor)`,
+            'dfs': `def dfs(graph, node, visited=None):\n    if visited is None: visited = set()\n    visited.add(node)\n    for neighbor in graph[node]:\n        if neighbor not in visited:\n            dfs(graph, neighbor, visited)`,
+            'binsearch': `def binary_search(arr, target):\n    low, high = 0, len(arr) - 1\n    while low <= high:\n        mid = (low + high) // 2\n        if arr[mid] == target: return mid\n        elif arr[mid] < target: low = mid + 1\n        else: high = mid - 1\n    return -1`,
+            'dijkstra': `import heapq\ndef dijkstra(graph, start):\n    distances = {node: float('inf') for node in graph}\n    distances[start] = 0\n    pq = [(0, start)]\n    while pq:\n        dist, u = heapq.heappop(pq)\n        if dist > distances[u]: continue\n        for v, weight in graph[u].items():\n            if distances[u] + weight < distances[v]:\n                distances[v] = distances[u] + weight\n                heapq.heappush(pq, (distances[v], v))`
+        };
+
+        const currentText = editor.getValue();
+        editor.setValue(currentText + "\n\n" + (snippets[val] || ""));
+        e.target.value = ""; // Reset
     });
 });
 
@@ -92,17 +110,22 @@ async function loadProblems() {
         if (data.problems && data.problems.length > 0) {
             problemList.innerHTML = '';
             data.problems.forEach(p => {
+                globalProblems[p.id] = p; // Cache description
+                const isSolved = solvedProblemIds.has(p.id);
                 const card = document.createElement('div');
                 card.className = 'problem-card d-flex justify-content-between align-items-center';
+                card.onclick = () => showProblemDetails(p.id);
                 card.innerHTML = `
-                    <div>
-                        <div style="font-weight: bold;">${p.title}</div>
-                        <div style="font-size: 0.9em; margin-top: 5px;">
+                    <div style="flex: 1;">
+                        <div style="font-weight: bold;">
+                            ${p.title} ${isSolved ? '<span style="color: #4CAF50; margin-left: 5px;">✅</span>' : ''}
+                        </div>
+                        <div style="font-size: 0.85em; margin-top: 5px;">
                             <span class="difficulty-${p.difficulty}">${p.difficulty}</span> | 
-                            <a href="${p.url}" target="_blank" style="color: #4daaf1; text-decoration: none;">View on ${p.platform}</a>
+                            <span style="color: #888;">${p.platform}</span>
                         </div>
                     </div>
-                    <button class="btn btn-sm btn-outline-primary" onclick="addToCollection(${p.id})">+</button>
+                    <button class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation(); addToCollection(${p.id})">+</button>
                 `;
                 problemList.appendChild(card);
             });
@@ -140,25 +163,29 @@ async function loadMyCollection() {
         if (data.problems && data.problems.length > 0) {
             collectionList.innerHTML = '';
             data.problems.forEach(p => {
+                if (p.status === 'solved') solvedProblemIds.add(p.id);
                 const isSolved = p.status === 'solved';
                 const card = document.createElement('div');
                 card.className = 'problem-card d-flex justify-content-between align-items-center';
                 card.style.borderLeft = isSolved ? '4px solid #4CAF50' : '4px solid #555';
+                card.onclick = () => showProblemDetails(p.id);
                 card.innerHTML = `
-                    <div>
+                    <div style="flex: 1;">
                         <div style="font-weight: bold;">${p.title} ${isSolved ? '✅' : ''}</div>
-                        <div style="font-size: 0.9em; margin-top: 5px;">
+                        <div style="font-size: 0.85em; margin-top: 5px;">
                             <span class="difficulty-${p.difficulty}">${p.difficulty}</span> | 
-                            <span>${p.platform}</span>
+                            <span style="color: #888;">${p.platform}</span>
                         </div>
                     </div>
-                    <div class="form-check form-switch">
+                    <div class="form-check form-switch" onclick="event.stopPropagation()">
                         <input class="form-check-input" type="checkbox" ${isSolved ? 'checked' : ''} 
-                               onclick="toggleStatus(${p.id}, '${p.status}')">
+                                onclick="toggleStatus(${p.id}, '${p.status}')">
                     </div>
                 `;
                 collectionList.appendChild(card);
             });
+            // Re-render global list to show ticks if needed
+            loadProblems(); 
         } else {
             collectionList.innerHTML = '<p>Your collection is empty.</p>';
         }
@@ -184,12 +211,6 @@ async function toggleStatus(problemId, currentStatus) {
         alert('Failed to update status: ' + err.message);
     }
 }
-
-// Keep the old loadMyQuestions but rename the call to loadMyCollection
-// and maybe keep loadMyQuestions for user created questions if needed, 
-// but the requirement said "Store selected questions separately (user collection)".
-// I'll show both if they exist, or just focus on collection as requested.
-
 document.getElementById('btn-sync').addEventListener('click', async function () {
     const btn = this;
     const originalText = btn.innerText;
@@ -221,8 +242,25 @@ async function loadMyQuestions() {
     // But per instructions, "Dashboard shows progress = solved / total" where total is added questions.
 }
 
+async function showProblemDetails(problemId) {
+    const p = globalProblems[problemId];
+    if (!p) return;
+
+    document.getElementById('active-problem-details').style.display = 'block';
+    document.getElementById('detail-title').innerText = p.title;
+    document.getElementById('detail-meta').innerHTML = `
+        <span class="difficulty-${p.difficulty}">${p.difficulty}</span> | 
+        <span>${p.platform}</span> | 
+        <a href="${p.url}" target="_blank" style="color: #4daaf1;">External Link</a>
+    `;
+    document.getElementById('detail-description').innerText = p.description || "No description available.";
+
+    // Also update editor header
+    document.getElementById('active-problem-display').style.display = 'block';
+    document.getElementById('current-problem-title').innerText = p.title;
+}
+
 // Initial load
 window.addEventListener('DOMContentLoaded', () => {
-    loadProblems();
-    loadMyCollection();
+    loadMyCollection(); // This will trigger loadProblems after fetching solved IDs
 });
