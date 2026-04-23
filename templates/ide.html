@@ -131,6 +131,16 @@
 
     <div class="main-container">
         <div class="problem-pane" id="problem-pane">
+            <div id="active-problem-details" style="display: none; margin-bottom: 20px; padding: 20px; background: rgba(255,255,255,0.04); border-radius: 12px; border-left: 4px solid var(--primary);">
+                <h3 id="detail-title" style="margin-bottom: 8px; color: #fff;"></h3>
+                <div id="detail-meta" style="font-size: 0.85rem; margin-bottom: 14px; color: #aaa; display: flex; gap: 10px; align-items: center;"></div>
+                <div id="detail-tags" style="margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 6px;"></div>
+                <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px;">
+                    <h5 style="margin-bottom: 8px; color: #ccc; font-size: 0.9rem;">📄 Problem Description</h5>
+                    <div id="detail-description" style="font-size: 0.92rem; line-height: 1.7; color: #ccc; max-height: 300px; overflow-y: auto; white-space: pre-wrap;"></div>
+                </div>
+            </div>
+
             <h4>My Added Questions</h4>
             <div id="my-questions-list">
                 <p>Loading your questions...</p>
@@ -151,6 +161,15 @@
                     <option value="javascript">JavaScript</option>
                 </select>
                 <button id="btn-run" class="btn-run">Run Code</button>
+                
+                <select id="snippet-select" style="margin-left: 10px; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; padding: 4px 8px;">
+                    <option value="">-- Snippets --</option>
+                    <option value="bfs">BFS Template</option>
+                    <option value="dfs">DFS Template</option>
+                    <option value="binsearch">Binary Search</option>
+                    <option value="dijkstra">Dijkstra's</option>
+                </select>
+
                 <div id="active-problem-display" style="margin-left: auto; color: #4daaf1; font-weight: bold; display: none;">
                     Solving: <span id="current-problem-title"></span>
                 </div>
