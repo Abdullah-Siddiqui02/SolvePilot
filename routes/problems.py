@@ -104,7 +104,7 @@ def get_problems():
     
     db, cursor = get_db()
     
-    query = "SELECT * FROM global_problems WHERE 1=1"
+    query = "SELECT id, platform, platform_problem_id, title, difficulty, tags, url, description FROM global_problems WHERE 1=1"
     params = []
     
     if difficulty:
