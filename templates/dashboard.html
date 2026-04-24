@@ -1,255 +1,401 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard – InterviewIQ{% endblock %}
+{% block title %}Dashboard - InterviewIQ{% endblock %}
 
 {% block content %}
-<style>
-    .interactive-card { cursor: pointer; transition: all 0.3s ease; }
-    .interactive-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(56, 189, 248, 0.2); }
-    .interactive-card.active { border-color: var(--primary); background: rgba(56, 189, 248, 0.1); }
-    
-    .view-content { display: none; animation: fadeIn 0.4s ease forwards; }
-    .view-content.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* Progress Circles */
-    .progress-circles { display: flex; justify-content: space-around; gap: 2rem; margin: 2rem 0; flex-wrap: wrap; }
-    .progress-container { text-align: center; }
-    .progress-circle {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        background: conic-gradient(var(--p-color) calc(var(--percent) * 1%), rgba(255,255,255,0.05) 0);
-        margin-bottom: 0.5rem;
-    }
-    .progress-circle::after {
-        content: attr(data-percent) '%';
-        width: 100px;
-        height: 100px;
-        background: #0f172a;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        color: white;
-    }
-
-    .streak-badge {
-        background: linear-gradient(135deg, #f59e0b, #ef4444);
-        padding: 0.5rem 1.5rem;
-        border-radius: 50px;
-        font-weight: bold;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
-    }
-
-    .leaderboard-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-    .leaderboard-table th, .leaderboard-table td { padding: 1rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
-    .leaderboard-table tr:first-child { background: rgba(56, 189, 248, 0.05); }
-
-    .category-section { margin-bottom: 2.5rem; }
-    .badge { padding: 0.3rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 500; }
-    .badge-easy { background: rgba(16, 185, 129, 0.15); color: #10b981; }
-    .badge-medium { background: rgba(250, 204, 21, 0.15); color: #facc15; }
-    .badge-hard { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
-</style>
-
-<!-- Header -->
-<div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center;">
-    <div>
-        <h2>Welcome back!</h2>
-        <div class="streak-badge" title="Solve a problem daily to keep your streak alive!">
-            🔥 {{ user_streak }} Day Streak
+<section class="dashboard-modern">
+    <header class="dashboard-modern-hero">
+        <div>
+            <h1>Hello, {{ username }}!</h1>
+            <p>Ready to solve some amazing problems today?</p>
         </div>
-    </div>
-    <a href="/add" class="btn btn-primary">+ Explore Problems</a>
-</div>
+        <a href="/add" class="dashboard-modern-add">+ Add Question</a>
+    </header>
 
-<!-- Progress Overview -->
-<div class="progress-circles glass" style="padding: 2rem; border: 1px solid rgba(255,255,255,0.05);">
-    {% for diff, data in diff_stats.items() %}
-    <div class="progress-container">
-        <div class="progress-circle" data-percent="{{ data.percent }}" 
-             style="--percent: {{ data.percent }}; --p-color: {% if diff == 'Easy' %}#10b981{% elif diff == 'Medium' %}#facc15{% else %}#ef4444{% endif %};">
-        </div>
-        <div style="font-weight: 500;">{{ diff }}</div>
-        <div style="color: var(--text-secondary); font-size: 0.85rem;">{{ data.solved }}/{{ data.total }} Solved</div>
-    </div>
-    {% endfor %}
-</div>
-
-<!-- Main Grid -->
-<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-top: 2rem;">
-    
-    <!-- Left Column: Contest & Content -->
-    <div>
-        <!-- Daily Challenge -->
-        <div class="category-section glass" style="padding: 2rem; border: 1px solid rgba(56, 189, 248, 0.2);">
-            <h3 style="color: var(--primary); display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
-                🏆 Daily Challenge
-            </h3>
-            {% if daily_challenge %}
-            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 12px;">
-                <div>
-                    <h4 style="margin-bottom: 0.5rem;">{{ daily_challenge[1] }}</h4>
-                    <div style="display: flex; gap: 0.8rem; align-items: center;">
-                        <span class="badge badge-{{ daily_challenge[2]|lower }}">{{ daily_challenge[2] }}</span>
-                        <span style="color: var(--text-secondary); font-size: 0.85rem;">{{ daily_challenge[3] }}</span>
-                        {% if is_challenge_solved %}<span class="badge badge-easy">✅ Solved</span>{% endif %}
-                    </div>
-                </div>
-                <a href="/ide?id={{ daily_challenge[0] }}&title={{ daily_challenge[1]|urlencode }}" class="btn btn-primary">Solve Now</a>
+    <div class="dashboard-modern-summary">
+        <article class="dashboard-modern-stat stat-blue dashboard-modern-trigger" data-detail-target="solved-questions-panel">
+            <div class="stat-icon-wrap"><span class="stat-orb"></span></div>
+            <div>
+                <span class="dashboard-modern-label">Questions Solved</span>
+                <strong>{{ total_solved }}</strong>
+                <small>Double-click to view solved questions</small>
             </div>
-            {% endif %}
-        </div>
-
-        <!-- Hot Topics -->
-        <div class="category-section">
-            <h3 style="margin-bottom: 1.5rem;">🔥 Hot Topics</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
-                {% for topic, count, questions in hot_topics %}
-                <div class="glass" style="padding: 1.5rem; border-radius: 12px; transition: 0.3s ease;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.8rem;">
-                        <div style="font-weight: bold; font-size: 1.1rem;">{% if loop.index == 1 %}🚀{% elif loop.index == 2 %}💡{% else %}🔥{% endif %} {{ topic }}</div>
-                        <span style="color: var(--text-secondary); font-size: 0.8rem;">{{ count }} Qs</span>
-                    </div>
-                    <ul style="list-style: none; padding: 0; margin: 0;">
-                        {% for q in questions %}
-                        <li style="display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0; font-size: 0.85rem;">
-                            <a href="/ide?id={{ q.id }}&title={{ q.title|urlencode }}" style="color: var(--text-primary); text-decoration: none; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ q.title }}</a>
-                            <span class="badge badge-{{ q.difficulty|lower }}" style="font-size: 0.7rem; padding: 0.15rem 0.5rem; margin-left: 0.5rem;">{{ q.difficulty }}</span>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                {% endfor %}
+        </article>
+        <article class="dashboard-modern-stat stat-purple dashboard-modern-trigger" data-detail-target="topics-covered-panel">
+            <div class="stat-icon-wrap"><span class="stat-orb"></span></div>
+            <div>
+                <span class="dashboard-modern-label">Topics Covered</span>
+                <strong>{{ topics|length }}</strong>
+                <small>Double-click to view covered topics</small>
             </div>
-        </div>
+        </article>
+        <article class="dashboard-modern-stat stat-orange">
+            <div class="stat-icon-wrap"><span class="stat-orb"></span></div>
+            <div>
+                <span class="dashboard-modern-label">Current Streak</span>
+                <strong>{{ user_streak }} Days</strong>
+                <small>Keep it up!</small>
+            </div>
+        </article>
+        <article class="dashboard-modern-stat stat-gold">
+            <div class="stat-icon-wrap"><span class="stat-orb"></span></div>
+            <div>
+                <span class="dashboard-modern-label">Rank</span>
+                <strong>#{{ user_rank }}</strong>
+                <small>Leaderboard position</small>
+            </div>
+        </article>
     </div>
 
-    <!-- Right Column: Leaderboard -->
-    <div class="glass" style="padding: 2rem; border: 1px solid rgba(255,255,255,0.05); height: fit-content;">
-        <h3 style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
-            📊 Top Performers
-        </h3>
-        <table class="leaderboard-table">
-            <thead>
-                <tr>
-                    <th style="font-size: 0.8rem; color: var(--text-secondary);">User</th>
-                    <th style="font-size: 0.8rem; color: var(--text-secondary);">Solved</th>
-                    <th style="font-size: 0.8rem; color: var(--text-secondary);">Streak</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in leaderboard %}
-                <tr>
-                    <td>
-                        <span style="font-weight: 500;">{{ user[0] }}</span>
-                        {% if loop.index == 1 %} 👑{% endif %}
-                    </td>
-                    <td>{{ user[1] }}</td>
-                    <td style="color: #f59e0b;">🔥 {{ user[2] }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+    <section class="dashboard-modern-details" id="dashboard-modern-details">
+        <div class="dashboard-modern-card">
+            <div class="dashboard-modern-card-head detail-head">
+                <h3>Practice Details</h3>
+                <div class="dashboard-modern-detail-tabs" role="tablist" aria-label="Practice details">
+                    <button class="dashboard-modern-detail-tab active" type="button" data-detail-tab="solved-questions-panel">Questions Solved</button>
+                    <button class="dashboard-modern-detail-tab" type="button" data-detail-tab="topics-covered-panel">Topics Covered</button>
+                </div>
+            </div>
 
-</div>
-
-<!-- Content Sections Tabs -->
-<div class="stat-cards" style="margin-top: 4rem;">
-    <div class="stat-card glass interactive-card active" data-target="view-questions" onclick="switchView('view-questions')">
-        <span class="stat-value">{{ total }}</span>
-        <span class="stat-label">Personal Questions</span>
-    </div>
-    <div class="stat-card glass interactive-card" data-target="view-topics" onclick="switchView('view-topics')">
-        <span class="stat-value">{{ topics | length }}</span>
-        <span class="stat-label">Topics Explored</span>
-    </div>
-    <div class="stat-card glass interactive-card" data-target="view-collection" onclick="switchView('view-collection')">
-        <span class="stat-value">{{ total_solved }}/{{ total_added }}</span>
-        <span class="stat-label">Collection Progress</span>
-    </div>
-</div>
-
-<div class="dashboard-content" style="margin-top: 2rem;">
-    <!-- View 1: Questions Solved -->
-    <div id="view-questions" class="view-content active">
-        <div class="category-section">
-            <ul class="question-list">
-                {% for q in all_questions %}
-                    <li class="question-item" title="Double-click to solve in IDE" ondblclick="openInIde('{{ q[1] }}', '{{ q[0] }}')">
+            <div id="solved-questions-panel" class="dashboard-modern-detail-panel active">
+                <div class="dashboard-modern-list-grid">
+                    {% for c in collection_details if c[2] == 'solved' %}
+                    <a href="/ide?id={{ c[4] }}&title={{ c[0]|urlencode }}" class="dashboard-modern-list-card">
                         <div>
-                            <strong>{{ q[1] }}</strong>
-                            <span class="badge badge-{{ q[3]|lower }}" style="margin-left: 1rem;">{{ q[3] }}</span>
+                            <strong>{{ c[0] }}</strong>
+                            <span>Solved from your collection</span>
                         </div>
-                        <span style="color: var(--text-secondary);">{{ q[2] }}</span>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
-
-    <!-- View 2: Topics Covered -->
-    <div id="view-topics" class="view-content">
-        <div class="topic-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
-            {% for t in topics %}
-            <div class="topic-card glass" style="padding: 1.5rem; border-radius: 12px;">
-                <h4 style="margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;">{{ t[0] }}</h4>
-                <ul style="list-style: none; padding: 0;">
-                    {% for q in all_questions if q[2] == t[0] %}
-                        <li style="margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-size: 0.9rem;">{{ q[1] }}</span>
-                            <span class="badge badge-{{ q[3]|lower }}" style="font-size: 0.7rem;">{{ q[3] }}</span>
-                        </li>
+                        <span class="dashboard-mini-badge {{ c[1]|lower }}">{{ c[1] }}</span>
+                    </a>
+                    {% else %}
+                    <p class="dashboard-modern-empty">No solved questions yet.</p>
                     {% endfor %}
-                </ul>
+                </div>
             </div>
-            {% endfor %}
+
+            <div id="topics-covered-panel" class="dashboard-modern-detail-panel">
+                <div class="dashboard-modern-topic-groups">
+                    {% for topic in topics %}
+                    <div class="dashboard-modern-topic-group">
+                        <div class="topic-group-head">
+                            <h4>{{ topic[0] }}</h4>
+                            <span>{{ topic[1] }} question{% if topic[1] != 1 %}s{% endif %}</span>
+                        </div>
+                        <div class="dashboard-modern-topic-items">
+                            {% for q in all_questions if q[2] == topic[0] %}
+                            <a href="/ide?id={{ q[0] }}&title={{ q[1]|urlencode }}" class="dashboard-modern-topic-item">
+                                <span>{{ q[1] }}</span>
+                                <span class="dashboard-mini-badge {{ q[3]|lower }}">{{ q[3] }}</span>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="dashboard-modern-empty">No topics covered yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
+    </section>
+
+    <div class="dashboard-modern-tabs" role="tablist" aria-label="Dashboard sections">
+        <button class="dashboard-modern-tab active" type="button" data-modern-tab="overview-panel">Overview</button>
+        <button class="dashboard-modern-tab" type="button" data-modern-tab="hot-topics-panel">Hot Topics</button>
+        <button class="dashboard-modern-tab" type="button" data-modern-tab="daily-contest-panel">Daily Contest</button>
     </div>
 
-    <!-- View 3: Collection Progress -->
-    <div id="view-collection" class="view-content">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-            <div>
-                <h4 style="color: #10b981; margin-bottom: 1rem;">✓ Solved</h4>
-                {% for c in collection_details if c[2] == 'solved' %}
-                    <div class="question-item" style="margin-bottom: 0.8rem; border-left: 4px solid #10b981;" ondblclick="openInIde('{{ c[0] }}', '{{ c[4] }}')">
-                        <strong>{{ c[0] }}</strong>
-                    </li>
-                {% endfor %}
-            </div>
-            <div>
-                <h4 style="color: #facc15; margin-bottom: 1rem;">⏳ Pending</h4>
-                {% for c in collection_details if c[2] == 'added' %}
-                    <div class="question-item" style="margin-bottom: 0.8rem; border-left: 4px solid #facc15;" ondblclick="openInIde('{{ c[0] }}', '{{ c[4] }}')">
-                        <strong>{{ c[0] }}</strong>
-                    </li>
-                {% endfor %}
+    <div class="dashboard-modern-grid">
+        <div class="dashboard-modern-main">
+            <section id="overview-panel" class="dashboard-modern-panel active">
+                <div class="dashboard-modern-card">
+                    <div class="dashboard-modern-card-head">
+                        <h3>Progress Overview</h3>
+                        <span class="dashboard-modern-chip">This Week</span>
+                    </div>
+                    <div class="dashboard-modern-chart">
+                        <canvas id="progressChart"></canvas>
+                    </div>
+                    <div class="dashboard-modern-mini-stats">
+                        <div><span>Total Solved</span><strong>{{ weekly_total }}</strong></div>
+                        <div><span>Easy</span><strong>{{ diff_stats["Easy"]["solved"] }}</strong></div>
+                        <div><span>Medium</span><strong>{{ diff_stats["Medium"]["solved"] }}</strong></div>
+                        <div><span>Hard</span><strong>{{ diff_stats["Hard"]["solved"] }}</strong></div>
+                    </div>
+                </div>
+
+                <div class="dashboard-modern-row">
+                    <div class="dashboard-modern-card">
+                        <div class="dashboard-modern-card-head">
+                            <h3>Topics Mastery</h3>
+                        </div>
+                        <div class="dashboard-modern-mastery">
+                            <div class="dashboard-modern-donut">
+                                <canvas id="masteryChart"></canvas>
+                                <div class="dashboard-modern-donut-center">
+                                    <strong>{{ overall_mastery }}%</strong>
+                                    <span>Overall</span>
+                                </div>
+                            </div>
+                            <div class="dashboard-modern-legend">
+                                {% for topic in topic_mastery %}
+                                <div class="dashboard-modern-legend-item">
+                                    <span class="legend-left">
+                                        <span class="legend-dot dot-{{ loop.index }}"></span>
+                                        {{ topic.name }}
+                                    </span>
+                                    <span>{{ topic.percent }}%</span>
+                                </div>
+                                {% else %}
+                                <p class="dashboard-modern-empty">No mastery data yet.</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-modern-card">
+                        <div class="dashboard-modern-card-head">
+                            <h3>Weak Topics</h3>
+                        </div>
+                        <div class="dashboard-modern-weak-list">
+                            {% for topic in weak_topics %}
+                            <div class="dashboard-modern-weak-item">
+                                <div class="weak-head">
+                                    <span>{{ topic.name }}</span>
+                                    <span>{{ topic.percent }}%</span>
+                                </div>
+                                <div class="weak-track">
+                                    <div class="weak-fill" style="width: {{ topic.percent }}%;"></div>
+                                </div>
+                            </div>
+                            {% else %}
+                            <p class="dashboard-modern-empty">Solve more problems to unlock weak-topic insights.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="hot-topics-panel" class="dashboard-modern-panel">
+                <div class="dashboard-modern-card">
+                    <div class="dashboard-modern-card-head">
+                        <h3>Hot Topics</h3>
+                    </div>
+                    <div class="dashboard-modern-topic-grid">
+                        {% for topic, count, questions in hot_topics %}
+                        <article class="dashboard-modern-topic-card">
+                            <div class="topic-card-top">
+                                <h4>{{ topic }}</h4>
+                                <span>{{ count }} Qs</span>
+                            </div>
+                            <p class="dashboard-modern-topic-meta">Topic: {{ topic }}</p>
+                            <div class="topic-card-links">
+                                {% for q in questions %}
+                                <a href="/ide?id={{ q.id }}&title={{ q.title|urlencode }}">
+                                    <span>{{ q.title }}</span>
+                                    <span class="dashboard-mini-badge {{ q.difficulty|lower }}">{{ q.difficulty }}</span>
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </article>
+                        {% else %}
+                        <p class="dashboard-modern-empty">No hot topics available yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+
+            <section id="daily-contest-panel" class="dashboard-modern-panel">
+                <div class="dashboard-modern-card">
+                    <div class="dashboard-modern-card-head">
+                        <h3>Daily Contest</h3>
+                    </div>
+                    {% if daily_challenge %}
+                    <div class="dashboard-modern-feature">
+                        <div>
+                            <span class="dashboard-mini-badge {{ daily_challenge[2]|lower }}">{{ daily_challenge[2] }}</span>
+                            <h4>{{ daily_challenge[1] }}</h4>
+                            <p>{{ daily_challenge[3] or "Today's challenge is ready for practice." }}</p>
+                            <p class="dashboard-modern-topic-meta">Question: {{ daily_challenge[1] }}</p>
+                            {% if is_challenge_solved %}
+                            <span class="dashboard-modern-note">Already solved today.</span>
+                            {% endif %}
+                        </div>
+                        <a href="/ide?id={{ daily_challenge[0] }}&title={{ daily_challenge[1]|urlencode }}" class="dashboard-modern-add secondary">Solve Today's Challenge</a>
+                    </div>
+                    {% else %}
+                    <p class="dashboard-modern-empty">No daily challenge available right now.</p>
+                    {% endif %}
+                </div>
+            </section>
+
+            <div class="dashboard-modern-row lower single-card-row">
+                <div class="dashboard-modern-card">
+                    <div class="dashboard-modern-card-head">
+                        <h3>Recommended For You</h3>
+                    </div>
+                    {% if recommended_problem %}
+                    <div class="dashboard-modern-feature compact">
+                        <div>
+                            <span class="dashboard-mini-badge {{ recommended_problem[2]|lower }}">{{ recommended_problem[2] }}</span>
+                            <h4>{{ recommended_problem[1] }}</h4>
+                            <p>Based on your weak topics: {{ recommended_problem[3] }}</p>
+                        </div>
+                        <a href="/ide?id={{ recommended_problem[0] }}&title={{ recommended_problem[1]|urlencode }}" class="dashboard-modern-add secondary">Solve Now</a>
+                    </div>
+                    {% else %}
+                    <p class="dashboard-modern-empty">No recommendation available yet.</p>
+                    {% endif %}
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
+        <aside class="dashboard-modern-side">
+            <div class="dashboard-modern-card streak-card">
+                <div class="dashboard-modern-card-head">
+                    <h3>Current Streak</h3>
+                </div>
+                <div class="dashboard-modern-streak">
+                    <div class="streak-ring">
+                        <strong>{{ user_streak }}</strong>
+                        <span>Days</span>
+                    </div>
+                    <div class="streak-days-row">
+                        {% for day in ['M', 'T', 'W', 'T', 'F', 'S', 'S'] %}
+                        <div class="streak-day-item">
+                            <span class="streak-day-dot {% if loop.index <= [user_streak, 7] | min %}active{% endif %}"></span>
+                            <small>{{ day }}</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-modern-card">
+                <div class="dashboard-modern-card-head">
+                    <h3>Recent Activity</h3>
+                    <span class="dashboard-modern-link">View All</span>
+                </div>
+                <div class="dashboard-modern-activity">
+                    {% for activity in recent_activity %}
+                    <div class="activity-row">
+                        <span class="activity-dot {% if activity.status == 'solved' %}solved{% else %}added{% endif %}"></span>
+                        <div>
+                            <strong>{{ activity.title }}</strong>
+                            <small>{{ activity.topic }}</small>
+                        </div>
+                        <span>{{ activity.time }}</span>
+                    </div>
+                    {% else %}
+                    <p class="dashboard-modern-empty">No recent activity yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </aside>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
 <script>
-    function switchView(viewId) {
-        document.querySelectorAll('.interactive-card').forEach(c => c.classList.remove('active'));
-        document.querySelector(`[data-target="${viewId}"]`).classList.add('active');
-        document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
-        document.getElementById(viewId).classList.add('active');
-    }
+    document.addEventListener("DOMContentLoaded", function () {
+        const tabs = document.querySelectorAll(".dashboard-modern-tab");
+        const panels = document.querySelectorAll(".dashboard-modern-panel");
+        const detailTabs = document.querySelectorAll(".dashboard-modern-detail-tab");
+        const detailPanels = document.querySelectorAll(".dashboard-modern-detail-panel");
+        const detailTriggers = document.querySelectorAll(".dashboard-modern-trigger");
 
-    function openInIde(title, id) {
-        window.location.href = `/ide?title=${encodeURIComponent(title)}&id=${id}`;
-    }
+        tabs.forEach((tab) => {
+            tab.addEventListener("click", function () {
+                const targetId = tab.dataset.modernTab;
+                tabs.forEach((item) => item.classList.remove("active"));
+                panels.forEach((panel) => panel.classList.remove("active"));
+                tab.classList.add("active");
+                document.getElementById(targetId).classList.add("active");
+            });
+        });
+
+        function activateDetailTab(targetId) {
+            detailTabs.forEach((tab) => {
+                tab.classList.toggle("active", tab.dataset.detailTab === targetId);
+            });
+            detailPanels.forEach((panel) => {
+                panel.classList.toggle("active", panel.id === targetId);
+            });
+        }
+
+        detailTabs.forEach((tab) => {
+            tab.addEventListener("click", function () {
+                activateDetailTab(tab.dataset.detailTab);
+            });
+        });
+
+        detailTriggers.forEach((card) => {
+            card.addEventListener("click", function () {
+                activateDetailTab(card.dataset.detailTarget);
+            });
+            card.addEventListener("dblclick", function () {
+                activateDetailTab(card.dataset.detailTarget);
+            });
+        });
+
+        const progressCanvas = document.getElementById("progressChart");
+        if (progressCanvas) {
+            const weeklyData = {{ weekly_progress | tojson }};
+            new Chart(progressCanvas, {
+                type: "line",
+                data: {
+                    labels: weeklyData.map((entry) => entry.label),
+                    datasets: [{
+                        data: weeklyData.map((entry) => entry.value),
+                        borderColor: "#7c4dff",
+                        backgroundColor: "rgba(124, 77, 255, 0.16)",
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.35,
+                        pointRadius: 4,
+                        pointBackgroundColor: "#7c4dff"
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: "rgba(255,255,255,0.05)" },
+                            ticks: { color: "#94a3b8", stepSize: 1 }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: "#94a3b8" }
+                        }
+                    }
+                }
+            });
+        }
+
+        const masteryCanvas = document.getElementById("masteryChart");
+        if (masteryCanvas && {{ topic_mastery | length }}) {
+            const topicData = {{ topic_mastery | tojson }};
+            new Chart(masteryCanvas, {
+                type: "doughnut",
+                data: {
+                    labels: topicData.map((topic) => topic.name),
+                    datasets: [{
+                        data: topicData.map((topic) => topic.percent),
+                        backgroundColor: ["#8b5cf6", "#3b82f6", "#2dd4bf", "#fbbf24"],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: "72%",
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+    });
 </script>
-{% endblock %}
+{% endblock %}
