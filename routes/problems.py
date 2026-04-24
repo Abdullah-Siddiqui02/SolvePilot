@@ -104,7 +104,7 @@ def get_problems():
     
     db, cursor = get_db()
     
-    query = "SELECT id, platform, platform_problem_id, title, difficulty, tags, url, description FROM global_problems WHERE 1=1"
+    query = "SELECT id, platform, platform_problem_id, title, difficulty, tags, url FROM global_problems WHERE 1=1"
     params = []
     
     if difficulty:
@@ -125,3 +125,22 @@ def get_problems():
     cursor.close()
     
     return jsonify({"problems": problem_dicts})
+ 
+ 
+@problems_bp.route("/api/problems/<int:problem_id>", methods=["GET"])
+def get_problem_details(problem_id):
+    """Retrieve full details for a single problem, including description."""
+    db, cursor = get_db()
+    cursor.execute(
+        "SELECT id, platform, platform_problem_id, title, difficulty, tags, url, description FROM global_problems WHERE id = %s",
+        (problem_id,),
+    )
+    row = cursor.fetchone()
+    if not row:
+        cursor.close()
+        return jsonify({"error": "Problem not found"}), 404
+ 
+    column_names = [col[0] for col in cursor.description]
+    problem_dict = dict(zip(column_names, row))
+    cursor.close()
+    return jsonify(problem_dict)
