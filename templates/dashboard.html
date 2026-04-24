@@ -113,7 +113,7 @@
                         <span class="dashboard-modern-chip">This Week</span>
                     </div>
                     <div class="dashboard-modern-chart">
-                        <canvas id="progressChart"></canvas>
+                        <canvas id="progressChart" class="dashboard-modern-chart-canvas"></canvas>
                     </div>
                     <div class="dashboard-modern-mini-stats">
                         <div><span>Total Solved</span><strong>{{ weekly_total }}</strong></div>
@@ -178,16 +178,17 @@
             <section id="hot-topics-panel" class="dashboard-modern-panel">
                 <div class="dashboard-modern-card">
                     <div class="dashboard-modern-card-head">
-                        <h3>Hot Topics</h3>
+                        <h3>Trending Topics</h3>
+                        <span class="dashboard-modern-chip">Popular this week</span>
                     </div>
                     <div class="dashboard-modern-topic-grid">
                         {% for topic, count, questions in hot_topics %}
                         <article class="dashboard-modern-topic-card">
                             <div class="topic-card-top">
                                 <h4>{{ topic }}</h4>
-                                <span>{{ count }} Qs</span>
+                                <span class="dashboard-mini-badge purple">{{ count }} Qs</span>
                             </div>
-                            <p class="dashboard-modern-topic-meta">Topic: {{ topic }}</p>
+                            <p class="dashboard-modern-topic-meta">Mastery level: {{ (topic_mastery | selectattr("name", "equalto", topic) | first).percent if (topic_mastery | selectattr("name", "equalto", topic) | first) else 0 }}%</p>
                             <div class="topic-card-links">
                                 {% for q in questions %}
                                 <a href="/ide?id={{ q.id }}&title={{ q.title|urlencode }}">
@@ -198,8 +199,27 @@
                             </div>
                         </article>
                         {% else %}
-                        <p class="dashboard-modern-empty">No hot topics available yet.</p>
+                        <div class="dashboard-modern-empty-state">
+                            <p>No hot topics available yet.</p>
+                            <a href="/add" class="dashboard-modern-add secondary">Add Problems to start tracking</a>
+                        </div>
                         {% endfor %}
+                    </div>
+                </div>
+
+                <div class="dashboard-modern-row">
+                    <div class="dashboard-modern-card">
+                        <div class="dashboard-modern-card-head">
+                            <h3>Preparation Insights</h3>
+                        </div>
+                        <ul class="dashboard-modern-insight-list" style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.8rem;">
+                            <li style="display: flex; gap: 1rem; align-items: center; color: var(--text-secondary); font-size: 0.9rem;">
+                                <span style="color: #10b981;">●</span> Focusing on **Arrays** and **Strings** can improve your basic problem-solving speed.
+                            </li>
+                            <li style="display: flex; gap: 1rem; align-items: center; color: var(--text-secondary); font-size: 0.9rem;">
+                                <span style="color: #fb923c;">●</span> You haven't solved any **Graph** problems yet. Consider trying some easy ones.
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </section>
@@ -207,24 +227,49 @@
             <section id="daily-contest-panel" class="dashboard-modern-panel">
                 <div class="dashboard-modern-card">
                     <div class="dashboard-modern-card-head">
-                        <h3>Daily Contest</h3>
+                        <h3>Daily Challenge</h3>
+                        <div class="dashboard-modern-timer" id="daily-countdown">--:--:--</div>
                     </div>
                     {% if daily_challenge %}
                     <div class="dashboard-modern-feature">
-                        <div>
-                            <span class="dashboard-mini-badge {{ daily_challenge[2]|lower }}">{{ daily_challenge[2] }}</span>
+                        <div style="flex: 1;">
+                            <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                <span class="dashboard-mini-badge {{ daily_challenge[2]|lower }}">{{ daily_challenge[2] }}</span>
+                                <span class="dashboard-mini-badge gold">50 Points</span>
+                            </div>
                             <h4>{{ daily_challenge[1] }}</h4>
-                            <p>{{ daily_challenge[3] or "Today's challenge is ready for practice." }}</p>
-                            <p class="dashboard-modern-topic-meta">Question: {{ daily_challenge[1] }}</p>
+                            <p>{{ daily_challenge[3] or "Today's challenge is ready. Solve it to maintain your streak!" }}</p>
                             {% if is_challenge_solved %}
-                            <span class="dashboard-modern-note">Already solved today.</span>
+                            <div style="margin-top: 1rem; color: #10b981; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                                <span>✓ Challenge Completed</span>
+                            </div>
                             {% endif %}
                         </div>
-                        <a href="/ide?id={{ daily_challenge[0] }}&title={{ daily_challenge[1]|urlencode }}" class="dashboard-modern-add secondary">Solve Today's Challenge</a>
+                        <a href="/ide?id={{ daily_challenge[0] }}&title={{ daily_challenge[1]|urlencode }}" class="dashboard-modern-add secondary">
+                            {% if is_challenge_solved %}Review Solution{% else %}Start Challenge{% endif %}
+                        </a>
                     </div>
                     {% else %}
                     <p class="dashboard-modern-empty">No daily challenge available right now.</p>
                     {% endif %}
+                </div>
+
+                <div class="dashboard-modern-row">
+                    <div class="dashboard-modern-card">
+                        <div class="dashboard-modern-card-head">
+                            <h3>Weekly Tournament</h3>
+                        </div>
+                        <div class="dashboard-modern-upcoming">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <div>
+                                    <strong style="display: block; font-size: 1.1rem;">Placement Sprint #12</strong>
+                                    <small style="color: var(--text-secondary);">Saturday, 27 April • 8:00 PM</small>
+                                </div>
+                                <button class="dashboard-modern-add secondary" style="background: rgba(255,255,255,0.05); color: var(--primary);">Remind Me</button>
+                            </div>
+                            <p style="font-size: 0.85rem; line-height: 1.4;">Participate in the weekly tournament to compete with other top performers and earn placement credits.</p>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -340,35 +385,83 @@
 
         const progressCanvas = document.getElementById("progressChart");
         if (progressCanvas) {
+            const ctx = progressCanvas.getContext("2d");
             const weeklyData = {{ weekly_progress | tojson }};
+            
+            // Create Gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, "rgba(124, 77, 255, 0.4)");
+            gradient.addColorStop(1, "rgba(124, 77, 255, 0.0)");
+
             new Chart(progressCanvas, {
                 type: "line",
                 data: {
                     labels: weeklyData.map((entry) => entry.label),
                     datasets: [{
+                        label: "Solved Questions",
                         data: weeklyData.map((entry) => entry.value),
                         borderColor: "#7c4dff",
-                        backgroundColor: "rgba(124, 77, 255, 0.16)",
-                        borderWidth: 3,
+                        borderWidth: 4,
+                        backgroundColor: gradient,
                         fill: true,
-                        tension: 0.35,
-                        pointRadius: 4,
-                        pointBackgroundColor: "#7c4dff"
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: "#fff",
+                        pointHoverBorderColor: "#7c4dff",
+                        pointHoverBorderWidth: 3,
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index',
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: "rgba(15, 23, 42, 0.9)",
+                            titleColor: "#94a3b8",
+                            bodyColor: "#fff",
+                            bodyFont: { weight: 'bold' },
+                            padding: 12,
+                            cornerRadius: 10,
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.y + " problems solved";
+                                }
+                            }
+                        }
+                    },
                     scales: {
                         y: {
                             beginAtZero: true,
-                            grid: { color: "rgba(255,255,255,0.05)" },
-                            ticks: { color: "#94a3b8", stepSize: 1 }
+                            suggestedMax: 5,
+                            grid: {
+                                color: "rgba(255,255,255,0.03)",
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: "#64748b",
+                                padding: 10,
+                                stepSize: 1
+                            }
                         },
                         x: {
                             grid: { display: false },
-                            ticks: { color: "#94a3b8" }
+                            ticks: {
+                                color: "#64748b",
+                                padding: 10
+                            }
+                        }
+                    },
+                    animations: {
+                        tension: {
+                            duration: 1000,
+                            easing: 'linear',
                         }
                     }
                 }
@@ -396,6 +489,26 @@
                 }
             });
         }
+        
+        // Daily Countdown Logic
+        function updateCountdown() {
+            const now = new Date();
+            const tomorrow = new Date(now);
+            tomorrow.setHours(24, 0, 0, 0);
+            
+            const diff = tomorrow - now;
+            const h = Math.floor(diff / 1000 / 60 / 60);
+            const m = Math.floor((diff / 1000 / 60) % 60);
+            const s = Math.floor((diff / 1000) % 60);
+            
+            const timerEl = document.getElementById("daily-countdown");
+            if (timerEl) {
+                timerEl.textContent = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            }
+        }
+        
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
     });
 </script>
 {% endblock %}
