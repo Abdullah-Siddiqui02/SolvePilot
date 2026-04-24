@@ -119,8 +119,8 @@
                 </div>
                 <div style="display: flex; gap: 0.5rem; margin-top: auto;">
                     ${inCollection ? 
-                        `<button onclick="toggleCollection(${p.id}, 'remove')" class="btn btn-sm btn-outline-danger" style="flex: 1;">- Remove Q</button>` : 
-                        `<button onclick="toggleCollection(${p.id}, 'add')" class="btn btn-sm btn-primary" style="flex: 1;">+ Add Quest</button>`
+                        `<button onclick="toggleCollection(${p.id}, 'remove')" class="btn btn-sm btn-outline-danger collection-action-btn">-</button>` : 
+                        `<button onclick="toggleCollection(${p.id}, 'add')" class="btn btn-sm btn-primary collection-action-btn">+</button>`
                     }
                     <a href="/ide?id=${p.id}&title=${encodeURIComponent(p.title)}" class="btn btn-sm btn-outline-primary" style="padding: 0.5rem 1rem;">Solve</a>
                 </div>
