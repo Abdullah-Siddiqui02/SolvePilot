@@ -101,6 +101,59 @@ document.getElementById('btn-run').addEventListener('click', async function () {
     }
 });
 
+document.getElementById('btn-submit').addEventListener('click', async function () {
+    const code = editor.getValue();
+    const language = document.getElementById('language-select').value;
+    const consolePane = document.getElementById('console-pane');
+    
+    // Get the current active problem ID from global scope or details pane
+    const activeProblemId = window.currentProblemId;
+    if (!activeProblemId) {
+        alert("Please select a problem from the list first!");
+        return;
+    }
+
+    consolePane.innerHTML = '<div style="color: #7c4dff;">Submitting solution...</div>';
+
+    try {
+        const response = await fetch('/api/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                problem_id: activeProblemId, 
+                code: code, 
+                language: language 
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+            consolePane.innerHTML = `<div class="status-error">Submission Error: ${data.error}</div>`;
+            return;
+        }
+
+        let outputHtml = `<div class="${data.status === 'Accepted' ? 'status-success' : 'status-error'}">Submission Status: ${data.status}</div>`;
+        outputHtml += `<div style="margin-top: 5px; font-weight: bold; color: ${data.status === 'Accepted' ? '#4CAF50' : '#f44336'}">${data.message}</div>`;
+
+        if (data.output) {
+            outputHtml += `<pre style="margin-top: 10px; white-space: pre-wrap; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px;">${data.output}</pre>`;
+        }
+        if (data.stderr) {
+            outputHtml += `<pre class="status-error" style="margin-top: 10px; white-space: pre-wrap;">${data.stderr}</pre>`;
+        }
+
+        consolePane.innerHTML = outputHtml;
+
+        if (data.status === 'Accepted') {
+            loadMyCollection(); // Refresh lists to show green checkmark
+        }
+
+    } catch (err) {
+        consolePane.innerHTML = `<div class="status-error">Submission failed: ${err.message}</div>`;
+    }
+});
+
 async function loadProblems() {
     const problemList = document.getElementById('problem-list');
     try {
@@ -110,7 +163,8 @@ async function loadProblems() {
         if (data.problems && data.problems.length > 0) {
             problemList.innerHTML = '';
             data.problems.forEach(p => {
-                globalProblems[p.id] = p; // Cache description
+                // Metadata cached, but description is now fetched on-demand
+                globalProblems[p.id] = p; 
                 const isSolved = solvedProblemIds.has(p.id);
                 const card = document.createElement('div');
                 card.className = 'problem-card d-flex justify-content-between align-items-center';
@@ -177,10 +231,7 @@ async function loadMyCollection() {
                             <span style="color: #888;">${p.platform}</span>
                         </div>
                     </div>
-                    <div class="form-check form-switch" onclick="event.stopPropagation()">
-                        <input class="form-check-input" type="checkbox" ${isSolved ? 'checked' : ''} 
-                                onclick="toggleStatus(${p.id}, '${p.status}')">
-                    </div>
+                    ${isSolved ? '<span class="status-success" style="font-size: 0.8rem;">SOLVED</span>' : '<span style="color: #666; font-size: 0.8rem;">PENDING</span>'}
                 `;
                 collectionList.appendChild(card);
             });
@@ -243,8 +294,28 @@ async function loadMyQuestions() {
 }
 
 async function showProblemDetails(problemId) {
-    const p = globalProblems[problemId];
-    if (!p) return;
+    window.currentProblemId = problemId; // Store for submission
+    let p = globalProblems[problemId];
+    
+    // If description is missing, fetch full details
+    if (!p || !p.description) {
+        const detailsPane = document.getElementById('active-problem-details');
+        detailsPane.style.display = 'block';
+        document.getElementById('detail-title').innerText = "Loading details...";
+        document.getElementById('detail-description').innerText = "";
+
+        try {
+            const response = await fetch(`/api/problems/${problemId}`);
+            const data = await response.json();
+            if (data.error) throw new Error(data.error);
+            p = data;
+            globalProblems[problemId] = p; // Cache full details
+        } catch (err) {
+            document.getElementById('detail-title').innerText = "Error loading details";
+            document.getElementById('detail-description').innerText = err.message;
+            return;
+        }
+    }
 
     document.getElementById('active-problem-details').style.display = 'block';
     document.getElementById('detail-title').innerText = p.title;
