@@ -326,6 +326,16 @@ async function showProblemDetails(problemId) {
     `;
     document.getElementById('detail-description').innerText = p.description || "No description available.";
 
+    // Handle Samples
+    const samplesContainer = document.getElementById('samples-container');
+    const samplesContent = document.getElementById('detail-samples');
+    if (p.samples) {
+        samplesContainer.style.display = 'block';
+        samplesContent.innerHTML = p.samples; // p.samples contains HTML from scraper
+    } else {
+        samplesContainer.style.display = 'none';
+    }
+
     // Also update editor header
     document.getElementById('active-problem-display').style.display = 'block';
     document.getElementById('current-problem-title').innerText = p.title;
