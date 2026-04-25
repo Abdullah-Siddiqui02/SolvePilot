@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request, render_template
 import requests
+from bs4 import BeautifulSoup
 from extensions import get_db
 
 problems_bp = Blueprint("problems", __name__)
@@ -127,12 +128,38 @@ def get_problems():
     return jsonify({"problems": problem_dicts})
  
  
+import cloudscraper
+ 
+def scrape_problem_data(url):
+    """Scrape problem description and samples from Codeforces."""
+    try:
+        scraper = cloudscraper.create_scraper()
+        response = scraper.get(url, timeout=10)
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text, 'html.parser')
+            statement = soup.find('div', class_='problem-statement')
+            if not statement: return None, None
+            
+            # Extract samples before cleaning up description
+            samples_html = ""
+            samples_div = statement.find('div', class_='sample-tests')
+            if samples_div:
+                samples_html = str(samples_div)
+                samples_div.decompose() # Remove from main statement for description text
+            
+            description = statement.get_text(separator='\n').strip()
+            return description, samples_html
+    except Exception as e:
+        print(f"Scraping error: {e}")
+    return None, None
+ 
+ 
 @problems_bp.route("/api/problems/<int:problem_id>", methods=["GET"])
 def get_problem_details(problem_id):
-    """Retrieve full details for a single problem, including description."""
+    """Retrieve full details for a single problem, including description and samples."""
     db, cursor = get_db()
     cursor.execute(
-        "SELECT id, platform, platform_problem_id, title, difficulty, tags, url, description FROM global_problems WHERE id = %s",
+        "SELECT id, platform, platform_problem_id, title, difficulty, tags, url, description, samples FROM global_problems WHERE id = %s",
         (problem_id,),
     )
     row = cursor.fetchone()
@@ -142,5 +169,19 @@ def get_problem_details(problem_id):
  
     column_names = [col[0] for col in cursor.description]
     problem_dict = dict(zip(column_names, row))
+    
+    # If description or samples are missing, try to scrape
+    if not problem_dict.get('description') or not problem_dict.get('samples'):
+        desc, samples = scrape_problem_data(problem_dict['url'])
+        if desc:
+            problem_dict['description'] = desc
+            problem_dict['samples'] = samples
+            # Save to DB for caching
+            cursor.execute(
+                "UPDATE global_problems SET description = %s, samples = %s WHERE id = %s",
+                (desc, samples, problem_id)
+            )
+            db.commit()
+ 
     cursor.close()
     return jsonify(problem_dict)
