@@ -147,6 +147,7 @@ def dashboard():
             "percent": int((solved_bank / total_bank) * 100) if total_bank else 0,
         }
 
+    # Weekly progress for line chart
     cursor.execute(
         """
         SELECT DATE(created_at) AS solved_on, COUNT(*)
@@ -166,6 +167,7 @@ def dashboard():
         solved_count = weekly_map.get(current_day, 0)
         weekly_total += solved_count
         weekly_progress.append({"label": current_day.strftime("%a"), "value": solved_count})
+
 
     cursor.execute("SELECT id, title, difficulty, tags FROM global_problems WHERE tags IS NOT NULL")
     all_global_problems = cursor.fetchall()

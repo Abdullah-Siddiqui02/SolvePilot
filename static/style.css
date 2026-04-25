@@ -451,6 +451,32 @@ input:focus, select:focus {
     align-items: center;
     gap: 1rem;
     cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-modern-stat:hover {
+    transform: translateY(-5px);
+    background: rgba(30, 41, 59, 0.9);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.dashboard-modern-stat::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.dashboard-modern-stat:hover::after {
+    opacity: 1;
 }
 
 .stat-icon-wrap {
@@ -500,10 +526,10 @@ input:focus, select:focus {
 .dashboard-modern-tabs {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 2.5rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    overflow-x: auto;
-    white-space: nowrap;
+    margin-bottom: 0.5rem;
+    padding: 0 0.5rem;
 }
 
 .dashboard-modern-tab {
@@ -511,14 +537,36 @@ input:focus, select:focus {
     border: none;
     color: var(--text-secondary);
     font-family: var(--font-heading);
-    font-size: 1rem;
+    font-size: 1.05rem;
     font-weight: 600;
-    padding: 0.8rem 0;
+    padding: 1rem 0;
     cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.dashboard-modern-tab:hover {
+    color: var(--text-primary);
+}
+
+.dashboard-modern-tab::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #7c4dff, #3c8dff);
+    transition: width 0.3s ease;
+    border-radius: 99px;
 }
 
 .dashboard-modern-tab.active {
     color: var(--text-primary);
+}
+
+.dashboard-modern-tab.active::after {
+    width: 100%;
 }
 
 .dashboard-modern-grid {
@@ -578,6 +626,13 @@ input:focus, select:focus {
 
 .dashboard-modern-chart {
     height: 280px;
+    position: relative;
+}
+
+.dashboard-modern-chart-canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
 }
 
 .dashboard-modern-mini-stats {
@@ -866,6 +921,40 @@ input:focus, select:focus {
     color: #fca5a5;
 }
 
+.dashboard-mini-badge.purple {
+    background: rgba(139, 92, 246, 0.15);
+    color: #a78bfa;
+}
+
+.dashboard-mini-badge.gold {
+    background: rgba(251, 191, 36, 0.15);
+    color: #fbbf24;
+}
+
+.dashboard-modern-empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    background: rgba(255,255,255,0.02);
+    border: 1px dashed rgba(255,255,255,0.1);
+    border-radius: 18px;
+    grid-column: 1 / -1;
+}
+
+.dashboard-modern-empty-state p {
+    margin-bottom: 1.5rem;
+    color: var(--text-secondary);
+}
+
+.dashboard-modern-timer {
+    background: rgba(56, 189, 248, 0.1);
+    color: var(--primary);
+    padding: 0.35rem 0.8rem;
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
 .dashboard-modern-feature {
     display: flex;
     justify-content: space-between;
@@ -1024,3 +1113,4 @@ input:focus, select:focus {
         flex-direction: column;
     }
 }
+
