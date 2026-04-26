@@ -197,7 +197,17 @@
     <script>
         const ACTIVE_PROBLEM_TITLE = "{{ active_title or '' }}";
         const ACTIVE_PROBLEM_ID = "{{ active_id or '' }}";
+
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$$$', '$$$'], ['\\(', '\\)']],
+                displayMath: [['$$$$', '$$$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
     </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
     <script src="{{ url_for('static', filename='js/ide.js') }}"></script>
 </body>
 
