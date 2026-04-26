@@ -339,6 +339,11 @@ async function showProblemDetails(problemId) {
     // Also update editor header
     document.getElementById('active-problem-display').style.display = 'block';
     document.getElementById('current-problem-title').innerText = p.title;
+
+    // Trigger MathJax re-render for the new content
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise();
+    }
 }
 
 // Initial load
