@@ -109,23 +109,7 @@ def dashboard():
         if challenge_status and challenge_status[0] == "solved":
             is_challenge_solved = True
 
-    cursor.execute(
-        """
-        SELECT u.id, u.username, COUNT(uc.id) AS solved_count, u.current_streak
-        FROM users u
-        LEFT JOIN user_collection uc ON u.id = uc.user_id AND uc.status = 'solved'
-        GROUP BY u.id, u.username, u.current_streak
-        ORDER BY solved_count DESC, u.current_streak DESC, u.username ASC
-        """
-    )
-    ranked_users = cursor.fetchall()
-    leaderboard = ranked_users[:5]
 
-    user_rank = 1
-    for index, ranked_user in enumerate(ranked_users, start=1):
-        if ranked_user[0] == user_id:
-            user_rank = index
-            break
 
     diff_stats = {}
     for diff in ["Easy", "Medium", "Hard"]:
@@ -326,8 +310,6 @@ def dashboard():
         daily_challenge=daily_challenge,
         is_challenge_solved=is_challenge_solved,
         user_streak=user_streak,
-        user_rank=user_rank,
-        leaderboard=leaderboard,
         diff_stats=diff_stats,
         hot_topics=hot_topics_data,
         weekly_progress=weekly_progress,
