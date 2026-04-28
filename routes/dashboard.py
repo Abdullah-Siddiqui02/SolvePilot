@@ -32,12 +32,23 @@ def dashboard():
     today = date.today()
 
     cursor.execute(
-        "SELECT username, current_streak FROM users WHERE id = %s",
+        "SELECT username, current_streak, last_solved_date FROM users WHERE id = %s",
         (user_id,),
     )
     user_row = cursor.fetchone()
     username = user_row[0]
     user_streak = user_row[1] or 0
+    last_solved_date = user_row[2]
+
+    # Break the streak if the user missed a day
+    if last_solved_date is None or (last_solved_date != today and last_solved_date != today - timedelta(days=1)):
+        if user_streak != 0:
+            user_streak = 0
+            cursor.execute(
+                "UPDATE users SET current_streak = 0 WHERE id = %s",
+                (user_id,),
+            )
+            cursor.connection.commit()
 
     cursor.execute(
         "SELECT COUNT(*) FROM questions WHERE user_id=%s",
