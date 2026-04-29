@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, session, flash
-from extensions import db, cursor
+from extensions import get_db
 
 questions_bp = Blueprint("questions", __name__)
 
@@ -15,11 +15,16 @@ def add():
         difficulty = request.form["difficulty"]
         user_id    = session["user_id"]
 
-        cursor.execute(
-            "INSERT INTO questions (user_id, title, topic, difficulty) VALUES (%s, %s, %s, %s)",
-            (user_id, title, topic, difficulty),
-        )
-        db.commit()
+        db, cursor = get_db()
+        try:
+            cursor.execute(
+                "INSERT INTO questions (user_id, title, topic, difficulty) VALUES (%s, %s, %s, %s)",
+                (user_id, title, topic, difficulty),
+            )
+            db.commit()
+        finally:
+            cursor.close()
+            db.close()
 
         flash("Question added successfully!", "success")
         return redirect("/dashboard")
@@ -33,11 +38,16 @@ def get_my_questions():
         return {"error": "Unauthorized"}, 401
     
     user_id = session["user_id"]
-    cursor.execute(
-        "SELECT id, title, topic, difficulty FROM questions WHERE user_id = %s ORDER BY created_at DESC",
-        (user_id,)
-    )
-    rows = cursor.fetchall()
+    db, cursor = get_db()
+    try:
+        cursor.execute(
+            "SELECT id, title, topic, difficulty FROM questions WHERE user_id = %s ORDER BY created_at DESC",
+            (user_id,)
+        )
+        rows = cursor.fetchall()
+    finally:
+        cursor.close()
+        db.close()
     
     # Map rows to list of dicts
     questions = []
