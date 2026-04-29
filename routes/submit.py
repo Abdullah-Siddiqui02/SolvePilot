@@ -86,13 +86,68 @@ def parse_sample_tests(samples_html):
 
 
 # Transient errors from Wandbox that should be retried
-TRANSIENT_ERRORS = ["OCI runtime error", "Resource temporarily unavailable", "container", "crun"]
+TRANSIENT_ERRORS = ["OCI runtime error", "Resource temporarily unavailable", "container", "crun", "No space left on device", "os error"]
 
 def is_transient_error(error_text):
     """Check if an error is transient (server overload) vs actual code error."""
     if not error_text:
         return False
     return any(keyword.lower() in error_text.lower() for keyword in TRANSIENT_ERRORS)
+
+
+def format_error_with_lines(error_text, language):
+    """Parse compiler/runtime error text and annotate with user-friendly line references."""
+    if not error_text:
+        return error_text
+
+    lines = error_text.strip().split('\n')
+    formatted = []
+    # Patterns that capture line numbers from various compilers/interpreters
+    line_patterns = [
+        # Python: File "<stdin>", line 5
+        re.compile(r'line\s+(\d+)', re.IGNORECASE),
+        # C++/Java: prog.cc:5:10: error
+        re.compile(r'(?:prog\.[a-z]+|Main\.java|solution\.[a-z]+):([0-9]+)'),
+        # Generic: at line 5, on line 5
+        re.compile(r'at\s+line\s+(\d+)', re.IGNORECASE),
+    ]
+
+    mentioned_lines = set()
+    for err_line in lines:
+        for pat in line_patterns:
+            m = pat.search(err_line)
+            if m:
+                mentioned_lines.add(int(m.group(1)))
+        formatted.append(err_line)
+
+    result = '\n'.join(formatted)
+
+    if mentioned_lines:
+        sorted_lines = sorted(mentioned_lines)
+        if len(sorted_lines) == 1:
+            result = f"⚠ Error on line {sorted_lines[0]}:\n\n" + result
+        else:
+            line_list = ', '.join(str(l) for l in sorted_lines)
+            result = f"⚠ Errors on lines {line_list}:\n\n" + result
+    else:
+        # Try to detect common error types and give a helpful prefix
+        lower = error_text.lower()
+        if 'syntaxerror' in lower or 'syntax error' in lower:
+            result = "⚠ Syntax Error in your code:\n\n" + result
+        elif 'nameerror' in lower:
+            result = "⚠ Name Error (undefined variable/function):\n\n" + result
+        elif 'typeerror' in lower:
+            result = "⚠ Type Error (wrong data type):\n\n" + result
+        elif 'indentationerror' in lower:
+            result = "⚠ Indentation Error:\n\n" + result
+        elif 'indexerror' in lower:
+            result = "⚠ Index Error (out of range):\n\n" + result
+        elif 'undefined reference' in lower or 'undeclared' in lower:
+            result = "⚠ Compilation Error (undefined reference):\n\n" + result
+        elif 'error' in lower:
+            result = "⚠ Error in your code:\n\n" + result
+
+    return result
 
 
 def run_with_input(code, language, stdin_text, retries=2):
@@ -285,12 +340,13 @@ def submit_solution():
                     })
                 elif first["actual"] in (None, "") or "error" in error_text.lower():
                     # Actual compile/runtime error
+                    formatted_err = format_error_with_lines(error_text, language)
                     cursor.close()
                     return jsonify({
                         "status": "Runtime Error",
                         "output": "",
-                        "stderr": error_text,
-                        "message": "Code failed to compile or execute. Fix syntax or runtime errors first."
+                        "stderr": formatted_err,
+                        "message": "Code failed to compile or execute. Check the error details below."
                     })
             
             # FAST PATH: If ALL sample outputs match exactly, accept immediately
@@ -323,12 +379,22 @@ def submit_solution():
             
             if not exec_success:
                 stderr = exec_result.get("compiler_error") or exec_result.get("program_error") or ""
+                # Check for transient server errors
+                if is_transient_error(stderr):
+                    cursor.close()
+                    return jsonify({
+                        "status": "Server Busy",
+                        "output": "",
+                        "stderr": stderr,
+                        "message": "Execution server is temporarily busy. Please try again in a few seconds."
+                    })
+                formatted_err = format_error_with_lines(stderr, language)
                 cursor.close()
                 return jsonify({
                     "status": "Runtime Error",
                     "output": exec_result.get("program_output", ""),
-                    "stderr": stderr,
-                    "message": "Code failed to execute. Fix syntax or runtime errors first."
+                    "stderr": formatted_err,
+                    "message": "Code failed to execute. Check the error details below."
                 })
             exec_output = exec_result.get("program_output", "")
 
