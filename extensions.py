@@ -15,7 +15,6 @@ def get_db():
     return db, db.cursor(buffered=True)
 
 
-db, cursor = get_db()
 
 
 # AI Client 
