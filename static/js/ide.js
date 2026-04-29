@@ -4,7 +4,7 @@ let solvedProblemIds = new Set();
 
 require(['vs/editor/editor.main'], function () {
     editor = monaco.editor.create(document.getElementById('editor'), {
-        value: '# Write your code here...\n\nprint("Hello, InterviewIQ!")\n',
+        value: '# Write your code here...\n\nprint("Hello, SolvePilot!")\n',
         language: 'python',
         theme: 'vs-dark',
         automaticLayout: true,
@@ -26,16 +26,16 @@ require(['vs/editor/editor.main'], function () {
 
         if (lang === 'cpp') {
             monacoLang = 'cpp';
-            defaultCode = "#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << \"Hello, InterviewIQ!\" << endl;\n    return 0;\n}";
+            defaultCode = "#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << \"Hello, SolvePilot!\" << endl;\n    return 0;\n}";
         } else if (lang === 'java') {
             monacoLang = 'java';
-            defaultCode = "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"Hello, InterviewIQ!\");\n    }\n}";
+            defaultCode = "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"Hello, SolvePilot!\");\n    }\n}";
         } else if (lang === 'javascript') {
             monacoLang = 'javascript';
-            defaultCode = "console.log('Hello, InterviewIQ!');";
+            defaultCode = "console.log('Hello, SolvePilot!');";
         } else {
             monacoLang = 'python';
-            defaultCode = "print('Hello, InterviewIQ!')";
+            defaultCode = "print('Hello, SolvePilot!')";
         }
 
         monaco.editor.setModelLanguage(editor.getModel(), monacoLang);
