@@ -101,9 +101,16 @@ document.getElementById('btn-run').addEventListener('click', async function () {
         const data = await response.json();
 
         if (data.error) {
-            consolePane.innerHTML = `<div class="status-error">System Error: ${data.error}</div>`;
-            if (data.details) {
-                consolePane.innerHTML += `<div class="status-error">${data.details}</div>`;
+            const isServerBusy = data.error.includes('temporarily busy') || response.status === 503;
+            if (isServerBusy) {
+                consolePane.innerHTML = `<div style="color: #FFC107; font-weight: bold;">⏳ Server Busy</div>
+                    <div style="color: #FFC107; margin-top: 8px;">${data.error}</div>
+                    <div style="color: #888; margin-top: 5px; font-size: 0.9em;">This is not a problem with your code. The execution server is overloaded — just try again.</div>`;
+            } else {
+                consolePane.innerHTML = `<div class="status-error">${data.error}</div>`;
+                if (data.details) {
+                    consolePane.innerHTML += `<div class="status-error">${data.details}</div>`;
+                }
             }
             return;
         }
@@ -153,6 +160,14 @@ document.getElementById('btn-submit').addEventListener('click', async function (
 
         if (data.error) {
             consolePane.innerHTML = `<div class="status-error">Submission Error: ${data.error}</div>`;
+            return;
+        }
+
+        // Handle server busy status
+        if (data.status === 'Server Busy') {
+            consolePane.innerHTML = `<div style="color: #FFC107; font-weight: bold;">⏳ Server Busy</div>
+                <div style="color: #FFC107; margin-top: 8px;">${data.message}</div>
+                <div style="color: #888; margin-top: 5px; font-size: 0.9em;">This is not a problem with your code. The execution server is overloaded — just try again.</div>`;
             return;
         }
 
