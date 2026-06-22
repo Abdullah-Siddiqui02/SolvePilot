@@ -6,6 +6,8 @@ from routes.problems import problems_bp
 from routes.execute import execute_bp
 from routes.collection import collection_bp
 from routes.submit import submit_bp
+from routes.ai import ai_bp
+
 
 
 def register_blueprints(app):
@@ -17,3 +19,5 @@ def register_blueprints(app):
     app.register_blueprint(execute_bp)
     app.register_blueprint(collection_bp)
     app.register_blueprint(submit_bp)
+    app.register_blueprint(ai_bp)
+

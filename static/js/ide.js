@@ -80,12 +80,109 @@ require(['vs/editor/editor.main'], function () {
         editor.setValue(currentText + "\n\n" + (snippets[val] || ""));
         e.target.value = ""; // Reset
     });
+
+    // AI Sidebar Toggle
+    document.getElementById('btn-ask-ai').addEventListener('click', () => {
+        document.getElementById('ai-sidebar').classList.add('active');
+    });
+
+    document.getElementById('close-ai').addEventListener('click', () => {
+        document.getElementById('ai-sidebar').classList.remove('active');
+    });
+
+    // Custom Input Toggle Logic
+    const checkCustomInput = document.getElementById('check-custom-input');
+    const inputPane = document.getElementById('input-pane');
+    if (checkCustomInput && inputPane) {
+        checkCustomInput.addEventListener('change', function() {
+            inputPane.style.display = this.checked ? 'block' : 'none';
+        });
+    }
+
+    // Chat Logic
+    const chatInput = document.getElementById('chat-input');
+    const sendBtn = document.getElementById('btn-send-chat');
+    let chatHistory = []; // Track conversation history
+
+
+    const appendMessage = (text, role) => {
+        const container = document.getElementById('chat-messages');
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `message ${role}`;
+        
+        // Use a library for markdown if available, else simple replacement
+        // For now, let's just use textContent and handle line breaks
+        msgDiv.innerText = text;
+        container.appendChild(msgDiv);
+        container.scrollTop = container.scrollHeight;
+    };
+
+    const sendChatMessage = async () => {
+        const query = chatInput.value.trim();
+        if (!query) return;
+
+        appendMessage(query, 'user');
+        chatInput.value = '';
+        
+        const code = editor.getValue();
+        const language = document.getElementById('language-select').value;
+        const problemId = window.currentProblemId;
+
+        // Show loading state
+        const loadingDiv = document.createElement('div');
+        loadingDiv.className = 'message ai';
+        loadingDiv.innerText = 'Thinking...';
+        document.getElementById('chat-messages').appendChild(loadingDiv);
+
+        try {
+            const response = await fetch('/api/ai/ask', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    query: query,
+                    code: code,
+                    language: language,
+                    problem_id: problemId,
+                    history: chatHistory
+                })
+            });
+
+            const data = await response.json();
+            loadingDiv.remove();
+
+            if (data.error) {
+                appendMessage("Sorry, I encountered an error: " + data.error, 'ai');
+            } else {
+                appendMessage(data.response, 'ai');
+                // Store in history
+                chatHistory.push({ role: 'user', content: query });
+                chatHistory.push({ role: 'assistant', content: data.response });
+            }
+
+        } catch (err) {
+            loadingDiv.remove();
+            appendMessage("Request failed: " + err.message, 'ai');
+        }
+    };
+
+    sendBtn.addEventListener('click', sendChatMessage);
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendChatMessage();
+    });
 });
+
 
 document.getElementById('btn-run').addEventListener('click', async function () {
     const code = editor.getValue();
     const language = document.getElementById('language-select').value;
     const consolePane = document.getElementById('console-pane');
+    const checkCustomInput = document.getElementById('check-custom-input');
+    const customStdin = document.getElementById('custom-stdin');
+
+    let stdin = "";
+    if (checkCustomInput && checkCustomInput.checked && customStdin) {
+        stdin = customStdin.value;
+    }
 
     consolePane.innerHTML = '<div style="color: #aaa;">Running code...</div>';
 
@@ -95,7 +192,7 @@ document.getElementById('btn-run').addEventListener('click', async function () {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ code: code, language: language })
+            body: JSON.stringify({ code: code, language: language, stdin: stdin })
         });
 
         const data = await response.json();

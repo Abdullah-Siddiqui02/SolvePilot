@@ -110,17 +110,104 @@
             background: #444;
         }
 
-        .difficulty-Easy {
-            color: #4CAF50;
-        }
-
-        .difficulty-Medium {
-            color: #FFC107;
-        }
-
         .difficulty-Hard {
             color: #f44336;
         }
+
+        /* AI Sidebar Styles */
+        #ai-sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: #1e1e1e;
+            border-left: 1px solid #444;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+            transition: right 0.3s ease;
+            z-index: 1050;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #ai-sidebar.active {
+            right: 0;
+        }
+
+        .ai-header {
+            padding: 15px;
+            background: #2d2d2d;
+            border-bottom: 1px solid #444;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            padding: 10px 14px;
+            border-radius: 12px;
+            max-width: 85%;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background: #0e639c;
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+
+        .message.ai {
+            align-self: flex-start;
+            background: #333;
+            color: #ddd;
+            border-bottom-left-radius: 2px;
+            border: 1px solid #444;
+        }
+
+        .chat-input-area {
+            padding: 15px;
+            background: #252526;
+            border-top: 1px solid #444;
+            display: flex;
+            gap: 10px;
+        }
+
+        #chat-input {
+            flex: 1;
+            background: #1e1e1e;
+            border: 1px solid #444;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        #chat-input:focus {
+            border-color: #0e639c;
+        }
+
+        .btn-ai-ask {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            border: none;
+            color: white;
+            font-weight: 500;
+        }
+
+        .btn-ai-ask:hover {
+            opacity: 0.9;
+        }
+
     </style>
 </head>
 
@@ -149,6 +236,7 @@
                     <h5 style="margin-bottom: 8px; color: #ccc; font-size: 0.9rem;">🧪 Sample Test Cases</h5>
                     <div id="detail-samples" style="font-size: 0.9rem; color: #aaa;"></div>
                 </div>
+
             </div>
 
             <h4>My Added Questions</h4>
@@ -172,8 +260,11 @@
                 </select>
                 <button id="btn-run" class="btn-run">Run Code</button>
                 <button id="btn-submit" class="btn-run" style="background-color: #28a745;">Submit Solution</button>
+                <button id="btn-ask-ai" class="btn-run btn-ai-ask">✨ Ask AI Doubt</button>
+
                 
                 <select id="snippet-select" style="margin-left: 10px; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; padding: 4px 8px;">
+
                     <option value="">-- Snippets --</option>
                     <option value="bfs">BFS Template</option>
                     <option value="dfs">DFS Template</option>
@@ -181,12 +272,23 @@
                     <option value="dijkstra">Dijkstra's</option>
                 </select>
 
-                <div id="active-problem-display" style="margin-left: auto; color: #4daaf1; font-weight: bold; display: none;">
+                <div id="active-problem-display"
+                    style="margin-left: auto; color: #4daaf1; font-weight: bold; display: none;">
                     Solving: <span id="current-problem-title"></span>
+                </div>
+
+                <div class="ms-3 d-flex align-items-center">
+                    <input type="checkbox" id="check-custom-input" class="form-check-input me-2" style="cursor: pointer; width: 1.1em; height: 1.1em;">
+                    <label for="check-custom-input" class="form-check-label small" style="color: #aaa; cursor: pointer; user-select: none;">Custom Input</label>
                 </div>
             </div>
 
             <div id="editor"></div>
+
+            <div class="input-pane" id="input-pane" style="display: none; height: 120px; background-color: #252526; border-top: 1px solid #444; position: relative;">
+                <div style="font-size: 0.75rem; color: #888; padding: 4px 10px; border-bottom: 1px solid #333; background: #2d2d2d; font-weight: bold;">STANDARD INPUT (STDIN)</div>
+                <textarea id="custom-stdin" style="width: 100%; height: calc(100% - 25px); background: transparent; color: #d4d4d4; border: none; padding: 10px; resize: none; outline: none; font-family: 'Consolas', 'Monaco', 'Courier New', monospace; font-size: 13px;" placeholder="Type your program input here..."></textarea>
+            </div>
 
             <div class="console-pane" id="console-pane">
                 <div style="color: #888;">// Console output will appear here</div>
@@ -213,7 +315,24 @@
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
+    <div id="ai-sidebar">
+        <div class="ai-header">
+            <h5 class="mb-0">✨ SolvePilot AI Help</h5>
+            <button class="btn-close btn-close-white" id="close-ai"></button>
+        </div>
+        <div id="chat-messages">
+            <div class="message ai">
+                Hello! I'm your SolvePilot AI mentor. Stuck on a problem? Ask me anything about the logic or your code!
+            </div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Ask a doubt..." autocomplete="off">
+            <button id="btn-send-chat" class="btn btn-primary btn-sm">Send</button>
+        </div>
+    </div>
+
     <script src="{{ url_for('static', filename='js/ide.js') }}"></script>
+
 </body>
 
 </html>
