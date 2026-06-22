@@ -80,6 +80,7 @@ def execute_code():
 
     language = data.get("language", "").lower()
     code = data.get("code", "")
+    stdin = data.get("stdin", "")
 
     if language not in COMPILER_MAP:
         return jsonify({"error": f"Unsupported language: {language}"}), 400
@@ -91,6 +92,7 @@ def execute_code():
     payload = {
         "compiler": COMPILER_MAP[language],
         "code": code,
+        "stdin": stdin,
         "save": False
     }
 
