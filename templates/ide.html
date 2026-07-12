@@ -123,7 +123,7 @@
             height: 100vh;
             background: #1e1e1e;
             border-left: 1px solid #444;
-            box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.5);
             transition: right 0.3s ease;
             z-index: 1050;
             display: flex;
@@ -207,7 +207,6 @@
         .btn-ai-ask:hover {
             opacity: 0.9;
         }
-
     </style>
 </head>
 
@@ -223,16 +222,22 @@
 
     <div class="main-container">
         <div class="problem-pane" id="problem-pane">
-            <div id="active-problem-details" style="display: none; margin-bottom: 20px; padding: 20px; background: rgba(255,255,255,0.04); border-radius: 12px; border-left: 4px solid var(--primary);">
+            <div id="active-problem-details"
+                style="display: none; margin-bottom: 20px; padding: 20px; background: rgba(255,255,255,0.04); border-radius: 12px; border-left: 4px solid var(--primary);">
                 <h3 id="detail-title" style="margin-bottom: 8px; color: #fff;"></h3>
-                <div id="detail-meta" style="font-size: 0.85rem; margin-bottom: 14px; color: #aaa; display: flex; gap: 10px; align-items: center;"></div>
+                <div id="detail-meta"
+                    style="font-size: 0.85rem; margin-bottom: 14px; color: #aaa; display: flex; gap: 10px; align-items: center;">
+                </div>
                 <div id="detail-tags" style="margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 6px;"></div>
                 <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px; margin-top: 14px;">
                     <h5 style="margin-bottom: 8px; color: #ccc; font-size: 0.9rem;">📄 Problem Description</h5>
-                    <div id="detail-description" style="font-size: 0.92rem; line-height: 1.7; color: #ccc; max-height: 300px; overflow-y: auto; white-space: pre-wrap;"></div>
+                    <div id="detail-description"
+                        style="font-size: 0.92rem; line-height: 1.7; color: #ccc; max-height: 300px; overflow-y: auto; white-space: pre-wrap;">
+                    </div>
                 </div>
 
-                <div id="samples-container" style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px; margin-top: 14px; display: none;">
+                <div id="samples-container"
+                    style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px; margin-top: 14px; display: none;">
                     <h5 style="margin-bottom: 8px; color: #ccc; font-size: 0.9rem;">🧪 Sample Test Cases</h5>
                     <div id="detail-samples" style="font-size: 0.9rem; color: #aaa;"></div>
                 </div>
@@ -262,8 +267,9 @@
                 <button id="btn-submit" class="btn-run" style="background-color: #28a745;">Submit Solution</button>
                 <button id="btn-ask-ai" class="btn-run btn-ai-ask">✨ Ask AI Doubt</button>
 
-                
-                <select id="snippet-select" style="margin-left: 10px; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; padding: 4px 8px;">
+
+                <select id="snippet-select"
+                    style="margin-left: 10px; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; padding: 4px 8px;">
 
                     <option value="">-- Snippets --</option>
                     <option value="bfs">BFS Template</option>
@@ -278,16 +284,23 @@
                 </div>
 
                 <div class="ms-3 d-flex align-items-center">
-                    <input type="checkbox" id="check-custom-input" class="form-check-input me-2" style="cursor: pointer; width: 1.1em; height: 1.1em;">
-                    <label for="check-custom-input" class="form-check-label small" style="color: #aaa; cursor: pointer; user-select: none;">Custom Input</label>
+                    <input type="checkbox" id="check-custom-input" class="form-check-input me-2"
+                        style="cursor: pointer; width: 1.1em; height: 1.1em;">
+                    <label for="check-custom-input" class="form-check-label small"
+                        style="color: #aaa; cursor: pointer; user-select: none;">Custom Input</label>
                 </div>
             </div>
 
             <div id="editor"></div>
 
-            <div class="input-pane" id="input-pane" style="display: none; height: 120px; background-color: #252526; border-top: 1px solid #444; position: relative;">
-                <div style="font-size: 0.75rem; color: #888; padding: 4px 10px; border-bottom: 1px solid #333; background: #2d2d2d; font-weight: bold;">STANDARD INPUT (STDIN)</div>
-                <textarea id="custom-stdin" style="width: 100%; height: calc(100% - 25px); background: transparent; color: #d4d4d4; border: none; padding: 10px; resize: none; outline: none; font-family: 'Consolas', 'Monaco', 'Courier New', monospace; font-size: 13px;" placeholder="Type your program input here..."></textarea>
+            <div class="input-pane" id="input-pane"
+                style="display: none; height: 120px; background-color: #252526; border-top: 1px solid #444; position: relative;">
+                <div
+                    style="font-size: 0.75rem; color: #888; padding: 4px 10px; border-bottom: 1px solid #333; background: #2d2d2d; font-weight: bold;">
+                    STANDARD INPUT (STDIN)</div>
+                <textarea id="custom-stdin"
+                    style="width: 100%; height: calc(100% - 25px); background: transparent; color: #d4d4d4; border: none; padding: 10px; resize: none; outline: none; font-family: 'Consolas', 'Monaco', 'Courier New', monospace; font-size: 13px;"
+                    placeholder="Type your program input here..."></textarea>
             </div>
 
             <div class="console-pane" id="console-pane">
@@ -332,6 +345,15 @@
     </div>
 
     <script src="{{ url_for('static', filename='js/ide.js') }}"></script>
+
+</body>
+
+</html> <input type="text" id="chat-input" placeholder="Ask a doubt..." autocomplete="off">
+<button id="btn-send-chat" class="btn btn-primary btn-sm">Send</button>
+</div>
+</div>
+
+<script src="{{ url_for('static', filename='js/ide.js') }}"></script>
 
 </body>
 

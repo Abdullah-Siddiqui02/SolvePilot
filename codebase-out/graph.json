@@ -1,0 +1,2473 @@
+{
+  "options": {
+    "type": "mixed",
+    "multi": true,
+    "allowSelfLoops": true
+  },
+  "attributes": {},
+  "nodes": [
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\app.py",
+      "attributes": {
+        "dependencies": [
+          "flask",
+          "config",
+          "routes"
+        ],
+        "docstrings": [
+          "\"\"\"Application factory.\"\"\""
+        ],
+        "x": 61.00014588245739,
+        "y": 84.55251919603212,
+        "size": 5,
+        "label": "app.py",
+        "community": ".",
+        "color": "#4E79A7",
+        "language": "Python",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a Flask web application that interacts with a MySQL database. The cluster is responsible for setting up the application, handling database connections, and performing data migrations.\n\n**File Roles:**\n\n1. **app.py**: Serves as the application factory, creating and configuring the Flask app.\n2. **extensions.py**: Provides a function to establish a MySQL database connection.\n3. **migrate_questions.py**: Contains a function to migrate question-related data in the database.\n4. **migrate_users.py**: Performs a one-time migration to add streak columns to the users table in the database.\n\n**Key Connections:**\n\n* The application factory (`app.py`) depends on `flask`, `config`, and `routes`.\n* Database connections are established through `extensions.py`, which interacts with `mysql.connector`.\n* Data migrations (`migrate_questions.py` and `migrate_users.py`) rely on `mysql.connector` and, in some cases, `config`."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\app.py::create_app",
+      "attributes": {
+        "label": "create_app",
+        "kind": "function",
+        "x": 46.078135895503536,
+        "y": 72.99332727510284,
+        "size": 3,
+        "community": "entities",
+        "color": "#4E79A7",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a Flask web application that interacts with a MySQL database. The cluster is responsible for setting up the application, handling database connections, and performing data migrations.\n\n**File Roles:**\n\n1. **app.py**: Serves as the application factory, creating and configuring the Flask app.\n2. **extensions.py**: Provides a function to establish a MySQL database connection.\n3. **migrate_questions.py**: Contains a function to migrate question-related data in the database.\n4. **migrate_users.py**: Performs a one-time migration to add streak columns to the users table in the database.\n\n**Key Connections:**\n\n* The application factory (`app.py`) depends on `flask`, `config`, and `routes`.\n* Database connections are established through `extensions.py`, which interacts with `mysql.connector`.\n* Data migrations (`migrate_questions.py` and `migrate_users.py`) rely on `mysql.connector` and, in some cases, `config`."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\config.py",
+      "attributes": {
+        "dependencies": [
+          "os",
+          "dotenv"
+        ],
+        "x": 13.60622560563497,
+        "y": 99.8212981741284,
+        "size": 5,
+        "label": "config.py",
+        "community": ".",
+        "color": "#4E79A7",
+        "language": "Python",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster is responsible for configuration management. It defines a configuration class and utilizes external libraries for environment variable handling.\n\n**File Roles:**\n\n1. **config.py**: Defines the `Config` class and imports necessary libraries (`os` and `dotenv`) for configuration management.\n2. **config.py::Config**: Represents the `Config` class itself, which is a component of the `config.py` file, but does not contain any additional functions or docstrings."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\config.py::Config",
+      "attributes": {
+        "label": "Config",
+        "kind": "class",
+        "x": 22.704349796174682,
+        "y": 46.07283698411396,
+        "size": 3,
+        "community": "entities",
+        "color": "#4E79A7",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster is responsible for configuration management. It defines a configuration class and utilizes external libraries for environment variable handling.\n\n**File Roles:**\n\n1. **config.py**: Defines the `Config` class and imports necessary libraries (`os` and `dotenv`) for configuration management.\n2. **config.py::Config**: Represents the `Config` class itself, which is a component of the `config.py` file, but does not contain any additional functions or docstrings."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\extensions.py",
+      "attributes": {
+        "dependencies": [
+          "mysql.connector",
+          "groq",
+          "config"
+        ],
+        "docstrings": [
+          "\"\"\"Create and return a MySQL connection and cursor.\"\"\""
+        ],
+        "x": 57.95640776407747,
+        "y": 70.27223493385613,
+        "size": 5,
+        "label": "extensions.py",
+        "community": ".",
+        "color": "#4E79A7",
+        "language": "Python",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a Flask web application that interacts with a MySQL database. The cluster is responsible for setting up the application, handling database connections, and performing data migrations.\n\n**File Roles:**\n\n1. **app.py**: Serves as the application factory, creating and configuring the Flask app.\n2. **extensions.py**: Provides a function to establish a MySQL database connection.\n3. **migrate_questions.py**: Contains a function to migrate question-related data in the database.\n4. **migrate_users.py**: Performs a one-time migration to add streak columns to the users table in the database.\n\n**Key Connections:**\n\n* The application factory (`app.py`) depends on `flask`, `config`, and `routes`.\n* Database connections are established through `extensions.py`, which interacts with `mysql.connector`.\n* Data migrations (`migrate_questions.py` and `migrate_users.py`) rely on `mysql.connector` and, in some cases, `config`."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\extensions.py::get_db",
+      "attributes": {
+        "label": "get_db",
+        "kind": "function",
+        "x": 97.04516976276335,
+        "y": 53.564223767515806,
+        "size": 3,
+        "community": "entities",
+        "color": "#4E79A7",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a Flask web application that interacts with a MySQL database. The cluster is responsible for setting up the application, handling database connections, and performing data migrations.\n\n**File Roles:**\n\n1. **app.py**: Serves as the application factory, creating and configuring the Flask app.\n2. **extensions.py**: Provides a function to establish a MySQL database connection.\n3. **migrate_questions.py**: Contains a function to migrate question-related data in the database.\n4. **migrate_users.py**: Performs a one-time migration to add streak columns to the users table in the database.\n\n**Key Connections:**\n\n* The application factory (`app.py`) depends on `flask`, `config`, and `routes`.\n* Database connections are established through `extensions.py`, which interacts with `mysql.connector`.\n* Data migrations (`migrate_questions.py` and `migrate_users.py`) rely on `mysql.connector` and, in some cases, `config`."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\migrate_questions.py",
+      "attributes": {
+        "dependencies": [
+          "mysql.connector",
+          "config"
+        ],
+        "x": 73.31137409732037,
+        "y": 21.27105019874692,
+        "size": 5,
+        "label": "migrate_questions.py",
+        "community": ".",
+        "color": "#4E79A7",
+        "language": "Python",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a Flask web application that interacts with a MySQL database. The cluster is responsible for setting up the application, handling database connections, and performing data migrations.\n\n**File Roles:**\n\n1. **app.py**: Serves as the application factory, creating and configuring the Flask app.\n2. **extensions.py**: Provides a function to establish a MySQL database connection.\n3. **migrate_questions.py**: Contains a function to migrate question-related data in the database.\n4. **migrate_users.py**: Performs a one-time migration to add streak columns to the users table in the database.\n\n**Key Connections:**\n\n* The application factory (`app.py`) depends on `flask`, `config`, and `routes`.\n* Database connections are established through `extensions.py`, which interacts with `mysql.connector`.\n* Data migrations (`migrate_questions.py` and `migrate_users.py`) rely on `mysql.connector` and, in some cases, `config`."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\migrate_questions.py::migrate_questions",
+      "attributes": {
+        "label": "migrate_questions",
+        "kind": "function",
+        "x": 59.89940262198795,
+        "y": 37.20924781568616,
+        "size": 3,
+        "community": "entities",
+        "color": "#4E79A7",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a Flask web application that interacts with a MySQL database. The cluster is responsible for setting up the application, handling database connections, and performing data migrations.\n\n**File Roles:**\n\n1. **app.py**: Serves as the application factory, creating and configuring the Flask app.\n2. **extensions.py**: Provides a function to establish a MySQL database connection.\n3. **migrate_questions.py**: Contains a function to migrate question-related data in the database.\n4. **migrate_users.py**: Performs a one-time migration to add streak columns to the users table in the database.\n\n**Key Connections:**\n\n* The application factory (`app.py`) depends on `flask`, `config`, and `routes`.\n* Database connections are established through `extensions.py`, which interacts with `mysql.connector`.\n* Data migrations (`migrate_questions.py` and `migrate_users.py`) rely on `mysql.connector` and, in some cases, `config`."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\migrate_users.py",
+      "attributes": {
+        "dependencies": [
+          "mysql.connector"
+        ],
+        "docstrings": [
+          "\"\"\"One-time migration: add streak columns to the users table.\"\"\""
+        ],
+        "x": 66.25224871344105,
+        "y": 80.90812236876562,
+        "size": 5,
+        "label": "migrate_users.py",
+        "community": ".",
+        "color": "#4E79A7",
+        "language": "Python",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a Flask web application that interacts with a MySQL database. The cluster is responsible for setting up the application, handling database connections, and performing data migrations.\n\n**File Roles:**\n\n1. **app.py**: Serves as the application factory, creating and configuring the Flask app.\n2. **extensions.py**: Provides a function to establish a MySQL database connection.\n3. **migrate_questions.py**: Contains a function to migrate question-related data in the database.\n4. **migrate_users.py**: Performs a one-time migration to add streak columns to the users table in the database.\n\n**Key Connections:**\n\n* The application factory (`app.py`) depends on `flask`, `config`, and `routes`.\n* Database connections are established through `extensions.py`, which interacts with `mysql.connector`.\n* Data migrations (`migrate_questions.py` and `migrate_users.py`) rely on `mysql.connector` and, in some cases, `config`."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\ai.py",
+      "attributes": {
+        "dependencies": [
+          "flask",
+          "extensions",
+          "json",
+          "traceback"
+        ],
+        "x": 3.2369426825532344,
+        "y": 87.67662230621715,
+        "size": 5,
+        "label": "ai.py",
+        "community": "routes",
+        "color": "#F28E2B",
+        "language": "Python",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically handling routes for authentication, AI interactions, and question management. The cluster is built using the Flask framework and utilizes various extensions.\n\n**File Roles:**\n\n1. **routes\\\\ai.py**: Handles AI-related interactions, providing a single function `ask_ai` that likely interfaces with an AI model.\n2. **routes\\\\auth.py**: Manages user authentication, offering functions for `login`, `signup`, and `logout`. It relies on Flask and Werkzeug security extensions.\n3. **routes\\\\questions.py**: Focuses on question management, providing functions for `add` and `get_my_questions`. This file also uses Flask and extensions.\n\n**Key Dependencies:**\n\n* Flask: The primary web framework used throughout the cluster.\n* Extensions: Various extensions are used across files, likely for database interactions or other utility functions.\n* Werkzeug.security: Used specifically in `routes\\\\auth.py` for security-related tasks."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\ai.py::ask_ai",
+      "attributes": {
+        "label": "ask_ai",
+        "kind": "function",
+        "x": 26.73759070609657,
+        "y": 42.0667745030731,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically handling routes for authentication, AI interactions, and question management. The cluster is built using the Flask framework and utilizes various extensions.\n\n**File Roles:**\n\n1. **routes\\\\ai.py**: Handles AI-related interactions, providing a single function `ask_ai` that likely interfaces with an AI model.\n2. **routes\\\\auth.py**: Manages user authentication, offering functions for `login`, `signup`, and `logout`. It relies on Flask and Werkzeug security extensions.\n3. **routes\\\\questions.py**: Focuses on question management, providing functions for `add` and `get_my_questions`. This file also uses Flask and extensions.\n\n**Key Dependencies:**\n\n* Flask: The primary web framework used throughout the cluster.\n* Extensions: Various extensions are used across files, likely for database interactions or other utility functions.\n* Werkzeug.security: Used specifically in `routes\\\\auth.py` for security-related tasks."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\auth.py",
+      "attributes": {
+        "dependencies": [
+          "flask",
+          "werkzeug.security",
+          "extensions"
+        ],
+        "x": 57.94449726032005,
+        "y": 82.87775720470691,
+        "size": 6,
+        "label": "auth.py",
+        "community": "routes",
+        "color": "#F28E2B",
+        "language": "Python",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically handling routes for authentication, AI interactions, and question management. The cluster is built using the Flask framework and utilizes various extensions.\n\n**File Roles:**\n\n1. **routes\\\\ai.py**: Handles AI-related interactions, providing a single function `ask_ai` that likely interfaces with an AI model.\n2. **routes\\\\auth.py**: Manages user authentication, offering functions for `login`, `signup`, and `logout`. It relies on Flask and Werkzeug security extensions.\n3. **routes\\\\questions.py**: Focuses on question management, providing functions for `add` and `get_my_questions`. This file also uses Flask and extensions.\n\n**Key Dependencies:**\n\n* Flask: The primary web framework used throughout the cluster.\n* Extensions: Various extensions are used across files, likely for database interactions or other utility functions.\n* Werkzeug.security: Used specifically in `routes\\\\auth.py` for security-related tasks."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\auth.py::login",
+      "attributes": {
+        "label": "login",
+        "kind": "function",
+        "x": 44.01304949133282,
+        "y": 91.6671670122106,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically handling routes for authentication, AI interactions, and question management. The cluster is built using the Flask framework and utilizes various extensions.\n\n**File Roles:**\n\n1. **routes\\\\ai.py**: Handles AI-related interactions, providing a single function `ask_ai` that likely interfaces with an AI model.\n2. **routes\\\\auth.py**: Manages user authentication, offering functions for `login`, `signup`, and `logout`. It relies on Flask and Werkzeug security extensions.\n3. **routes\\\\questions.py**: Focuses on question management, providing functions for `add` and `get_my_questions`. This file also uses Flask and extensions.\n\n**Key Dependencies:**\n\n* Flask: The primary web framework used throughout the cluster.\n* Extensions: Various extensions are used across files, likely for database interactions or other utility functions.\n* Werkzeug.security: Used specifically in `routes\\\\auth.py` for security-related tasks."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\auth.py::signup",
+      "attributes": {
+        "label": "signup",
+        "kind": "function",
+        "x": 78.70324046746431,
+        "y": 29.829519221136447,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically handling routes for authentication, AI interactions, and question management. The cluster is built using the Flask framework and utilizes various extensions.\n\n**File Roles:**\n\n1. **routes\\\\ai.py**: Handles AI-related interactions, providing a single function `ask_ai` that likely interfaces with an AI model.\n2. **routes\\\\auth.py**: Manages user authentication, offering functions for `login`, `signup`, and `logout`. It relies on Flask and Werkzeug security extensions.\n3. **routes\\\\questions.py**: Focuses on question management, providing functions for `add` and `get_my_questions`. This file also uses Flask and extensions.\n\n**Key Dependencies:**\n\n* Flask: The primary web framework used throughout the cluster.\n* Extensions: Various extensions are used across files, likely for database interactions or other utility functions.\n* Werkzeug.security: Used specifically in `routes\\\\auth.py` for security-related tasks."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\auth.py::logout",
+      "attributes": {
+        "label": "logout",
+        "kind": "function",
+        "x": 86.81041426529411,
+        "y": 46.34466044465643,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically handling routes for authentication, AI interactions, and question management. The cluster is built using the Flask framework and utilizes various extensions.\n\n**File Roles:**\n\n1. **routes\\\\ai.py**: Handles AI-related interactions, providing a single function `ask_ai` that likely interfaces with an AI model.\n2. **routes\\\\auth.py**: Manages user authentication, offering functions for `login`, `signup`, and `logout`. It relies on Flask and Werkzeug security extensions.\n3. **routes\\\\questions.py**: Focuses on question management, providing functions for `add` and `get_my_questions`. This file also uses Flask and extensions.\n\n**Key Dependencies:**\n\n* Flask: The primary web framework used throughout the cluster.\n* Extensions: Various extensions are used across files, likely for database interactions or other utility functions.\n* Werkzeug.security: Used specifically in `routes\\\\auth.py` for security-related tasks."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\collection.py",
+      "attributes": {
+        "dependencies": [
+          "flask",
+          "extensions",
+          "datetime"
+        ],
+        "x": 46.62360994899939,
+        "y": 14.611639296472035,
+        "size": 7,
+        "label": "collection.py",
+        "community": "routes",
+        "color": "#F28E2B",
+        "language": "Python",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically handling collection and dashboard-related functionality. It provides functions for managing collections, such as adding, removing, and toggling status, as well as generating a dashboard with relative time labels.\n\n**File Roles:**\n\n* **collection.py**: Handles collection management, including adding, removing, and toggling status of items in a collection. It interacts with external libraries like Flask and datetime.\n* **dashboard.py**: Generates a dashboard, likely displaying collection data, and utilizes relative time labels. It also interacts with various libraries, including Flask, datetime, and hashlib.\n\n**Key Functionality:**\n\n* Collection management (add, remove, toggle status)\n* Dashboard generation with relative time labels\n* Integration with external libraries (Flask, datetime, hashlib, extensions)"
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\collection.py::add_to_collection",
+      "attributes": {
+        "label": "add_to_collection",
+        "kind": "function",
+        "x": 7.273986965424495,
+        "y": 67.78574709041722,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically handling collection and dashboard-related functionality. It provides functions for managing collections, such as adding, removing, and toggling status, as well as generating a dashboard with relative time labels.\n\n**File Roles:**\n\n* **collection.py**: Handles collection management, including adding, removing, and toggling status of items in a collection. It interacts with external libraries like Flask and datetime.\n* **dashboard.py**: Generates a dashboard, likely displaying collection data, and utilizes relative time labels. It also interacts with various libraries, including Flask, datetime, and hashlib.\n\n**Key Functionality:**\n\n* Collection management (add, remove, toggle status)\n* Dashboard generation with relative time labels\n* Integration with external libraries (Flask, datetime, hashlib, extensions)"
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\collection.py::get_collection",
+      "attributes": {
+        "label": "get_collection",
+        "kind": "function",
+        "x": 22.463232585661142,
+        "y": 48.18726700429744,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically handling collection and dashboard-related functionality. It provides functions for managing collections, such as adding, removing, and toggling status, as well as generating a dashboard with relative time labels.\n\n**File Roles:**\n\n* **collection.py**: Handles collection management, including adding, removing, and toggling status of items in a collection. It interacts with external libraries like Flask and datetime.\n* **dashboard.py**: Generates a dashboard, likely displaying collection data, and utilizes relative time labels. It also interacts with various libraries, including Flask, datetime, and hashlib.\n\n**Key Functionality:**\n\n* Collection management (add, remove, toggle status)\n* Dashboard generation with relative time labels\n* Integration with external libraries (Flask, datetime, hashlib, extensions)"
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\collection.py::toggle_status",
+      "attributes": {
+        "label": "toggle_status",
+        "kind": "function",
+        "x": 51.6033742008234,
+        "y": 25.7189362574754,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically handling collection and dashboard-related functionality. It provides functions for managing collections, such as adding, removing, and toggling status, as well as generating a dashboard with relative time labels.\n\n**File Roles:**\n\n* **collection.py**: Handles collection management, including adding, removing, and toggling status of items in a collection. It interacts with external libraries like Flask and datetime.\n* **dashboard.py**: Generates a dashboard, likely displaying collection data, and utilizes relative time labels. It also interacts with various libraries, including Flask, datetime, and hashlib.\n\n**Key Functionality:**\n\n* Collection management (add, remove, toggle status)\n* Dashboard generation with relative time labels\n* Integration with external libraries (Flask, datetime, hashlib, extensions)"
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\collection.py::remove_from_collection",
+      "attributes": {
+        "label": "remove_from_collection",
+        "kind": "function",
+        "x": 82.46698485746873,
+        "y": 95.67918061416009,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically handling collection and dashboard-related functionality. It provides functions for managing collections, such as adding, removing, and toggling status, as well as generating a dashboard with relative time labels.\n\n**File Roles:**\n\n* **collection.py**: Handles collection management, including adding, removing, and toggling status of items in a collection. It interacts with external libraries like Flask and datetime.\n* **dashboard.py**: Generates a dashboard, likely displaying collection data, and utilizes relative time labels. It also interacts with various libraries, including Flask, datetime, and hashlib.\n\n**Key Functionality:**\n\n* Collection management (add, remove, toggle status)\n* Dashboard generation with relative time labels\n* Integration with external libraries (Flask, datetime, hashlib, extensions)"
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\dashboard.py",
+      "attributes": {
+        "dependencies": [
+          "collections",
+          "datetime",
+          "hashlib",
+          "flask",
+          "extensions"
+        ],
+        "x": 42.453972029659134,
+        "y": 93.58748755400832,
+        "size": 7,
+        "label": "dashboard.py",
+        "community": "routes",
+        "color": "#F28E2B",
+        "language": "Python",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically handling collection and dashboard-related functionality. It provides functions for managing collections, such as adding, removing, and toggling status, as well as generating a dashboard with relative time labels.\n\n**File Roles:**\n\n* **collection.py**: Handles collection management, including adding, removing, and toggling status of items in a collection. It interacts with external libraries like Flask and datetime.\n* **dashboard.py**: Generates a dashboard, likely displaying collection data, and utilizes relative time labels. It also interacts with various libraries, including Flask, datetime, and hashlib.\n\n**Key Functionality:**\n\n* Collection management (add, remove, toggle status)\n* Dashboard generation with relative time labels\n* Integration with external libraries (Flask, datetime, hashlib, extensions)"
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\dashboard.py::_relative_time_label",
+      "attributes": {
+        "label": "_relative_time_label",
+        "kind": "function",
+        "x": 98.3622845708234,
+        "y": 15.572180763162468,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically handling collection and dashboard-related functionality. It provides functions for managing collections, such as adding, removing, and toggling status, as well as generating a dashboard with relative time labels.\n\n**File Roles:**\n\n* **collection.py**: Handles collection management, including adding, removing, and toggling status of items in a collection. It interacts with external libraries like Flask and datetime.\n* **dashboard.py**: Generates a dashboard, likely displaying collection data, and utilizes relative time labels. It also interacts with various libraries, including Flask, datetime, and hashlib.\n\n**Key Functionality:**\n\n* Collection management (add, remove, toggle status)\n* Dashboard generation with relative time labels\n* Integration with external libraries (Flask, datetime, hashlib, extensions)"
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\dashboard.py::dashboard",
+      "attributes": {
+        "label": "dashboard",
+        "kind": "function",
+        "x": 79.24229012851549,
+        "y": 30.224175768416984,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically handling collection and dashboard-related functionality. It provides functions for managing collections, such as adding, removing, and toggling status, as well as generating a dashboard with relative time labels.\n\n**File Roles:**\n\n* **collection.py**: Handles collection management, including adding, removing, and toggling status of items in a collection. It interacts with external libraries like Flask and datetime.\n* **dashboard.py**: Generates a dashboard, likely displaying collection data, and utilizes relative time labels. It also interacts with various libraries, including Flask, datetime, and hashlib.\n\n**Key Functionality:**\n\n* Collection management (add, remove, toggle status)\n* Dashboard generation with relative time labels\n* Integration with external libraries (Flask, datetime, hashlib, extensions)"
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\execute.py",
+      "attributes": {
+        "dependencies": [
+          "flask",
+          "requests",
+          "re",
+          "extensions",
+          "routes.submit",
+          "concurrent.futures"
+        ],
+        "docstrings": [
+          "\"\"\"Check if error text indicates a server-side/transient issue.\"\"\"",
+          "\"\"\"Parse error text and prepend which line(s) caused the error.\"\"\""
+        ],
+        "x": 87.40203791458188,
+        "y": 24.99922128032489,
+        "size": 9,
+        "label": "execute.py",
+        "community": "routes",
+        "color": "#F28E2B",
+        "language": "Python",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically designed for executing and submitting code solutions to problems, likely on a platform like Codeforces. The cluster consists of two main files: `execute.py` and `submit.py`, which handle code execution and submission, respectively.\n\n**File Roles:**\n\n1. **`execute.py`**: This file contains functions for executing code, handling errors, and formatting error messages. It serves as a utility module for code execution.\n2. **`submit.py`**: This file is responsible for submitting code solutions to problems. It includes functions for fetching problem descriptions, parsing sample tests, running code with input, and marking problems as solved.\n\n**Key Functionality:**\n\n* Code execution and error handling\n* Problem description fetching and sample test parsing\n* Code submission and marking problems as solved\n* Error formatting and transient error detection\n\n**Dependencies:**\nThe cluster relies on various libraries, including `flask`, `requests`, `re`, `extensions`, `concurrent.futures`, `json`, `traceback`, `bs4`, `datetime`, `time`, `cloudscraper`, indicating a Python-based web application with dependencies on web scraping, concurrency, and data processing."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\execute.py::_is_server_error",
+      "attributes": {
+        "label": "_is_server_error",
+        "kind": "function",
+        "x": 61.43924580102523,
+        "y": 10.267731221200671,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically designed for executing and submitting code solutions to problems, likely on a platform like Codeforces. The cluster consists of two main files: `execute.py` and `submit.py`, which handle code execution and submission, respectively.\n\n**File Roles:**\n\n1. **`execute.py`**: This file contains functions for executing code, handling errors, and formatting error messages. It serves as a utility module for code execution.\n2. **`submit.py`**: This file is responsible for submitting code solutions to problems. It includes functions for fetching problem descriptions, parsing sample tests, running code with input, and marking problems as solved.\n\n**Key Functionality:**\n\n* Code execution and error handling\n* Problem description fetching and sample test parsing\n* Code submission and marking problems as solved\n* Error formatting and transient error detection\n\n**Dependencies:**\nThe cluster relies on various libraries, including `flask`, `requests`, `re`, `extensions`, `concurrent.futures`, `json`, `traceback`, `bs4`, `datetime`, `time`, `cloudscraper`, indicating a Python-based web application with dependencies on web scraping, concurrency, and data processing."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\execute.py::_format_error",
+      "attributes": {
+        "label": "_format_error",
+        "kind": "function",
+        "x": 53.732097826332435,
+        "y": 38.99456188517071,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically designed for executing and submitting code solutions to problems, likely on a platform like Codeforces. The cluster consists of two main files: `execute.py` and `submit.py`, which handle code execution and submission, respectively.\n\n**File Roles:**\n\n1. **`execute.py`**: This file contains functions for executing code, handling errors, and formatting error messages. It serves as a utility module for code execution.\n2. **`submit.py`**: This file is responsible for submitting code solutions to problems. It includes functions for fetching problem descriptions, parsing sample tests, running code with input, and marking problems as solved.\n\n**Key Functionality:**\n\n* Code execution and error handling\n* Problem description fetching and sample test parsing\n* Code submission and marking problems as solved\n* Error formatting and transient error detection\n\n**Dependencies:**\nThe cluster relies on various libraries, including `flask`, `requests`, `re`, `extensions`, `concurrent.futures`, `json`, `traceback`, `bs4`, `datetime`, `time`, `cloudscraper`, indicating a Python-based web application with dependencies on web scraping, concurrency, and data processing."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\execute.py::execute_code",
+      "attributes": {
+        "label": "execute_code",
+        "kind": "function",
+        "x": 91.5781855667751,
+        "y": 29.660567748540632,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically designed for executing and submitting code solutions to problems, likely on a platform like Codeforces. The cluster consists of two main files: `execute.py` and `submit.py`, which handle code execution and submission, respectively.\n\n**File Roles:**\n\n1. **`execute.py`**: This file contains functions for executing code, handling errors, and formatting error messages. It serves as a utility module for code execution.\n2. **`submit.py`**: This file is responsible for submitting code solutions to problems. It includes functions for fetching problem descriptions, parsing sample tests, running code with input, and marking problems as solved.\n\n**Key Functionality:**\n\n* Code execution and error handling\n* Problem description fetching and sample test parsing\n* Code submission and marking problems as solved\n* Error formatting and transient error detection\n\n**Dependencies:**\nThe cluster relies on various libraries, including `flask`, `requests`, `re`, `extensions`, `concurrent.futures`, `json`, `traceback`, `bs4`, `datetime`, `time`, `cloudscraper`, indicating a Python-based web application with dependencies on web scraping, concurrency, and data processing."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\problems.py",
+      "attributes": {
+        "dependencies": [
+          "flask",
+          "requests",
+          "bs4",
+          "extensions",
+          "cloudscraper"
+        ],
+        "docstrings": [
+          "\"\"\"Retrieve cached problems from the local database.\"\"\"",
+          "\"\"\"Scrape problem description and samples from Codeforces.\"\"\"",
+          "\"\"\"Retrieve full details for a single problem, including description and samples.\"\"\""
+        ],
+        "x": 60.229185023021024,
+        "y": 92.6466493367267,
+        "size": 10,
+        "label": "problems.py",
+        "community": "routes",
+        "color": "#F28E2B",
+        "language": "Python",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be responsible for managing and retrieving mathematical problems, likely from an online platform such as Codeforces. The primary file, `problems.py`, contains functions for syncing, retrieving, and scraping problem data.\n\n**File Roles:**\n\n* `routes/problems.py`: The main file, containing functions for problem management, including:\n\t+ `ide`: No clear purpose based on provided data.\n\t+ `sync_problems`: Likely responsible for synchronizing problems with an external source.\n\t+ `get_problems`: Retrieves cached problems from a local database.\n\t+ `scrape_problem_data`: Scrapes problem data from Codeforces.\n\t+ `get_problem_details`: Retrieves detailed information about a single problem.\n* Sub-files (`routes/problems.py::function_name`): These appear to be internal representations of the functions within `problems.py`, with no additional functionality or purpose beyond what is described in the main file."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\problems.py::ide",
+      "attributes": {
+        "label": "ide",
+        "kind": "function",
+        "x": 57.83511265432142,
+        "y": 2.9964863573269107,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be responsible for managing and retrieving mathematical problems, likely from an online platform such as Codeforces. The primary file, `problems.py`, contains functions for syncing, retrieving, and scraping problem data.\n\n**File Roles:**\n\n* `routes/problems.py`: The main file, containing functions for problem management, including:\n\t+ `ide`: No clear purpose based on provided data.\n\t+ `sync_problems`: Likely responsible for synchronizing problems with an external source.\n\t+ `get_problems`: Retrieves cached problems from a local database.\n\t+ `scrape_problem_data`: Scrapes problem data from Codeforces.\n\t+ `get_problem_details`: Retrieves detailed information about a single problem.\n* Sub-files (`routes/problems.py::function_name`): These appear to be internal representations of the functions within `problems.py`, with no additional functionality or purpose beyond what is described in the main file."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\problems.py::sync_problems",
+      "attributes": {
+        "label": "sync_problems",
+        "kind": "function",
+        "x": 26.457319414168467,
+        "y": 8.179155778043345,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be responsible for managing and retrieving mathematical problems, likely from an online platform such as Codeforces. The primary file, `problems.py`, contains functions for syncing, retrieving, and scraping problem data.\n\n**File Roles:**\n\n* `routes/problems.py`: The main file, containing functions for problem management, including:\n\t+ `ide`: No clear purpose based on provided data.\n\t+ `sync_problems`: Likely responsible for synchronizing problems with an external source.\n\t+ `get_problems`: Retrieves cached problems from a local database.\n\t+ `scrape_problem_data`: Scrapes problem data from Codeforces.\n\t+ `get_problem_details`: Retrieves detailed information about a single problem.\n* Sub-files (`routes/problems.py::function_name`): These appear to be internal representations of the functions within `problems.py`, with no additional functionality or purpose beyond what is described in the main file."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\problems.py::get_problems",
+      "attributes": {
+        "label": "get_problems",
+        "kind": "function",
+        "x": 83.14571993270309,
+        "y": 92.26117339458416,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be responsible for managing and retrieving mathematical problems, likely from an online platform such as Codeforces. The primary file, `problems.py`, contains functions for syncing, retrieving, and scraping problem data.\n\n**File Roles:**\n\n* `routes/problems.py`: The main file, containing functions for problem management, including:\n\t+ `ide`: No clear purpose based on provided data.\n\t+ `sync_problems`: Likely responsible for synchronizing problems with an external source.\n\t+ `get_problems`: Retrieves cached problems from a local database.\n\t+ `scrape_problem_data`: Scrapes problem data from Codeforces.\n\t+ `get_problem_details`: Retrieves detailed information about a single problem.\n* Sub-files (`routes/problems.py::function_name`): These appear to be internal representations of the functions within `problems.py`, with no additional functionality or purpose beyond what is described in the main file."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\problems.py::scrape_problem_data",
+      "attributes": {
+        "label": "scrape_problem_data",
+        "kind": "function",
+        "x": 16.28595671411346,
+        "y": 71.33137591751334,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be responsible for managing and retrieving mathematical problems, likely from an online platform such as Codeforces. The primary file, `problems.py`, contains functions for syncing, retrieving, and scraping problem data.\n\n**File Roles:**\n\n* `routes/problems.py`: The main file, containing functions for problem management, including:\n\t+ `ide`: No clear purpose based on provided data.\n\t+ `sync_problems`: Likely responsible for synchronizing problems with an external source.\n\t+ `get_problems`: Retrieves cached problems from a local database.\n\t+ `scrape_problem_data`: Scrapes problem data from Codeforces.\n\t+ `get_problem_details`: Retrieves detailed information about a single problem.\n* Sub-files (`routes/problems.py::function_name`): These appear to be internal representations of the functions within `problems.py`, with no additional functionality or purpose beyond what is described in the main file."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\problems.py::get_problem_details",
+      "attributes": {
+        "label": "get_problem_details",
+        "kind": "function",
+        "x": 21.290993299636398,
+        "y": 17.192455199534397,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be responsible for managing and retrieving mathematical problems, likely from an online platform such as Codeforces. The primary file, `problems.py`, contains functions for syncing, retrieving, and scraping problem data.\n\n**File Roles:**\n\n* `routes/problems.py`: The main file, containing functions for problem management, including:\n\t+ `ide`: No clear purpose based on provided data.\n\t+ `sync_problems`: Likely responsible for synchronizing problems with an external source.\n\t+ `get_problems`: Retrieves cached problems from a local database.\n\t+ `scrape_problem_data`: Scrapes problem data from Codeforces.\n\t+ `get_problem_details`: Retrieves detailed information about a single problem.\n* Sub-files (`routes/problems.py::function_name`): These appear to be internal representations of the functions within `problems.py`, with no additional functionality or purpose beyond what is described in the main file."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\questions.py",
+      "attributes": {
+        "dependencies": [
+          "flask",
+          "extensions"
+        ],
+        "x": 83.21904910410352,
+        "y": 5.522763317692347,
+        "size": 5,
+        "label": "questions.py",
+        "community": "routes",
+        "color": "#F28E2B",
+        "language": "Python",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically handling routes for authentication, AI interactions, and question management. The cluster is built using the Flask framework and utilizes various extensions.\n\n**File Roles:**\n\n1. **routes\\\\ai.py**: Handles AI-related interactions, providing a single function `ask_ai` that likely interfaces with an AI model.\n2. **routes\\\\auth.py**: Manages user authentication, offering functions for `login`, `signup`, and `logout`. It relies on Flask and Werkzeug security extensions.\n3. **routes\\\\questions.py**: Focuses on question management, providing functions for `add` and `get_my_questions`. This file also uses Flask and extensions.\n\n**Key Dependencies:**\n\n* Flask: The primary web framework used throughout the cluster.\n* Extensions: Various extensions are used across files, likely for database interactions or other utility functions.\n* Werkzeug.security: Used specifically in `routes\\\\auth.py` for security-related tasks."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\questions.py::add",
+      "attributes": {
+        "label": "add",
+        "kind": "function",
+        "x": 26.66648176623514,
+        "y": 2.007809992337728,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically handling routes for authentication, AI interactions, and question management. The cluster is built using the Flask framework and utilizes various extensions.\n\n**File Roles:**\n\n1. **routes\\\\ai.py**: Handles AI-related interactions, providing a single function `ask_ai` that likely interfaces with an AI model.\n2. **routes\\\\auth.py**: Manages user authentication, offering functions for `login`, `signup`, and `logout`. It relies on Flask and Werkzeug security extensions.\n3. **routes\\\\questions.py**: Focuses on question management, providing functions for `add` and `get_my_questions`. This file also uses Flask and extensions.\n\n**Key Dependencies:**\n\n* Flask: The primary web framework used throughout the cluster.\n* Extensions: Various extensions are used across files, likely for database interactions or other utility functions.\n* Werkzeug.security: Used specifically in `routes\\\\auth.py` for security-related tasks."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\questions.py::get_my_questions",
+      "attributes": {
+        "label": "get_my_questions",
+        "kind": "function",
+        "x": 14.705066604585571,
+        "y": 9.529128339608251,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically handling mathematical question solving. It consists of two main files: `questions.py` and `solve.py`.\n\n**File Roles:**\n\n1. **`questions.py`**: Contains a function `get_my_questions`, likely responsible for retrieving a list of questions.\n2. **`solve.py`**: Exports a `solve` function, which is the core of the mathematical solving functionality. It has dependencies on external libraries (`flask` and `extensions`), suggesting a web-based interface for solving mathematical problems.\n\nThe `solve.py::solve` entry represents the `solve` function within the `solve.py` file, which is a more detailed representation of the function's internal structure."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\solve.py",
+      "attributes": {
+        "dependencies": [
+          "flask",
+          "extensions"
+        ],
+        "x": 14.55974693051333,
+        "y": 43.50976134927754,
+        "size": 5,
+        "label": "solve.py",
+        "community": "routes",
+        "color": "#F28E2B",
+        "language": "Python",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically handling mathematical question solving. It consists of two main files: `questions.py` and `solve.py`.\n\n**File Roles:**\n\n1. **`questions.py`**: Contains a function `get_my_questions`, likely responsible for retrieving a list of questions.\n2. **`solve.py`**: Exports a `solve` function, which is the core of the mathematical solving functionality. It has dependencies on external libraries (`flask` and `extensions`), suggesting a web-based interface for solving mathematical problems.\n\nThe `solve.py::solve` entry represents the `solve` function within the `solve.py` file, which is a more detailed representation of the function's internal structure."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\solve.py::solve",
+      "attributes": {
+        "label": "solve",
+        "kind": "function",
+        "x": 85.06574127311859,
+        "y": 58.43811199237807,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically handling mathematical question solving. It consists of two main files: `questions.py` and `solve.py`.\n\n**File Roles:**\n\n1. **`questions.py`**: Contains a function `get_my_questions`, likely responsible for retrieving a list of questions.\n2. **`solve.py`**: Exports a `solve` function, which is the core of the mathematical solving functionality. It has dependencies on external libraries (`flask` and `extensions`), suggesting a web-based interface for solving mathematical problems.\n\nThe `solve.py::solve` entry represents the `solve` function within the `solve.py` file, which is a more detailed representation of the function's internal structure."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py",
+      "attributes": {
+        "dependencies": [
+          "flask",
+          "extensions",
+          "requests",
+          "json",
+          "traceback",
+          "bs4",
+          "datetime",
+          "re",
+          "time",
+          "cloudscraper",
+          "concurrent.futures"
+        ],
+        "docstrings": [
+          "\"\"\"Attempt to scrape problem description if missing.\"\"\"",
+          "\"\"\"Parse sample test cases from Codeforces HTML into list of (input, output) pairs.\"\"\"",
+          "\"\"\"Check if an error is transient (server overload) vs actual code error.\"\"\"",
+          "\"\"\"Parse compiler/runtime error text and annotate with user-friendly line references.\"\"\"",
+          "\"\"\"Run code on Wandbox with specific stdin input. Retries on transient errors. Returns (output, success).\"\"\"",
+          "\"\"\"Normalize output for comparison: strip trailing whitespace per line, trailing newlines.\"\"\"",
+          "\"\"\"Mark a problem as solved and update streak.\"\"\""
+        ],
+        "x": 51.35429870152063,
+        "y": 39.16918573239372,
+        "size": 15,
+        "label": "submit.py",
+        "community": "routes",
+        "color": "#F28E2B",
+        "language": "Python",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically designed for executing and submitting code solutions to problems, likely on a platform like Codeforces. The cluster consists of two main files: `execute.py` and `submit.py`, which handle code execution and submission, respectively.\n\n**File Roles:**\n\n1. **`execute.py`**: This file contains functions for executing code, handling errors, and formatting error messages. It serves as a utility module for code execution.\n2. **`submit.py`**: This file is responsible for submitting code solutions to problems. It includes functions for fetching problem descriptions, parsing sample tests, running code with input, and marking problems as solved.\n\n**Key Functionality:**\n\n* Code execution and error handling\n* Problem description fetching and sample test parsing\n* Code submission and marking problems as solved\n* Error formatting and transient error detection\n\n**Dependencies:**\nThe cluster relies on various libraries, including `flask`, `requests`, `re`, `extensions`, `concurrent.futures`, `json`, `traceback`, `bs4`, `datetime`, `time`, `cloudscraper`, indicating a Python-based web application with dependencies on web scraping, concurrency, and data processing."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py::fetch_problem_description",
+      "attributes": {
+        "label": "fetch_problem_description",
+        "kind": "function",
+        "x": 9.577941881237717,
+        "y": 10.856132537361196,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically designed for executing and submitting code solutions to problems, likely on a platform like Codeforces. The cluster consists of two main files: `execute.py` and `submit.py`, which handle code execution and submission, respectively.\n\n**File Roles:**\n\n1. **`execute.py`**: This file contains functions for executing code, handling errors, and formatting error messages. It serves as a utility module for code execution.\n2. **`submit.py`**: This file is responsible for submitting code solutions to problems. It includes functions for fetching problem descriptions, parsing sample tests, running code with input, and marking problems as solved.\n\n**Key Functionality:**\n\n* Code execution and error handling\n* Problem description fetching and sample test parsing\n* Code submission and marking problems as solved\n* Error formatting and transient error detection\n\n**Dependencies:**\nThe cluster relies on various libraries, including `flask`, `requests`, `re`, `extensions`, `concurrent.futures`, `json`, `traceback`, `bs4`, `datetime`, `time`, `cloudscraper`, indicating a Python-based web application with dependencies on web scraping, concurrency, and data processing."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py::parse_sample_tests",
+      "attributes": {
+        "label": "parse_sample_tests",
+        "kind": "function",
+        "x": 78.3898329311093,
+        "y": 9.031817525167662,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically designed for executing and submitting code solutions to problems, likely on a platform like Codeforces. The cluster consists of two main files: `execute.py` and `submit.py`, which handle code execution and submission, respectively.\n\n**File Roles:**\n\n1. **`execute.py`**: This file contains functions for executing code, handling errors, and formatting error messages. It serves as a utility module for code execution.\n2. **`submit.py`**: This file is responsible for submitting code solutions to problems. It includes functions for fetching problem descriptions, parsing sample tests, running code with input, and marking problems as solved.\n\n**Key Functionality:**\n\n* Code execution and error handling\n* Problem description fetching and sample test parsing\n* Code submission and marking problems as solved\n* Error formatting and transient error detection\n\n**Dependencies:**\nThe cluster relies on various libraries, including `flask`, `requests`, `re`, `extensions`, `concurrent.futures`, `json`, `traceback`, `bs4`, `datetime`, `time`, `cloudscraper`, indicating a Python-based web application with dependencies on web scraping, concurrency, and data processing."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py::is_transient_error",
+      "attributes": {
+        "label": "is_transient_error",
+        "kind": "function",
+        "x": 11.121592102121458,
+        "y": 44.01170591812992,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically designed for executing and submitting code solutions to problems, likely on a platform like Codeforces. The cluster consists of two main files: `execute.py` and `submit.py`, which handle code execution and submission, respectively.\n\n**File Roles:**\n\n1. **`execute.py`**: This file contains functions for executing code, handling errors, and formatting error messages. It serves as a utility module for code execution.\n2. **`submit.py`**: This file is responsible for submitting code solutions to problems. It includes functions for fetching problem descriptions, parsing sample tests, running code with input, and marking problems as solved.\n\n**Key Functionality:**\n\n* Code execution and error handling\n* Problem description fetching and sample test parsing\n* Code submission and marking problems as solved\n* Error formatting and transient error detection\n\n**Dependencies:**\nThe cluster relies on various libraries, including `flask`, `requests`, `re`, `extensions`, `concurrent.futures`, `json`, `traceback`, `bs4`, `datetime`, `time`, `cloudscraper`, indicating a Python-based web application with dependencies on web scraping, concurrency, and data processing."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py::format_error_with_lines",
+      "attributes": {
+        "label": "format_error_with_lines",
+        "kind": "function",
+        "x": 94.03576387127703,
+        "y": 82.1066894630273,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a submission handling system, specifically designed for processing and evaluating user-submitted solutions to mathematical problems. The cluster is comprised of five functions within the \"submit.py\" file.\n\n**File Roles:**\n\n1. **format_error_with_lines**: Handles error formatting, likely for displaying user-friendly error messages with line numbers.\n2. **run_with_input**: Executes a solution with provided input, possibly for testing or evaluation purposes.\n3. **normalize_output**: Standardizes output from user-submitted solutions, ensuring consistency in formatting.\n4. **mark_solved**: Updates the status of a problem or solution, marking it as solved.\n5. **submit_solution**: Manages the submission process for user solutions, potentially integrating with the other functions in the cluster.\n\nThese functions collectively facilitate the submission, evaluation, and feedback process for mathematical problems, providing a structured framework for handling user input and output."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py::run_with_input",
+      "attributes": {
+        "label": "run_with_input",
+        "kind": "function",
+        "x": 30.775552068955538,
+        "y": 25.65886812952105,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a submission handling system, specifically designed for processing and evaluating user-submitted solutions to mathematical problems. The cluster is comprised of five functions within the \"submit.py\" file.\n\n**File Roles:**\n\n1. **format_error_with_lines**: Handles error formatting, likely for displaying user-friendly error messages with line numbers.\n2. **run_with_input**: Executes a solution with provided input, possibly for testing or evaluation purposes.\n3. **normalize_output**: Standardizes output from user-submitted solutions, ensuring consistency in formatting.\n4. **mark_solved**: Updates the status of a problem or solution, marking it as solved.\n5. **submit_solution**: Manages the submission process for user solutions, potentially integrating with the other functions in the cluster.\n\nThese functions collectively facilitate the submission, evaluation, and feedback process for mathematical problems, providing a structured framework for handling user input and output."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py::normalize_output",
+      "attributes": {
+        "label": "normalize_output",
+        "kind": "function",
+        "x": 24.996986267952526,
+        "y": 44.518960250935095,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a submission handling system, specifically designed for processing and evaluating user-submitted solutions to mathematical problems. The cluster is comprised of five functions within the \"submit.py\" file.\n\n**File Roles:**\n\n1. **format_error_with_lines**: Handles error formatting, likely for displaying user-friendly error messages with line numbers.\n2. **run_with_input**: Executes a solution with provided input, possibly for testing or evaluation purposes.\n3. **normalize_output**: Standardizes output from user-submitted solutions, ensuring consistency in formatting.\n4. **mark_solved**: Updates the status of a problem or solution, marking it as solved.\n5. **submit_solution**: Manages the submission process for user solutions, potentially integrating with the other functions in the cluster.\n\nThese functions collectively facilitate the submission, evaluation, and feedback process for mathematical problems, providing a structured framework for handling user input and output."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py::mark_solved",
+      "attributes": {
+        "label": "mark_solved",
+        "kind": "function",
+        "x": 12.62540139068571,
+        "y": 24.436633995218504,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a submission handling system, specifically designed for processing and evaluating user-submitted solutions to mathematical problems. The cluster is comprised of five functions within the \"submit.py\" file.\n\n**File Roles:**\n\n1. **format_error_with_lines**: Handles error formatting, likely for displaying user-friendly error messages with line numbers.\n2. **run_with_input**: Executes a solution with provided input, possibly for testing or evaluation purposes.\n3. **normalize_output**: Standardizes output from user-submitted solutions, ensuring consistency in formatting.\n4. **mark_solved**: Updates the status of a problem or solution, marking it as solved.\n5. **submit_solution**: Manages the submission process for user solutions, potentially integrating with the other functions in the cluster.\n\nThese functions collectively facilitate the submission, evaluation, and feedback process for mathematical problems, providing a structured framework for handling user input and output."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py::submit_solution",
+      "attributes": {
+        "label": "submit_solution",
+        "kind": "function",
+        "x": 85.4925723747349,
+        "y": 99.68978294171185,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a submission handling system, specifically designed for processing and evaluating user-submitted solutions to mathematical problems. The cluster is comprised of five functions within the \"submit.py\" file.\n\n**File Roles:**\n\n1. **format_error_with_lines**: Handles error formatting, likely for displaying user-friendly error messages with line numbers.\n2. **run_with_input**: Executes a solution with provided input, possibly for testing or evaluation purposes.\n3. **normalize_output**: Standardizes output from user-submitted solutions, ensuring consistency in formatting.\n4. **mark_solved**: Updates the status of a problem or solution, marking it as solved.\n5. **submit_solution**: Manages the submission process for user solutions, potentially integrating with the other functions in the cluster.\n\nThese functions collectively facilitate the submission, evaluation, and feedback process for mathematical problems, providing a structured framework for handling user input and output."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\__init__.py",
+      "attributes": {
+        "dependencies": [
+          "routes.auth",
+          "routes.dashboard",
+          "routes.questions",
+          "routes.solve",
+          "routes.problems",
+          "routes.execute",
+          "routes.collection",
+          "routes.submit",
+          "routes.ai"
+        ],
+        "x": 85.36055085372321,
+        "y": 69.49157213470872,
+        "size": 10,
+        "label": "__init__.py",
+        "community": "routes",
+        "color": "#F28E2B",
+        "language": "Python",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically handling route registration. The primary file, `__init__.py`, contains a function `register_blueprints` that connects to multiple route modules.\n\n**File Roles:**\n\n1. **`routes\\\\__init__.py`**: Serves as the central route registration point, containing the `register_blueprints` function that links to various route modules.\n2. **`routes\\\\__init__.py::register_blueprints`**: A function within `__init__.py`, responsible for registering blueprints, but its internal implementation is not provided in the AST data.\n\n**Connected Route Modules:**\n\n* `routes.auth`\n* `routes.dashboard`\n* `routes.questions`\n* `routes.solve`\n* `routes.problems`\n* `routes.execute`\n* `routes.collection`\n* `routes.submit`\n* `routes.ai`\n\nThese modules are likely responsible for handling specific routes or functionalities within the application."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\__init__.py::register_blueprints",
+      "attributes": {
+        "label": "register_blueprints",
+        "kind": "function",
+        "x": 24.114338627938913,
+        "y": 17.229790998246763,
+        "size": 3,
+        "community": "entities",
+        "color": "#F28E2B",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of a web application, specifically handling route registration. The primary file, `__init__.py`, contains a function `register_blueprints` that connects to multiple route modules.\n\n**File Roles:**\n\n1. **`routes\\\\__init__.py`**: Serves as the central route registration point, containing the `register_blueprints` function that links to various route modules.\n2. **`routes\\\\__init__.py::register_blueprints`**: A function within `__init__.py`, responsible for registering blueprints, but its internal implementation is not provided in the AST data.\n\n**Connected Route Modules:**\n\n* `routes.auth`\n* `routes.dashboard`\n* `routes.questions`\n* `routes.solve`\n* `routes.problems`\n* `routes.execute`\n* `routes.collection`\n* `routes.submit`\n* `routes.ai`\n\nThese modules are likely responsible for handling specific routes or functionalities within the application."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\static\\style.css",
+      "attributes": {
+        "dependencies": [],
+        "x": 72.69659842029084,
+        "y": 41.40976648845989,
+        "size": 5,
+        "label": "style.css",
+        "community": "static",
+        "color": "#E15759",
+        "language": "CSS",
+        "semantic_summary": "**Cluster Summary:** \nThis cluster contains a single file, \"style.css\", which is a static CSS file. \n\n**File Roles:**\n- \"static\\\\style.css\": Provides styling information for the application, with no connections to other files in the cluster."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\templates\\add_question.html",
+      "attributes": {
+        "dependencies": [],
+        "x": 21.96416743722367,
+        "y": 68.39134679993944,
+        "size": 5,
+        "label": "add_question.html",
+        "community": "templates",
+        "color": "#76B7B2",
+        "language": "HTML",
+        "semantic_summary": "**Cluster Summary:** \nThis cluster appears to be related to a web application, specifically a template for adding questions.\n\n**File Roles:**\n\n* `add_question.html`: A template file, likely used for rendering a user interface to add questions, with no direct computational logic or connections to other files in the cluster."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\templates\\base.html",
+      "attributes": {
+        "dependencies": [
+          "https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Inter:wght@400;500;700&display=swap",
+          "{{ url_for('static', filename='style.css') }}",
+          "https://cdn.jsdelivr.net/npm/chart.js",
+          "{{ url_for('static', filename='js/main.js') }}"
+        ],
+        "x": 38.07783081801437,
+        "y": 77.82917066071715,
+        "size": 5,
+        "label": "base.html",
+        "community": "templates",
+        "color": "#76B7B2",
+        "language": "HTML",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be related to a web application's frontend, specifically a template file (`base.html`) that imports external stylesheets, fonts, and JavaScript libraries.\n\n**File Roles:**\n\n* `base.html`: The central template file that imports and connects various external resources, including fonts, stylesheets, and JavaScript libraries.\n* External resources:\n\t+ `https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Inter:wght@400;500;700&display=swap`: Google Fonts stylesheet.\n\t+ `style.css`: Local stylesheet, likely containing custom CSS rules.\n\t+ `https://cdn.jsdelivr.net/npm/chart.js`: Chart.js library, used for data visualization.\n\t+ `main.js`: Local JavaScript file, likely containing custom script logic."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\templates\\dashboard.html",
+      "attributes": {
+        "dependencies": [],
+        "x": 79.72641486510115,
+        "y": 89.74654594929825,
+        "size": 5,
+        "label": "dashboard.html",
+        "community": "templates",
+        "color": "#76B7B2",
+        "language": "HTML",
+        "semantic_summary": "**Cluster Summary:** \nThis cluster appears to contain a single HTML template file, \"dashboard.html\", which does not have any direct connections to other files via Abstract Syntax Tree (AST) edges.\n\n**File Roles:**\n\n* **dashboard.html**: A template file, likely used for rendering a user interface, with no embedded executable code or connections to other files in the cluster."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\templates\\explore.html",
+      "attributes": {
+        "dependencies": [],
+        "x": 64.90833237540753,
+        "y": 8.823911356182423,
+        "size": 5,
+        "label": "explore.html",
+        "community": "templates",
+        "color": "#76B7B2",
+        "language": "HTML",
+        "semantic_summary": "**Cluster Summary:** \nThis cluster appears to be a simple web template, containing a single HTML file named \"explore.html\". \n\n**File Roles:**\n- \"explore.html\": A web template file, likely used for displaying content, with no embedded logic or dynamic functionality based on the provided AST data."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\templates\\ide.html",
+      "attributes": {
+        "dependencies": [
+          "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css",
+          "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/loader.min.js",
+          "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/editor/editor.main.nls.js",
+          "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/editor/editor.main.js",
+          "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js",
+          "{{ url_for('static', filename='js/ide.js') }}"
+        ],
+        "x": 29.852866978127736,
+        "y": 78.24066368364775,
+        "size": 6,
+        "label": "ide.html",
+        "community": "templates",
+        "color": "#76B7B2",
+        "language": "HTML",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be a web-based Integrated Development Environment (IDE) template, leveraging external libraries for styling, code editing, and mathematical rendering.\n\n**File Roles:**\n\n* `templates/ide.html`: The main template file, responsible for structuring the IDE interface and linking to external resources, including CSS stylesheets, JavaScript libraries, and a custom IDE script (`ide.js`). It serves as the entry point for the IDE, providing a foundation for code editing and mathematical expression rendering."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\templates\\login.html",
+      "attributes": {
+        "dependencies": [],
+        "x": 3.2317942186963156,
+        "y": 37.877877102065916,
+        "size": 5,
+        "label": "login.html",
+        "community": "templates",
+        "color": "#76B7B2",
+        "language": "HTML",
+        "semantic_summary": "**Cluster Summary:** \nThis cluster appears to be related to user authentication, specifically handling the login functionality of an application.\n\n**File Roles:**\n\n* `login.html`: This file is a template for the login page, providing the user interface for users to enter their credentials. It does not contain any executable code, suggesting it is used for presentation purposes only."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\templates\\signup.html",
+      "attributes": {
+        "dependencies": [],
+        "x": 47.43846737604416,
+        "y": 93.2567115513566,
+        "size": 5,
+        "label": "signup.html",
+        "community": "templates",
+        "color": "#76B7B2",
+        "language": "HTML",
+        "semantic_summary": "**Cluster Summary:** \nThis cluster appears to be related to user registration, as indicated by the presence of a \"signup.html\" template file. \n\n**File Roles:**\n- `signup.html`: A template file likely used for rendering the user registration interface. It does not contain any executable code (classes, functions, or docstrings) and does not have any connections to other files in the cluster."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\templates\\solve.html",
+      "attributes": {
+        "dependencies": [
+          "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css",
+          "https://cdn.jsdelivr.net/npm/marked/marked.min.js",
+          "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"
+        ],
+        "x": 76.65230426780504,
+        "y": 60.58019034456758,
+        "size": 5,
+        "label": "solve.html",
+        "community": "templates",
+        "color": "#76B7B2",
+        "language": "HTML",
+        "semantic_summary": "**Cluster Summary:** \nThis cluster appears to be related to rendering and highlighting mathematical expressions or code snippets in an HTML template.\n\n**File Roles:**\n\n* `templates/solve.html`: The central file in this cluster, responsible for rendering the HTML template. It depends on external CSS and JavaScript libraries for syntax highlighting and Markdown rendering, specifically:\n\t+ `highlight.js` for code syntax highlighting\n\t+ `marked` for Markdown parsing and rendering\n\t+ A GitHub Dark theme CSS for styling the highlighted code."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\static\\js\\ide.js",
+      "attributes": {
+        "dependencies": [],
+        "x": 46.767105562032995,
+        "y": 47.37144214626618,
+        "size": 8,
+        "label": "ide.js",
+        "community": "static\\js",
+        "color": "#59A14F",
+        "language": "JavaScript",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of an Integrated Development Environment (IDE) for mathematical problems, focusing on user interaction, problem management, and collection features.\n\n**File Roles:**\n\n* `ide.js`: The main file, containing functions for user interaction (e.g., sending chat messages, appending messages), problem management (e.g., loading problems, adding to collection), and user-specific data retrieval (e.g., loading user's collection, questions).\n* `ide.js::appendMessage`, `ide.js::sendChatMessage`, `ide.js::loadProblems`, `ide.js::addToCollection`, `ide.js::loadMyCollection`, `ide.js::toggleStatus`, `ide.js::loadMyQuestions`: These files represent individual functions within the `ide.js` file, each responsible for a specific task, such as:\n\t+ `appendMessage`: Appending messages to a chat or log.\n\t+ `sendChatMessage`: Sending a chat message.\n\t+ `loadProblems`: Loading mathematical problems.\n\t+ `addToCollection`: Adding a problem to the user's collection.\n\t+ `loadMyCollection`: Loading the user's collection of problems.\n\t+ `toggleStatus`: Toggling the status of a problem or collection.\n\t+ `loadMyQuestions`: Loading the user's questions or problems."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\static\\js\\ide.js::appendMessage",
+      "attributes": {
+        "label": "appendMessage",
+        "kind": "function",
+        "x": 99.5966188630916,
+        "y": 37.48704010017193,
+        "size": 3,
+        "community": "entities",
+        "color": "#59A14F",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of an Integrated Development Environment (IDE) for mathematical problems, focusing on user interaction, problem management, and collection features.\n\n**File Roles:**\n\n* `ide.js`: The main file, containing functions for user interaction (e.g., sending chat messages, appending messages), problem management (e.g., loading problems, adding to collection), and user-specific data retrieval (e.g., loading user's collection, questions).\n* `ide.js::appendMessage`, `ide.js::sendChatMessage`, `ide.js::loadProblems`, `ide.js::addToCollection`, `ide.js::loadMyCollection`, `ide.js::toggleStatus`, `ide.js::loadMyQuestions`: These files represent individual functions within the `ide.js` file, each responsible for a specific task, such as:\n\t+ `appendMessage`: Appending messages to a chat or log.\n\t+ `sendChatMessage`: Sending a chat message.\n\t+ `loadProblems`: Loading mathematical problems.\n\t+ `addToCollection`: Adding a problem to the user's collection.\n\t+ `loadMyCollection`: Loading the user's collection of problems.\n\t+ `toggleStatus`: Toggling the status of a problem or collection.\n\t+ `loadMyQuestions`: Loading the user's questions or problems."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\static\\js\\ide.js::sendChatMessage",
+      "attributes": {
+        "label": "sendChatMessage",
+        "kind": "function",
+        "x": 50.43027550446945,
+        "y": 72.94456233846661,
+        "size": 3,
+        "community": "entities",
+        "color": "#59A14F",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of an Integrated Development Environment (IDE) for mathematical problems, focusing on user interaction, problem management, and collection features.\n\n**File Roles:**\n\n* `ide.js`: The main file, containing functions for user interaction (e.g., sending chat messages, appending messages), problem management (e.g., loading problems, adding to collection), and user-specific data retrieval (e.g., loading user's collection, questions).\n* `ide.js::appendMessage`, `ide.js::sendChatMessage`, `ide.js::loadProblems`, `ide.js::addToCollection`, `ide.js::loadMyCollection`, `ide.js::toggleStatus`, `ide.js::loadMyQuestions`: These files represent individual functions within the `ide.js` file, each responsible for a specific task, such as:\n\t+ `appendMessage`: Appending messages to a chat or log.\n\t+ `sendChatMessage`: Sending a chat message.\n\t+ `loadProblems`: Loading mathematical problems.\n\t+ `addToCollection`: Adding a problem to the user's collection.\n\t+ `loadMyCollection`: Loading the user's collection of problems.\n\t+ `toggleStatus`: Toggling the status of a problem or collection.\n\t+ `loadMyQuestions`: Loading the user's questions or problems."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\static\\js\\ide.js::loadProblems",
+      "attributes": {
+        "label": "loadProblems",
+        "kind": "function",
+        "x": 31.006997300879114,
+        "y": 6.929563189883281,
+        "size": 3,
+        "community": "entities",
+        "color": "#59A14F",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of an Integrated Development Environment (IDE) for mathematical problems, focusing on user interaction, problem management, and collection features.\n\n**File Roles:**\n\n* `ide.js`: The main file, containing functions for user interaction (e.g., sending chat messages, appending messages), problem management (e.g., loading problems, adding to collection), and user-specific data retrieval (e.g., loading user's collection, questions).\n* `ide.js::appendMessage`, `ide.js::sendChatMessage`, `ide.js::loadProblems`, `ide.js::addToCollection`, `ide.js::loadMyCollection`, `ide.js::toggleStatus`, `ide.js::loadMyQuestions`: These files represent individual functions within the `ide.js` file, each responsible for a specific task, such as:\n\t+ `appendMessage`: Appending messages to a chat or log.\n\t+ `sendChatMessage`: Sending a chat message.\n\t+ `loadProblems`: Loading mathematical problems.\n\t+ `addToCollection`: Adding a problem to the user's collection.\n\t+ `loadMyCollection`: Loading the user's collection of problems.\n\t+ `toggleStatus`: Toggling the status of a problem or collection.\n\t+ `loadMyQuestions`: Loading the user's questions or problems."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\static\\js\\ide.js::addToCollection",
+      "attributes": {
+        "label": "addToCollection",
+        "kind": "function",
+        "x": 98.15132196994867,
+        "y": 2.0144931887288275,
+        "size": 3,
+        "community": "entities",
+        "color": "#59A14F",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of an Integrated Development Environment (IDE) for mathematical problems, focusing on user interaction, problem management, and collection features.\n\n**File Roles:**\n\n* `ide.js`: The main file, containing functions for user interaction (e.g., sending chat messages, appending messages), problem management (e.g., loading problems, adding to collection), and user-specific data retrieval (e.g., loading user's collection, questions).\n* `ide.js::appendMessage`, `ide.js::sendChatMessage`, `ide.js::loadProblems`, `ide.js::addToCollection`, `ide.js::loadMyCollection`, `ide.js::toggleStatus`, `ide.js::loadMyQuestions`: These files represent individual functions within the `ide.js` file, each responsible for a specific task, such as:\n\t+ `appendMessage`: Appending messages to a chat or log.\n\t+ `sendChatMessage`: Sending a chat message.\n\t+ `loadProblems`: Loading mathematical problems.\n\t+ `addToCollection`: Adding a problem to the user's collection.\n\t+ `loadMyCollection`: Loading the user's collection of problems.\n\t+ `toggleStatus`: Toggling the status of a problem or collection.\n\t+ `loadMyQuestions`: Loading the user's questions or problems."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\static\\js\\ide.js::loadMyCollection",
+      "attributes": {
+        "label": "loadMyCollection",
+        "kind": "function",
+        "x": 64.77703283171442,
+        "y": 35.772592828416826,
+        "size": 3,
+        "community": "entities",
+        "color": "#59A14F",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of an Integrated Development Environment (IDE) for mathematical problems, focusing on user interaction, problem management, and collection features.\n\n**File Roles:**\n\n* `ide.js`: The main file, containing functions for user interaction (e.g., sending chat messages, appending messages), problem management (e.g., loading problems, adding to collection), and user-specific data retrieval (e.g., loading user's collection, questions).\n* `ide.js::appendMessage`, `ide.js::sendChatMessage`, `ide.js::loadProblems`, `ide.js::addToCollection`, `ide.js::loadMyCollection`, `ide.js::toggleStatus`, `ide.js::loadMyQuestions`: These files represent individual functions within the `ide.js` file, each responsible for a specific task, such as:\n\t+ `appendMessage`: Appending messages to a chat or log.\n\t+ `sendChatMessage`: Sending a chat message.\n\t+ `loadProblems`: Loading mathematical problems.\n\t+ `addToCollection`: Adding a problem to the user's collection.\n\t+ `loadMyCollection`: Loading the user's collection of problems.\n\t+ `toggleStatus`: Toggling the status of a problem or collection.\n\t+ `loadMyQuestions`: Loading the user's questions or problems."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\static\\js\\ide.js::toggleStatus",
+      "attributes": {
+        "label": "toggleStatus",
+        "kind": "function",
+        "x": 37.44766850118122,
+        "y": 7.759750987171577,
+        "size": 3,
+        "community": "entities",
+        "color": "#59A14F",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of an Integrated Development Environment (IDE) for mathematical problems, focusing on user interaction, problem management, and collection features.\n\n**File Roles:**\n\n* `ide.js`: The main file, containing functions for user interaction (e.g., sending chat messages, appending messages), problem management (e.g., loading problems, adding to collection), and user-specific data retrieval (e.g., loading user's collection, questions).\n* `ide.js::appendMessage`, `ide.js::sendChatMessage`, `ide.js::loadProblems`, `ide.js::addToCollection`, `ide.js::loadMyCollection`, `ide.js::toggleStatus`, `ide.js::loadMyQuestions`: These files represent individual functions within the `ide.js` file, each responsible for a specific task, such as:\n\t+ `appendMessage`: Appending messages to a chat or log.\n\t+ `sendChatMessage`: Sending a chat message.\n\t+ `loadProblems`: Loading mathematical problems.\n\t+ `addToCollection`: Adding a problem to the user's collection.\n\t+ `loadMyCollection`: Loading the user's collection of problems.\n\t+ `toggleStatus`: Toggling the status of a problem or collection.\n\t+ `loadMyQuestions`: Loading the user's questions or problems."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\static\\js\\ide.js::loadMyQuestions",
+      "attributes": {
+        "label": "loadMyQuestions",
+        "kind": "function",
+        "x": 82.8081086274119,
+        "y": 23.492681794636493,
+        "size": 3,
+        "community": "entities",
+        "color": "#59A14F",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be part of an Integrated Development Environment (IDE) for mathematical problems, focusing on user interaction, problem management, and collection features.\n\n**File Roles:**\n\n* `ide.js`: The main file, containing functions for user interaction (e.g., sending chat messages, appending messages), problem management (e.g., loading problems, adding to collection), and user-specific data retrieval (e.g., loading user's collection, questions).\n* `ide.js::appendMessage`, `ide.js::sendChatMessage`, `ide.js::loadProblems`, `ide.js::addToCollection`, `ide.js::loadMyCollection`, `ide.js::toggleStatus`, `ide.js::loadMyQuestions`: These files represent individual functions within the `ide.js` file, each responsible for a specific task, such as:\n\t+ `appendMessage`: Appending messages to a chat or log.\n\t+ `sendChatMessage`: Sending a chat message.\n\t+ `loadProblems`: Loading mathematical problems.\n\t+ `addToCollection`: Adding a problem to the user's collection.\n\t+ `loadMyCollection`: Loading the user's collection of problems.\n\t+ `toggleStatus`: Toggling the status of a problem or collection.\n\t+ `loadMyQuestions`: Loading the user's questions or problems."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\static\\js\\ide.js::showProblemDetails",
+      "attributes": {
+        "label": "showProblemDetails",
+        "kind": "function",
+        "x": 59.60211117300658,
+        "y": 87.992874065037,
+        "size": 3,
+        "community": "entities",
+        "color": "#59A14F",
+        "semantic_summary": "**Cluster Summary:**\nThis cluster appears to be related to displaying problem details in an Integrated Development Environment (IDE).\n\n**File Roles:**\n\n* `ide.js`: Contains a function `showProblemDetails` that is likely responsible for displaying problem details in the IDE. However, the exact functionality is unclear due to the absence of AST classes, functions, and docstrings. The lack of graph edges suggests that this file does not have any direct connections to other files in the cluster."
+      }
+    },
+    {
+      "key": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\static\\js\\main.js",
+      "attributes": {
+        "dependencies": [],
+        "x": 77.33744067012779,
+        "y": 99.33593100650324,
+        "size": 5,
+        "label": "main.js",
+        "community": "static\\js",
+        "color": "#59A14F",
+        "language": "JavaScript",
+        "semantic_summary": "**Cluster Summary:** \nThis cluster appears to be a minimalistic JavaScript application, consisting of a single file, `main.js`, with no defined classes, functions, or docstrings. \n\n**File Roles:**\n- `main.js`: The primary entry point of the application, currently containing no executable code or documentation."
+      }
+    },
+    {
+      "key": "flask",
+      "attributes": {
+        "external": true,
+        "label": "flask",
+        "x": 82.03914061634873,
+        "y": 10.946514471309909,
+        "size": 10,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "config",
+      "attributes": {
+        "external": true,
+        "label": "config",
+        "x": 94.48744356121692,
+        "y": 26.983984231433666,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "routes",
+      "attributes": {
+        "external": true,
+        "label": "routes",
+        "x": 72.07944451126122,
+        "y": 47.909301854892746,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "os",
+      "attributes": {
+        "external": true,
+        "label": "os",
+        "x": 25.05807289967742,
+        "y": 78.1860106923423,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "dotenv",
+      "attributes": {
+        "external": true,
+        "label": "dotenv",
+        "x": 98.56987541269307,
+        "y": 69.2405047448716,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "mysql.connector",
+      "attributes": {
+        "external": true,
+        "label": "mysql.connector",
+        "x": 3.2970937622592067,
+        "y": 7.479008011535127,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "groq",
+      "attributes": {
+        "external": true,
+        "label": "groq",
+        "x": 90.64072311738981,
+        "y": 62.63336369159423,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "extensions",
+      "attributes": {
+        "external": true,
+        "label": "extensions",
+        "x": 29.74076292010136,
+        "y": 63.908008482980016,
+        "size": 9,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "json",
+      "attributes": {
+        "external": true,
+        "label": "json",
+        "x": 50.643163086692574,
+        "y": 80.70045619543339,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "traceback",
+      "attributes": {
+        "external": true,
+        "label": "traceback",
+        "x": 96.11469177758057,
+        "y": 4.874720651570419,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "werkzeug.security",
+      "attributes": {
+        "external": true,
+        "label": "werkzeug.security",
+        "x": 10.152636633364331,
+        "y": 45.20024537077322,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "datetime",
+      "attributes": {
+        "external": true,
+        "label": "datetime",
+        "x": 94.87893100160889,
+        "y": 73.38258300623515,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "collections",
+      "attributes": {
+        "external": true,
+        "label": "collections",
+        "x": 19.988006077741005,
+        "y": 35.9548310276831,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "hashlib",
+      "attributes": {
+        "external": true,
+        "label": "hashlib",
+        "x": 80.62443292114779,
+        "y": 74.37148299232895,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "requests",
+      "attributes": {
+        "external": true,
+        "label": "requests",
+        "x": 97.6762359058271,
+        "y": 49.524512636936315,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "re",
+      "attributes": {
+        "external": true,
+        "label": "re",
+        "x": 16.525729677860745,
+        "y": 68.75096431588521,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "routes.submit",
+      "attributes": {
+        "external": true,
+        "label": "routes.submit",
+        "x": 83.11349519279005,
+        "y": 38.21524405237755,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "concurrent.futures",
+      "attributes": {
+        "external": true,
+        "label": "concurrent.futures",
+        "x": 63.18700410549395,
+        "y": 50.64821549425638,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "bs4",
+      "attributes": {
+        "external": true,
+        "label": "bs4",
+        "x": 84.66168608594934,
+        "y": 91.29141199657673,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "cloudscraper",
+      "attributes": {
+        "external": true,
+        "label": "cloudscraper",
+        "x": 64.42397338753453,
+        "y": 36.2359055135918,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "time",
+      "attributes": {
+        "external": true,
+        "label": "time",
+        "x": 51.389640366278385,
+        "y": 83.8048581861722,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "routes.auth",
+      "attributes": {
+        "external": true,
+        "label": "routes.auth",
+        "x": 88.86063948729318,
+        "y": 41.08550980967679,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "routes.dashboard",
+      "attributes": {
+        "external": true,
+        "label": "routes.dashboard",
+        "x": 67.66618673855949,
+        "y": 84.89899771583461,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "routes.questions",
+      "attributes": {
+        "external": true,
+        "label": "routes.questions",
+        "x": 25.605287676860733,
+        "y": 55.29850820528567,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "routes.solve",
+      "attributes": {
+        "external": true,
+        "label": "routes.solve",
+        "x": 59.541885016728294,
+        "y": 92.66412224485639,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "routes.problems",
+      "attributes": {
+        "external": true,
+        "label": "routes.problems",
+        "x": 55.8446882124146,
+        "y": 97.90353297361985,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "routes.execute",
+      "attributes": {
+        "external": true,
+        "label": "routes.execute",
+        "x": 65.70590568616083,
+        "y": 25.24821843063577,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "routes.collection",
+      "attributes": {
+        "external": true,
+        "label": "routes.collection",
+        "x": 46.682508247253175,
+        "y": 25.400230753587184,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "routes.ai",
+      "attributes": {
+        "external": true,
+        "label": "routes.ai",
+        "x": 51.2987408046866,
+        "y": 93.6106107171613,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Inter:wght@400;500;700&display=swap",
+      "attributes": {
+        "external": true,
+        "label": "https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Inter:wght@400;500;700&display=swap",
+        "x": 37.02309365339782,
+        "y": 85.90533037374847,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "{{ url_for('static', filename='style.css') }}",
+      "attributes": {
+        "external": true,
+        "label": "{{ url_for('static', filename='style.css') }}",
+        "x": 32.79250668696941,
+        "y": 57.93546569927723,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "https://cdn.jsdelivr.net/npm/chart.js",
+      "attributes": {
+        "external": true,
+        "label": "https://cdn.jsdelivr.net/npm/chart.js",
+        "x": 75.32919680046349,
+        "y": 70.63841672253767,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "{{ url_for('static', filename='js/main.js') }}",
+      "attributes": {
+        "external": true,
+        "label": "{{ url_for('static', filename='js/main.js') }}",
+        "x": 25.86156382289001,
+        "y": 18.621907816352834,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css",
+      "attributes": {
+        "external": true,
+        "label": "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css",
+        "x": 40.68591621461697,
+        "y": 26.376056859966766,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/loader.min.js",
+      "attributes": {
+        "external": true,
+        "label": "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/loader.min.js",
+        "x": 15.081811567902893,
+        "y": 32.37226269095215,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/editor/editor.main.nls.js",
+      "attributes": {
+        "external": true,
+        "label": "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/editor/editor.main.nls.js",
+        "x": 11.748187724157743,
+        "y": 93.20505421324981,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/editor/editor.main.js",
+      "attributes": {
+        "external": true,
+        "label": "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/editor/editor.main.js",
+        "x": 74.14824130685635,
+        "y": 23.331039070220438,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js",
+      "attributes": {
+        "external": true,
+        "label": "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js",
+        "x": 40.46255210382319,
+        "y": 82.80995561831901,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "{{ url_for('static', filename='js/ide.js') }}",
+      "attributes": {
+        "external": true,
+        "label": "{{ url_for('static', filename='js/ide.js') }}",
+        "x": 49.71357338068805,
+        "y": 58.20611984158626,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css",
+      "attributes": {
+        "external": true,
+        "label": "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css",
+        "x": 32.87505798165683,
+        "y": 62.70158745709672,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "https://cdn.jsdelivr.net/npm/marked/marked.min.js",
+      "attributes": {
+        "external": true,
+        "label": "https://cdn.jsdelivr.net/npm/marked/marked.min.js",
+        "x": 54.80372276519119,
+        "y": 20.601643270741665,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    },
+    {
+      "key": "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js",
+      "attributes": {
+        "external": true,
+        "label": "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js",
+        "x": 16.81389305634835,
+        "y": 23.182596495943063,
+        "size": 5,
+        "community": "dependencies",
+        "color": "#64748B"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "key": "geid_39_0",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\app.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\app.py::create_app",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_1",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\config.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\config.py::Config",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_2",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\extensions.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\extensions.py::get_db",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_3",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\migrate_questions.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\migrate_questions.py::migrate_questions",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_4",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\ai.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\ai.py::ask_ai",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_5",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\auth.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\auth.py::login",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_6",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\auth.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\auth.py::signup",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_7",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\auth.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\auth.py::logout",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_8",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\collection.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\collection.py::add_to_collection",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_9",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\collection.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\collection.py::get_collection",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_10",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\collection.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\collection.py::toggle_status",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_11",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\collection.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\collection.py::remove_from_collection",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_12",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\dashboard.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\dashboard.py::_relative_time_label",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_13",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\dashboard.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\dashboard.py::dashboard",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_14",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\execute.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\execute.py::_is_server_error",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_15",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\execute.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\execute.py::_format_error",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_16",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\execute.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\execute.py::execute_code",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_17",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\problems.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\problems.py::ide",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_18",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\problems.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\problems.py::sync_problems",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_19",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\problems.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\problems.py::get_problems",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_20",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\problems.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\problems.py::scrape_problem_data",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_21",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\problems.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\problems.py::get_problem_details",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_22",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\questions.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\questions.py::add",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_23",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\questions.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\questions.py::get_my_questions",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_24",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\solve.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\solve.py::solve",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_25",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py::fetch_problem_description",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_26",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py::parse_sample_tests",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_27",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py::is_transient_error",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_28",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py::format_error_with_lines",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_29",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py::run_with_input",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_30",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py::normalize_output",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_31",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py::mark_solved",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_32",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py::submit_solution",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_33",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\__init__.py",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\__init__.py::register_blueprints",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_34",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\static\\js\\ide.js",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\static\\js\\ide.js::appendMessage",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_35",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\static\\js\\ide.js",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\static\\js\\ide.js::sendChatMessage",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_36",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\static\\js\\ide.js",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\static\\js\\ide.js::loadProblems",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_37",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\static\\js\\ide.js",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\static\\js\\ide.js::addToCollection",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_38",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\static\\js\\ide.js",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\static\\js\\ide.js::loadMyCollection",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_39",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\static\\js\\ide.js",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\static\\js\\ide.js::toggleStatus",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_40",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\static\\js\\ide.js",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\static\\js\\ide.js::loadMyQuestions",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_41",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\static\\js\\ide.js",
+      "target": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\static\\js\\ide.js::showProblemDetails",
+      "attributes": {
+        "relation": "contains"
+      }
+    },
+    {
+      "key": "geid_39_42",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\app.py",
+      "target": "flask",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_43",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\app.py",
+      "target": "config",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_44",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\app.py",
+      "target": "routes",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_45",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\config.py",
+      "target": "os",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_46",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\config.py",
+      "target": "dotenv",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_47",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\extensions.py",
+      "target": "mysql.connector",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_48",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\extensions.py",
+      "target": "groq",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_49",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\extensions.py",
+      "target": "config",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_50",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\migrate_questions.py",
+      "target": "mysql.connector",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_51",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\migrate_questions.py",
+      "target": "config",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_52",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\migrate_users.py",
+      "target": "mysql.connector",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_53",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\ai.py",
+      "target": "flask",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_54",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\ai.py",
+      "target": "extensions",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_55",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\ai.py",
+      "target": "json",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_56",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\ai.py",
+      "target": "traceback",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_57",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\auth.py",
+      "target": "flask",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_58",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\auth.py",
+      "target": "werkzeug.security",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_59",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\auth.py",
+      "target": "extensions",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_60",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\collection.py",
+      "target": "flask",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_61",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\collection.py",
+      "target": "extensions",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_62",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\collection.py",
+      "target": "datetime",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_63",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\dashboard.py",
+      "target": "collections",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_64",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\dashboard.py",
+      "target": "datetime",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_65",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\dashboard.py",
+      "target": "hashlib",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_66",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\dashboard.py",
+      "target": "flask",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_67",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\dashboard.py",
+      "target": "extensions",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_68",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\execute.py",
+      "target": "flask",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_69",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\execute.py",
+      "target": "requests",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_70",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\execute.py",
+      "target": "re",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_71",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\execute.py",
+      "target": "extensions",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_72",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\execute.py",
+      "target": "routes.submit",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_73",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\execute.py",
+      "target": "concurrent.futures",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_74",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\problems.py",
+      "target": "flask",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_75",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\problems.py",
+      "target": "requests",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_76",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\problems.py",
+      "target": "bs4",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_77",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\problems.py",
+      "target": "extensions",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_78",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\problems.py",
+      "target": "cloudscraper",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_79",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\questions.py",
+      "target": "flask",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_80",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\questions.py",
+      "target": "extensions",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_81",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\solve.py",
+      "target": "flask",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_82",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\solve.py",
+      "target": "extensions",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_83",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py",
+      "target": "flask",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_84",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py",
+      "target": "extensions",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_85",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py",
+      "target": "requests",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_86",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py",
+      "target": "json",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_87",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py",
+      "target": "traceback",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_88",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py",
+      "target": "bs4",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_89",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py",
+      "target": "datetime",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_90",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py",
+      "target": "re",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_91",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py",
+      "target": "time",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_92",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py",
+      "target": "cloudscraper",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_93",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\submit.py",
+      "target": "concurrent.futures",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_94",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\__init__.py",
+      "target": "routes.auth",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_95",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\__init__.py",
+      "target": "routes.dashboard",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_96",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\__init__.py",
+      "target": "routes.questions",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_97",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\__init__.py",
+      "target": "routes.solve",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_98",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\__init__.py",
+      "target": "routes.problems",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_99",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\__init__.py",
+      "target": "routes.execute",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_100",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\__init__.py",
+      "target": "routes.collection",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_101",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\__init__.py",
+      "target": "routes.submit",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_102",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\routes\\__init__.py",
+      "target": "routes.ai",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_103",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\templates\\base.html",
+      "target": "https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Inter:wght@400;500;700&display=swap",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_104",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\templates\\base.html",
+      "target": "{{ url_for('static', filename='style.css') }}",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_105",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\templates\\base.html",
+      "target": "https://cdn.jsdelivr.net/npm/chart.js",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_106",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\templates\\base.html",
+      "target": "{{ url_for('static', filename='js/main.js') }}",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_107",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\templates\\ide.html",
+      "target": "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_108",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\templates\\ide.html",
+      "target": "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/loader.min.js",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_109",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\templates\\ide.html",
+      "target": "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/editor/editor.main.nls.js",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_110",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\templates\\ide.html",
+      "target": "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/editor/editor.main.js",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_111",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\templates\\ide.html",
+      "target": "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_112",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\templates\\ide.html",
+      "target": "{{ url_for('static', filename='js/ide.js') }}",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_113",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\templates\\solve.html",
+      "target": "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_114",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\templates\\solve.html",
+      "target": "https://cdn.jsdelivr.net/npm/marked/marked.min.js",
+      "attributes": {
+        "relationship": "imports"
+      }
+    },
+    {
+      "key": "geid_39_115",
+      "source": "C:\\Users\\Abdullah\\OneDrive\\Desktop\\interviewPREPsysten\\templates\\solve.html",
+      "target": "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js",
+      "attributes": {
+        "relationship": "imports"
+      }
+    }
+  ]
+}

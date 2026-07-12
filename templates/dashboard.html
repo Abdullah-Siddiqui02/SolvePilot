@@ -109,10 +109,26 @@
                         <canvas id="progressChart" class="dashboard-modern-chart-canvas"></canvas>
                     </div>
                     <div class="dashboard-modern-mini-stats">
-                        <div><span>Total Solved</span><strong>{{ weekly_total }}</strong></div>
-                        <div><span>Easy</span><strong>{{ diff_stats["Easy"]["solved"] }}</strong></div>
-                        <div><span>Medium</span><strong>{{ diff_stats["Medium"]["solved"] }}</strong></div>
-                        <div><span>Hard</span><strong>{{ diff_stats["Hard"]["solved"] }}</strong></div>
+                        <div class="mini-stat-card total">
+                            <span class="mini-stat-badge">Total</span>
+                            <span>Total Solved</span>
+                            <strong>{{ weekly_total }}</strong>
+                        </div>
+                        <div class="mini-stat-card easy">
+                            <span class="mini-stat-badge">Easy</span>
+                            <span>Easy Solved</span>
+                            <strong>{{ diff_stats["Easy"]["solved"] }}</strong>
+                        </div>
+                        <div class="mini-stat-card medium">
+                            <span class="mini-stat-badge">Medium</span>
+                            <span>Medium Solved</span>
+                            <strong>{{ diff_stats["Medium"]["solved"] }}</strong>
+                        </div>
+                        <div class="mini-stat-card hard">
+                            <span class="mini-stat-badge">Hard</span>
+                            <span>Hard Solved</span>
+                            <strong>{{ diff_stats["Hard"]["solved"] }}</strong>
+                        </div>
                     </div>
                 </div>
 
@@ -288,12 +304,15 @@
         </div>
 
         <aside class="dashboard-modern-side">
-            <div class="dashboard-modern-card streak-card">
+            <div class="dashboard-modern-card streak-card {% if user_streak == 0 %}streak-inactive{% endif %}">
                 <div class="dashboard-modern-card-head">
                     <h3>Current Streak</h3>
                 </div>
                 <div class="dashboard-modern-streak">
                     <div class="streak-ring">
+                        {% if user_streak == 0 %}
+                        <div class="streak-empty-icon">⚡</div>
+                        {% endif %}
                         <strong>{{ user_streak }}</strong>
                         <span>Days</span>
                     </div>
@@ -305,6 +324,15 @@
                         </div>
                         {% endfor %}
                     </div>
+                    <p class="streak-motivation">
+                        {% if user_streak == 0 %}
+                        No active streak. Solve a problem today to start your coding streak! 🔥
+                        {% elif user_streak == 1 %}
+                        Streak started! Solve another problem tomorrow to keep the flame alive! 🚀
+                        {% else %}
+                        You're on fire! Keep it going! 🔥
+                        {% endif %}
+                    </p>
                 </div>
             </div>
 
