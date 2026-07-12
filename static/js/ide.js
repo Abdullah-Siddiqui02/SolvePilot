@@ -90,14 +90,67 @@ require(['vs/editor/editor.main'], function () {
         document.getElementById('ai-sidebar').classList.remove('active');
     });
 
-    // Custom Input Toggle Logic
+    // Synced Output/Stdin Tabs and Custom Input Checkbox
+    window.switchOutputTab = function(tabName) {
+        ensureConsoleExpanded();
+        document.querySelectorAll('.output-tab-btn').forEach(btn => btn.classList.remove('active'));
+        const consolePane = document.getElementById('console-pane');
+        const inputPane = document.getElementById('input-pane');
+        const checkCustomInput = document.getElementById('check-custom-input');
+
+        if (tabName === 'output') {
+            document.getElementById('tab-btn-output').classList.add('active');
+            if (consolePane) consolePane.style.display = 'block';
+            if (inputPane) inputPane.style.display = 'none';
+        } else {
+            document.getElementById('tab-btn-stdin').classList.add('active');
+            if (consolePane) consolePane.style.display = 'none';
+            if (inputPane) inputPane.style.display = 'block';
+            if (checkCustomInput) checkCustomInput.checked = true;
+        }
+    };
+
     const checkCustomInput = document.getElementById('check-custom-input');
-    const inputPane = document.getElementById('input-pane');
-    if (checkCustomInput && inputPane) {
+    if (checkCustomInput) {
         checkCustomInput.addEventListener('change', function() {
-            inputPane.style.display = this.checked ? 'block' : 'none';
+            if (this.checked) {
+                switchOutputTab('stdin');
+            } else {
+                switchOutputTab('output');
+            }
         });
     }
+
+    // Reset Code Logic
+    const btnReset = document.getElementById('btn-reset');
+    if (btnReset) {
+        btnReset.addEventListener('click', function() {
+            if (confirm("Are you sure you want to reset the editor to the default template? This will discard your current code.")) {
+                const langSelect = document.getElementById('language-select');
+                langSelect.dispatchEvent(new Event('change'));
+            }
+        });
+    }
+
+    // Problem Pane Tabs Logic
+    window.switchProblemTab = function(tabName) {
+        const descTab = document.getElementById('tab-btn-desc');
+        const listTab = document.getElementById('tab-btn-list');
+        const descPanel = document.getElementById('problem-desc-panel');
+        const listPanel = document.getElementById('problem-list-panel');
+
+        if (tabName === 'desc') {
+            if (descTab) descTab.classList.add('active');
+            if (listTab) listTab.classList.remove('active');
+            if (descPanel) descPanel.style.display = 'block';
+            if (listPanel) listPanel.style.display = 'none';
+        } else {
+            if (descTab) descTab.classList.remove('active');
+            if (listTab) listTab.classList.add('active');
+            if (descPanel) descPanel.style.display = 'none';
+            if (listPanel) listPanel.style.display = 'block';
+        }
+    };
 
     // Chat Logic
     const chatInput = document.getElementById('chat-input');
@@ -171,20 +224,123 @@ require(['vs/editor/editor.main'], function () {
     });
 });
 
+// Interactive execution state variables
+let currentInputs = [];
+let terminalHistory = "";
+let previousStdout = "";
+let isInteractiveMode = false;
 
-document.getElementById('btn-run').addEventListener('click', async function () {
-    const code = editor.getValue();
-    const language = document.getElementById('language-select').value;
-    const consolePane = document.getElementById('console-pane');
-    const checkCustomInput = document.getElementById('check-custom-input');
-    const customStdin = document.getElementById('custom-stdin');
+// Ensure output console is expanded
+function ensureConsoleExpanded() {
+    const outputPane = document.querySelector('.output-pane');
+    if (outputPane && outputPane.classList.contains('collapsed')) {
+        outputPane.classList.remove('collapsed');
+    }
+}
 
-    let stdin = "";
-    if (checkCustomInput && checkCustomInput.checked && customStdin) {
-        stdin = customStdin.value;
+// Append inline STDIN input prompt at the bottom of console results
+function appendInlineStdinPrompt(consolePane) {
+    if (!consolePane) return;
+    if (isInteractiveMode) return; // Skip if in interactive session
+    
+    // Check if inline prompt already exists in consolePane
+    const existingPrompt = consolePane.querySelector('.console-input-prompt');
+    if (existingPrompt) {
+        existingPrompt.remove();
     }
 
-    consolePane.innerHTML = '<div style="color: #aaa;">Running code...</div>';
+    const promptDiv = document.createElement('div');
+    promptDiv.className = 'console-input-prompt mt-3 p-2 d-flex align-items-end gap-2';
+    promptDiv.style.borderTop = '1px solid var(--surface-border)';
+    promptDiv.style.background = 'rgba(15, 23, 42, 0.3)';
+    promptDiv.style.borderRadius = '8px';
+
+    const customStdinVal = document.getElementById('custom-stdin')?.value || '';
+
+    promptDiv.innerHTML = `
+        <span style="font-size: 0.8rem; color: var(--text-secondary); padding-bottom: 6px; white-space: nowrap;">⌨ STDIN:</span>
+        <textarea id="console-inline-stdin" placeholder="Type input for next run (Enter to run, Shift+Enter for newline)..." style="flex: 1; background: transparent; border: none; color: #fff; font-size: 0.85rem; outline: none; resize: none; height: 32px; line-height: 1.4;" rows="1">${customStdinVal}</textarea>
+        <button id="btn-console-run" class="btn btn-sm btn-primary" style="font-size: 0.75rem; padding: 4px 10px; height: 30px; white-space: nowrap;">Run Code</button>
+    `;
+
+    consolePane.appendChild(promptDiv);
+    consolePane.scrollTop = consolePane.scrollHeight;
+
+    const textarea = document.getElementById('console-inline-stdin');
+    const runBtn = document.getElementById('btn-console-run');
+
+    const triggerReRun = () => {
+        const val = textarea.value;
+        const customStdin = document.getElementById('custom-stdin');
+        const checkCustomInput = document.getElementById('check-custom-input');
+        
+        if (customStdin) customStdin.value = val;
+        if (checkCustomInput) checkCustomInput.checked = true;
+
+        document.getElementById('btn-run').click();
+    };
+
+    if (textarea) {
+        textarea.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                triggerReRun();
+            }
+        });
+        
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight > 120 ? 120 : this.scrollHeight) + 'px';
+            consolePane.scrollTop = consolePane.scrollHeight;
+        });
+    }
+
+    if (runBtn) {
+        runBtn.addEventListener('click', triggerReRun);
+    }
+}
+
+// Render interactive terminal interface
+function renderInteractiveTerminal(consolePane, history, code, language) {
+    consolePane.innerHTML = `
+        <div class="status-info" style="color: var(--primary); font-weight: 600; margin-bottom: 8px;">Status: Waiting for Input...</div>
+        <div class="terminal-mock font-monospace p-3" style="background: #090d16; border: 1px solid var(--surface-border); border-radius: 6px; font-size: 0.9rem; line-height: 1.5; color: #f8fafc; overflow-y: auto; max-height: 240px; white-space: pre-wrap; word-wrap: break-word;">
+<span id="terminal-history-text">${history.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>
+<div class="terminal-input-line d-flex align-items-center" style="margin: 0; padding: 0;">
+<input type="text" id="terminal-active-input" style="flex: 1; background: transparent; border: none; color: #38bdf8; outline: none; font-family: inherit; font-size: inherit; padding: 0; margin: 0;" autofocus autocomplete="off">
+</div></div>
+        <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 6px;">Press Enter to submit input to program.</div>
+    `;
+
+    const inputField = document.getElementById('terminal-active-input');
+    if (inputField) {
+        inputField.focus();
+        
+        inputField.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const val = inputField.value;
+                inputField.disabled = true;
+                
+                terminalHistory += val + '\n';
+                currentInputs.push(val);
+
+                executeCodeStep(code, language);
+            }
+        });
+
+        const terminalMock = consolePane.querySelector('.terminal-mock');
+        if (terminalMock) {
+            terminalMock.addEventListener('click', () => {
+                inputField.focus();
+            });
+        }
+    }
+}
+
+// Interactive execution step-by-step executor
+async function executeCodeStep(code, language) {
+    const consolePane = document.getElementById('console-pane');
+    const stdin = currentInputs.join('\n');
 
     try {
         const response = await fetch('/api/execute', {
@@ -201,34 +357,90 @@ document.getElementById('btn-run').addEventListener('click', async function () {
             const isServerBusy = data.error.includes('temporarily busy') || response.status === 503;
             if (isServerBusy) {
                 consolePane.innerHTML = `<div style="color: #FFC107; font-weight: bold;">⏳ Server Busy</div>
-                    <div style="color: #FFC107; margin-top: 8px;">${data.error}</div>
-                    <div style="color: #888; margin-top: 5px; font-size: 0.9em;">This is not a problem with your code. The execution server is overloaded — just try again.</div>`;
+                    <div style="color: #FFC107; margin-top: 8px;">${data.error}</div>`;
             } else {
                 consolePane.innerHTML = `<div class="status-error">${data.error}</div>`;
-                if (data.details) {
-                    consolePane.innerHTML += `<div class="status-error">${data.details}</div>`;
-                }
             }
+            isInteractiveMode = false;
             return;
         }
 
-        let outputHtml = `<div class="${data.status === 'Success' ? 'status-success' : 'status-error'}">Status: ${data.status}</div>`;
+        const isEOFError = data.stderr && (
+            data.stderr.includes("EOFError") || 
+            data.stderr.includes("NoSuchElementException") || 
+            data.stderr.includes("EOF when reading a line")
+        );
 
-        if (data.output) {
-            outputHtml += `<pre style="margin-top: 10px; white-space: pre-wrap; word-wrap: break-word;">${data.output.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
+        const stdoutVal = data.output || "";
+        let newStdout = "";
+        if (stdoutVal.startsWith(previousStdout)) {
+            newStdout = stdoutVal.substring(previousStdout.length);
+        } else {
+            newStdout = stdoutVal;
         }
-        if (data.stderr) {
-            outputHtml += `<pre class="status-error" style="margin-top: 10px; white-space: pre-wrap; word-wrap: break-word;">${data.stderr.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
-        }
+        previousStdout = stdoutVal;
 
-        consolePane.innerHTML = outputHtml;
+        terminalHistory += newStdout;
+
+        if (isEOFError) {
+            isInteractiveMode = true;
+            renderInteractiveTerminal(consolePane, terminalHistory, code, language);
+        } else {
+            isInteractiveMode = false;
+            let outputHtml = `<div class="${data.status === 'Success' ? 'status-success' : 'status-error'}">Status: ${data.status}</div>`;
+            outputHtml += `<pre class="terminal-output mt-2 p-3" style="background: #090d16; border: 1px solid var(--surface-border); border-radius: 6px; font-family: monospace; white-space: pre-wrap; word-wrap: break-word; color: #f8fafc; line-height: 1.5; max-height: 240px; overflow-y: auto;">${terminalHistory.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
+            
+            if (data.stderr && !isEOFError) {
+                outputHtml += `<pre class="status-error mt-2" style="white-space: pre-wrap; word-wrap: break-word;">${data.stderr.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
+            }
+
+            consolePane.innerHTML = outputHtml;
+        }
 
     } catch (err) {
-        consolePane.innerHTML = `<div class="status-error">Request failed: ${err.message}</div>`;
+        consolePane.innerHTML = `<div class="status-error">Execution failed: ${err.message}</div>`;
+        isInteractiveMode = false;
+    } finally {
+        appendInlineStdinPrompt(consolePane);
+    }
+}
+
+// Toggle console panel collapse state
+document.addEventListener('DOMContentLoaded', () => {
+    const btnToggleConsole = document.getElementById('btn-toggle-console');
+    const outputPane = document.querySelector('.output-pane');
+    if (btnToggleConsole && outputPane) {
+        btnToggleConsole.addEventListener('click', () => {
+            outputPane.classList.toggle('collapsed');
+        });
     }
 });
 
+
+document.getElementById('btn-run').addEventListener('click', async function () {
+    ensureConsoleExpanded();
+    const code = editor.getValue();
+    const language = document.getElementById('language-select').value;
+    const consolePane = document.getElementById('console-pane');
+    const checkCustomInput = document.getElementById('check-custom-input');
+    const customStdin = document.getElementById('custom-stdin');
+
+    currentInputs = [];
+    terminalHistory = "";
+    previousStdout = "";
+    isInteractiveMode = false;
+
+    if (checkCustomInput && checkCustomInput.checked && customStdin && customStdin.value.trim()) {
+        currentInputs = customStdin.value.split('\n');
+    }
+
+    consolePane.innerHTML = '<div style="color: #aaa;">Running code...</div>';
+    
+    executeCodeStep(code, language);
+});
+
 document.getElementById('btn-submit').addEventListener('click', async function () {
+    ensureConsoleExpanded();
     const code = editor.getValue();
     const language = document.getElementById('language-select').value;
     const consolePane = document.getElementById('console-pane');
@@ -286,6 +498,8 @@ document.getElementById('btn-submit').addEventListener('click', async function (
 
     } catch (err) {
         consolePane.innerHTML = `<div class="status-error">Submission failed: ${err.message}</div>`;
+    } finally {
+        appendInlineStdinPrompt(consolePane);
     }
 });
 
@@ -432,10 +646,14 @@ async function showProblemDetails(problemId) {
     window.currentProblemId = problemId; // Store for submission
     let p = globalProblems[problemId];
     
+    // Hide empty state and show details container
+    const emptyState = document.getElementById('active-problem-empty');
+    if (emptyState) emptyState.style.display = 'none';
+    const detailsPane = document.getElementById('active-problem-details');
+    if (detailsPane) detailsPane.style.display = 'block';
+    
     // If description is missing, fetch full details
     if (!p || !p.description) {
-        const detailsPane = document.getElementById('active-problem-details');
-        detailsPane.style.display = 'block';
         document.getElementById('detail-title').innerText = "Loading details...";
         document.getElementById('detail-description').innerText = "";
 
@@ -461,6 +679,23 @@ async function showProblemDetails(problemId) {
     `;
     document.getElementById('detail-description').innerText = p.description || "No description available.";
 
+    // Render tags
+    const tagsContainer = document.getElementById('detail-tags');
+    if (tagsContainer) {
+        tagsContainer.innerHTML = '';
+        if (p.tags) {
+            const tagsList = p.tags.split(',');
+            tagsList.forEach(t => {
+                if (t.trim()) {
+                    const span = document.createElement('span');
+                    span.className = 'tag-pill';
+                    span.innerText = t.trim();
+                    tagsContainer.appendChild(span);
+                }
+            });
+        }
+    }
+
     // Handle Samples
     const samplesContainer = document.getElementById('samples-container');
     const samplesContent = document.getElementById('detail-samples');
@@ -479,9 +714,120 @@ async function showProblemDetails(problemId) {
     if (window.MathJax && window.MathJax.typesetPromise) {
         window.MathJax.typesetPromise();
     }
+
+    // Switch to description tab when details are shown
+    if (typeof switchProblemTab === 'function') {
+        switchProblemTab('desc');
+    }
 }
 
 // Initial load
 window.addEventListener('DOMContentLoaded', () => {
-    loadMyCollection(); // This will trigger loadProblems after fetching solved IDs
+    loadMyCollection().then(() => {
+        if (typeof ACTIVE_PROBLEM_ID !== 'undefined' && ACTIVE_PROBLEM_ID) {
+            showProblemDetails(ACTIVE_PROBLEM_ID);
+        } else {
+            if (typeof switchProblemTab === 'function') {
+                switchProblemTab('list');
+            }
+        }
+    });
+
+    // Initialize resizer dragging behavior
+    const resizer = document.getElementById('console-resizer');
+    const outputPane = document.querySelector('.output-pane');
+    const editorPane = document.querySelector('.editor-pane');
+
+    if (resizer && outputPane && editorPane) {
+        // Shared drag start logic
+        const startDrag = () => {
+            resizer.classList.add('dragging');
+            outputPane.classList.add('no-transition');
+
+            // If output pane is collapsed, temporarily uncollapse it so it starts resizing from its header height
+            if (outputPane.classList.contains('collapsed')) {
+                outputPane.classList.remove('collapsed');
+                outputPane.style.height = '44px';
+                outputPane.style.flex = '0 0 44px';
+            }
+        };
+
+        // Shared move calculation logic
+        const dragMove = (clientY, startY, startHeight, totalHeight) => {
+            const deltaY = clientY - startY;
+            let newHeight = startHeight - deltaY;
+
+            const minHeight = 44; // Tab header height
+            const maxHeight = totalHeight - 150; // At least 150px space for editor
+
+            if (newHeight < minHeight) newHeight = minHeight;
+            if (newHeight > maxHeight) newHeight = maxHeight;
+
+            outputPane.style.height = `${newHeight}px`;
+            outputPane.style.flex = `0 0 ${newHeight}px`;
+
+            // Let Monaco layout trigger if automaticLayout doesn't catch it instantly
+            if (window.editor) {
+                window.editor.layout();
+            }
+        };
+
+        // Shared drag end logic
+        const endDrag = () => {
+            resizer.classList.remove('dragging');
+            outputPane.classList.remove('no-transition');
+
+            // If user dragged it to minimum height, snap it to collapsed state
+            if (outputPane.offsetHeight <= 46) {
+                outputPane.classList.add('collapsed');
+                outputPane.style.height = '';
+                outputPane.style.flex = '';
+            }
+        };
+
+        // Mouse Events
+        resizer.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            startDrag();
+
+            const startY = e.clientY;
+            const startHeight = outputPane.offsetHeight;
+            const totalHeight = editorPane.offsetHeight;
+
+            const onMouseMove = (moveEvent) => {
+                dragMove(moveEvent.clientY, startY, startHeight, totalHeight);
+            };
+
+            const onMouseUp = () => {
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+                endDrag();
+            };
+
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+        });
+
+        // Touch Events
+        resizer.addEventListener('touchstart', (e) => {
+            startDrag();
+
+            const startY = e.touches[0].clientY;
+            const startHeight = outputPane.offsetHeight;
+            const totalHeight = editorPane.offsetHeight;
+
+            const onTouchMove = (moveEvent) => {
+                dragMove(moveEvent.touches[0].clientY, startY, startHeight, totalHeight);
+            };
+
+            const onTouchEnd = () => {
+                document.removeEventListener('touchmove', onTouchMove);
+                document.removeEventListener('touchend', onTouchEnd);
+                endDrag();
+            };
+
+            document.addEventListener('touchmove', onTouchMove);
+            document.addEventListener('touchend', onTouchEnd);
+        });
+    }
 });
