@@ -10,7 +10,6 @@ def create_app():
 
     # Register all route blueprints
     register_blueprints(app)
-
     return app
 
 
