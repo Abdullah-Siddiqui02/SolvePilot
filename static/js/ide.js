@@ -1,6 +1,7 @@
 let editor;
 let globalProblems = {}; // Store descriptions
 let solvedProblemIds = new Set();
+let codeHasRun = false;
 
 require(['vs/editor/editor.main'], function () {
     editor = monaco.editor.create(document.getElementById('editor'), {
@@ -81,14 +82,153 @@ require(['vs/editor/editor.main'], function () {
         e.target.value = ""; // Reset
     });
 
-    // AI Sidebar Toggle
-    document.getElementById('btn-ask-ai').addEventListener('click', () => {
-        document.getElementById('ai-sidebar').classList.add('active');
-    });
+    // AI Mentor Pane Toggle & Content Populate Logic
+    const dummySolutions = {
+        python: `def twoSum(nums, target):
+    seen = {}
+    for i, num in enumerate(nums):
+        complement = target - num
+        if complement in seen:
+            return [seen[complement], i]
+        seen[num] = i
+    return []`,
+        cpp: `#include <vector>
+#include <unordered_map>
 
-    document.getElementById('close-ai').addEventListener('click', () => {
-        document.getElementById('ai-sidebar').classList.remove('active');
-    });
+class Solution {
+public:
+    std::vector<int> twoSum(std::vector<int>& nums, int target) {
+        std::unordered_map<int, int> seen;
+        for (int i = 0; i < nums.size(); ++i) {
+            int complement = target - nums[i];
+            if (seen.find(complement) != seen.end()) {
+                return {seen[complement], i};
+            }
+            seen[nums[i]] = i;
+        }
+        return {};
+    }
+};`,
+        java: `import java.util.HashMap;
+import java.util.Map;
+
+class Solution {
+    public int[] twoSum(int[] nums, int target) {
+        Map<Integer, Integer> seen = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            int complement = target - nums[i];
+            if (seen.containsKey(complement)) {
+                return new int[] { seen.get(complement), i };
+            }
+            seen.put(nums[i], i);
+        }
+        return new int[] {};
+    }
+}`,
+        javascript: `function twoSum(nums, target) {
+    const seen = new Map();
+    for (let i = 0; i < nums.length; i++) {
+        const complement = target - nums[i];
+        if (seen.has(complement)) {
+            return [seen.get(complement), i];
+        }
+        seen.set(nums[i], i);
+    }
+    return [];
+}`
+    };
+
+    const mentorPane = document.getElementById('mentor-pane');
+    const mentorPlaceholder = document.getElementById('mentor-placeholder');
+    const mentorFeedback = document.getElementById('mentor-feedback-content');
+    const optCodeBlock = document.getElementById('opt-code-block');
+    const optCodeLang = document.getElementById('opt-code-lang');
+
+    // Toggle Mentor Panel Function
+    const toggleMentorPane = (show = true) => {
+        if (show) {
+            mentorPane.style.display = 'flex';
+        } else {
+            mentorPane.style.display = 'none';
+        }
+        if (window.editor) {
+            window.editor.layout();
+        }
+    };
+
+    // Ask Mentor Button Handler
+    const btnAskMentor = document.getElementById('btn-ask-mentor');
+    if (btnAskMentor) {
+        btnAskMentor.addEventListener('click', () => {
+            toggleMentorPane(true);
+
+            if (codeHasRun) {
+                // Show feedback content, hide placeholder
+                mentorPlaceholder.style.display = 'none';
+                mentorFeedback.style.display = 'block';
+
+                // Populate code snippet based on selected language
+                const selectedLang = document.getElementById('language-select').value;
+                const formattedLang = selectedLang === 'cpp' ? 'cpp' : (selectedLang === 'javascript' ? 'javascript' : selectedLang);
+                optCodeLang.innerText = formattedLang;
+                optCodeBlock.innerText = dummySolutions[formattedLang] || dummySolutions['python'];
+                
+                // Reset Hint card revealed state
+                const hintCard = document.getElementById('mentor-hint-card');
+                if (hintCard) {
+                    hintCard.classList.remove('revealed');
+                }
+
+                // Staggered card animation reset by re-applying active animations
+                const cards = mentorFeedback.querySelectorAll('.mentor-card');
+                cards.forEach(card => {
+                    const originalDelay = card.style.animationDelay;
+                    card.style.animation = 'none';
+                    card.offsetHeight; // Trigger reflow to restart animation
+                    card.style.animation = '';
+                    card.style.animationDelay = originalDelay;
+                });
+            } else {
+                // Show placeholder content, hide feedback
+                mentorPlaceholder.style.display = 'flex';
+                mentorFeedback.style.display = 'none';
+            }
+        });
+    }
+
+    // Close Mentor Button Handler
+    const btnCloseMentor = document.getElementById('close-mentor');
+    if (btnCloseMentor) {
+        btnCloseMentor.addEventListener('click', () => {
+            toggleMentorPane(false);
+        });
+    }
+
+    // Hint Reveal Card Click Handler
+    const hintCard = document.getElementById('mentor-hint-card');
+    if (hintCard) {
+        hintCard.addEventListener('click', function() {
+            this.classList.add('revealed');
+        });
+    }
+
+    // Copy Code Button Click Handler
+    const btnCopyOptCode = document.getElementById('btn-copy-opt-code');
+    if (btnCopyOptCode) {
+        btnCopyOptCode.addEventListener('click', (e) => {
+            e.stopPropagation(); // prevent card container events
+            const codeText = optCodeBlock.innerText;
+            navigator.clipboard.writeText(codeText).then(() => {
+                const originalText = btnCopyOptCode.innerHTML;
+                btnCopyOptCode.innerHTML = '✅ Copied!';
+                setTimeout(() => {
+                    btnCopyOptCode.innerHTML = originalText;
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy code: ', err);
+            });
+        });
+    }
 
     // Synced Output/Stdin Tabs and Custom Input Checkbox
     window.switchOutputTab = function(tabName) {
@@ -418,6 +558,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 document.getElementById('btn-run').addEventListener('click', async function () {
+    codeHasRun = true;
     ensureConsoleExpanded();
     const code = editor.getValue();
     const language = document.getElementById('language-select').value;
@@ -440,6 +581,7 @@ document.getElementById('btn-run').addEventListener('click', async function () {
 });
 
 document.getElementById('btn-submit').addEventListener('click', async function () {
+    codeHasRun = true;
     ensureConsoleExpanded();
     const code = editor.getValue();
     const language = document.getElementById('language-select').value;
