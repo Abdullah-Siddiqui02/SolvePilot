@@ -304,7 +304,7 @@ function appendInlineStdinPrompt(consolePane) {
 function renderInteractiveTerminal(consolePane, history, code, language) {
     consolePane.innerHTML = `
         <div class="status-info" style="color: var(--primary); font-weight: 600; margin-bottom: 8px;">Status: Waiting for Input...</div>
-        <div class="terminal-mock font-monospace p-3" style="background: #090d16; border: 1px solid var(--surface-border); border-radius: 6px; font-size: 0.9rem; line-height: 1.5; color: #f8fafc; overflow-y: auto; max-height: 240px; white-space: pre-wrap; word-wrap: break-word;">
+        <div class="terminal-mock font-monospace p-3" style="background: rgba(9, 13, 22, 0.9); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; font-size: 0.88rem; line-height: 1.6; color: #f8fafc; overflow-y: auto; max-height: 240px; white-space: pre-wrap; word-wrap: break-word; font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;">
 <span id="terminal-history-text">${history.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>
 <div class="terminal-input-line d-flex align-items-center" style="margin: 0; padding: 0;">
 <input type="text" id="terminal-active-input" style="flex: 1; background: transparent; border: none; color: #38bdf8; outline: none; font-family: inherit; font-size: inherit; padding: 0; margin: 0;" autofocus autocomplete="off">
@@ -388,10 +388,10 @@ async function executeCodeStep(code, language) {
         } else {
             isInteractiveMode = false;
             let outputHtml = `<div class="${data.status === 'Success' ? 'status-success' : 'status-error'}">Status: ${data.status}</div>`;
-            outputHtml += `<pre class="terminal-output mt-2 p-3" style="background: #090d16; border: 1px solid var(--surface-border); border-radius: 6px; font-family: monospace; white-space: pre-wrap; word-wrap: break-word; color: #f8fafc; line-height: 1.5; max-height: 240px; overflow-y: auto;">${terminalHistory.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
+            outputHtml += `<pre class="terminal-output mt-2 p-3" style="background: rgba(9, 13, 22, 0.9); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace; white-space: pre-wrap; word-wrap: break-word; color: #cbd5e1; line-height: 1.6; max-height: 240px; overflow-y: auto;">${terminalHistory.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
             
             if (data.stderr && !isEOFError) {
-                outputHtml += `<pre class="status-error mt-2" style="white-space: pre-wrap; word-wrap: break-word;">${data.stderr.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
+                outputHtml += `<pre class="status-error mt-2" style="white-space: pre-wrap; word-wrap: break-word; background-color: rgba(239, 68, 68, 0.04); border: 1px dashed rgba(239, 68, 68, 0.2); color: #fca5a5; padding: 12px 16px; font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 0.85rem; border-radius: 8px;">${data.stderr.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
             }
 
             consolePane.innerHTML = outputHtml;
@@ -474,20 +474,20 @@ document.getElementById('btn-submit').addEventListener('click', async function (
 
         // Handle server busy status
         if (data.status === 'Server Busy') {
-            consolePane.innerHTML = `<div style="color: #FFC107; font-weight: bold;">⏳ Server Busy</div>
-                <div style="color: #FFC107; margin-top: 8px;">${data.message}</div>
-                <div style="color: #888; margin-top: 5px; font-size: 0.9em;">This is not a problem with your code. The execution server is overloaded — just try again.</div>`;
+            consolePane.innerHTML = `<div class="status-error" style="color: #fb923c !important; background: rgba(251, 146, 60, 0.08); border: 1px solid rgba(251, 146, 60, 0.2); display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 8px; font-weight: 600;">⏳ Server Busy</div>
+                <div style="color: #fb923c; margin-top: 8px; font-weight: 600; font-size: 0.95rem;">${data.message}</div>
+                <div style="color: var(--text-secondary); margin-top: 6px; font-size: 0.85rem; line-height: 1.5;">This is not a problem with your code. The execution server is overloaded — just try again.</div>`;
             return;
         }
 
         let outputHtml = `<div class="${data.status === 'Accepted' ? 'status-success' : 'status-error'}">Submission Status: ${data.status}</div>`;
-        outputHtml += `<div style="margin-top: 5px; font-weight: bold; color: ${data.status === 'Accepted' ? '#4CAF50' : '#f44336'}">${data.message}</div>`;
+        outputHtml += `<div style="margin-top: 8px; font-weight: 600; color: ${data.status === 'Accepted' ? '#10b981' : '#f87171'}; font-size: 0.95rem;">${data.message}</div>`;
 
         if (data.output) {
-            outputHtml += `<pre style="margin-top: 10px; white-space: pre-wrap; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px;">${data.output}</pre>`;
+            outputHtml += `<pre style="margin-top: 12px; white-space: pre-wrap; background: rgba(9, 13, 22, 0.6); border: 1px solid rgba(255, 255, 255, 0.06); padding: 14px; border-radius: 10px; color: #cbd5e1; font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 0.88rem; line-height: 1.6;">${data.output}</pre>`;
         }
         if (data.stderr) {
-            outputHtml += `<pre class="status-error" style="margin-top: 10px; white-space: pre-wrap;">${data.stderr}</pre>`;
+            outputHtml += `<pre class="status-error" style="margin-top: 12px; white-space: pre-wrap; background-color: rgba(239, 68, 68, 0.04); border: 1px dashed rgba(239, 68, 68, 0.2); color: #fca5a5; padding: 12px 16px; font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 0.85rem; border-radius: 8px;">${data.stderr}</pre>`;
         }
 
         consolePane.innerHTML = outputHtml;
