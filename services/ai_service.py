@@ -1,6 +1,8 @@
 import os
 from typing import Dict, Any, List, Optional
 from abc import ABC, abstractmethod
+from services.prompt_builder import PromptBuilder
+
 
 # Gracefully import database and AI clients from extensions
 try:
@@ -343,6 +345,16 @@ class GroqProvider(BaseAIProvider):
     """Groq AI Provider."""
 
     def get_mentor_feedback(self, context: Dict[str, Any]) -> Dict[str, Any]:
+        # Generate the prompts to demonstrate PromptBuilder usage
+        system_prompt = PromptBuilder.build_mentor_system_prompt()
+        user_prompt = PromptBuilder.build_mentor_user_prompt(context)
+
+        # (In the future, we would call the Groq client here with these prompts)
+        # messages = [
+        #     {"role": "system", "content": system_prompt},
+        #     {"role": "user", "content": user_prompt}
+        # ]
+
         # Return dummy feedback for now (placeholder implementation)
         return DummyProvider().get_mentor_feedback(context)
 
@@ -358,41 +370,18 @@ class GroqProvider(BaseAIProvider):
         if not groq_client:
             raise RuntimeError("Groq client is not initialized.")
 
-        system_instructions = f"""You are 'SolvePilot AI', an expert coding mentor. Your goal is to help students learn and improve.
+        # Build prompt messages dynamically using PromptBuilder
+        system_prompt = PromptBuilder.build_chat_system_prompt(problem_title, problem_desc)
+        user_prompt = PromptBuilder.build_chat_user_prompt(code, language, user_query)
 
-CAPABILITIES:
-- Provide HINTS and EXPLANATIONS for logic issues.
-- Provide LINE-BY-LINE EXPLANATIONS of code if requested.
-- Suggest BETTER/OPTIMIZED SOLUTIONS if the student asks for improvements.
-- Identify syntax or logical errors clearly.
-
-CONTEXT:
-Problem Title: {problem_title}
-Problem Description: {problem_desc}
-
-GUIDELINES:
-- Be encouraging and helpful.
-- DO NOT just give the full solution immediately unless they are very stuck; prioritize teaching.
-- Use Markdown for code snippets and formatting.
-- Keep responses focused and readable.
-"""
-
-        user_content = f"""STUDENT'S CURRENT CODE ({language}):
-```
-{code}
-```
-
-STUDENT'S QUESTION:
-{user_query}"""
-
-        messages = [{"role": "system", "content": system_instructions}]
+        messages = [{"role": "system", "content": system_prompt}]
 
         # Add historical messages (max last 10)
         for msg in chat_history[-10:]:
             messages.append({"role": msg["role"], "content": msg["content"]})
 
         # Add current user message
-        messages.append({"role": "user", "content": user_content})
+        messages.append({"role": "user", "content": user_prompt})
 
         completion = groq_client.chat.completions.create(
             model="llama-3.3-70b-versatile",
@@ -407,6 +396,10 @@ class GeminiProvider(BaseAIProvider):
     """Gemini AI Provider (Placeholder)."""
 
     def get_mentor_feedback(self, context: Dict[str, Any]) -> Dict[str, Any]:
+        # Generate the prompts to demonstrate PromptBuilder usage
+        system_prompt = PromptBuilder.build_mentor_system_prompt()
+        user_prompt = PromptBuilder.build_mentor_user_prompt(context)
+
         # Return dummy feedback for now (placeholder implementation)
         return DummyProvider().get_mentor_feedback(context)
 
@@ -431,6 +424,10 @@ class OpenAIProvider(BaseAIProvider):
     """OpenAI AI Provider (Placeholder)."""
 
     def get_mentor_feedback(self, context: Dict[str, Any]) -> Dict[str, Any]:
+        # Generate the prompts to demonstrate PromptBuilder usage
+        system_prompt = PromptBuilder.build_mentor_system_prompt()
+        user_prompt = PromptBuilder.build_mentor_user_prompt(context)
+
         # Return dummy feedback for now (placeholder implementation)
         return DummyProvider().get_mentor_feedback(context)
 
