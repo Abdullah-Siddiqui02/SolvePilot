@@ -920,6 +920,386 @@
             box-shadow: 0 6px 16px rgba(56, 189, 248, 0.35);
         }
 
+        /* AI Mentor Pane Styles */
+        .mentor-pane {
+            flex: 1.1;
+            min-width: 340px;
+            max-width: 440px;
+            background: rgba(15, 23, 42, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .mentor-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(15, 23, 42, 0.3);
+        }
+
+        .mentor-header h5 {
+            font-family: var(--font-heading);
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+        }
+
+        .mentor-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* Placeholder State Styling */
+        .mentor-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+            padding: 24px;
+            color: var(--text-secondary);
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .mentor-placeholder-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--blob-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: floatIcon 3s infinite ease-in-out;
+        }
+
+        @keyframes floatIcon {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .mentor-placeholder h5 {
+            color: #fff;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .mentor-placeholder p {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            max-width: 260px;
+        }
+
+        /* Mentor Cards & Staggered Animations */
+        .mentor-card {
+            background: rgba(30, 41, 59, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.25s ease;
+            opacity: 0;
+            animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .mentor-card:hover {
+            background: rgba(30, 41, 59, 0.35);
+            border-color: rgba(56, 189, 248, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .mentor-card-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--primary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .mentor-card-content {
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+
+        /* Compilation Status Styling */
+        .compilation-card {
+            background: rgba(16, 185, 129, 0.04);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+        }
+
+        .compilation-card:hover {
+            border-color: rgba(16, 185, 129, 0.3);
+            background: rgba(16, 185, 129, 0.08);
+        }
+
+        .compilation-success-title {
+            color: #10b981;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Interactive Hint Card */
+        .hint-card {
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hint-blur-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .hint-card.revealed .hint-blur-overlay {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Complexity Pills */
+        .complexity-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .complexity-badge {
+            flex: 1;
+            min-width: 120px;
+            background: rgba(139, 92, 246, 0.08);
+            border: 1px solid rgba(139, 92, 246, 0.15);
+            border-radius: 8px;
+            padding: 10px 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            transition: all 0.25s ease;
+        }
+
+        .complexity-badge:hover {
+            border-color: rgba(139, 92, 246, 0.3);
+            background: rgba(139, 92, 246, 0.12);
+        }
+
+        .complexity-badge .lbl {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #a78bfa;
+        }
+
+        .complexity-badge .val {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Edge Cases List */
+        .edge-cases-list {
+            margin: 0;
+            padding-left: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .edge-cases-list li {
+            font-size: 0.88rem;
+            color: #cbd5e1;
+        }
+
+        /* Code Block Container */
+        .optimized-code-container {
+            position: relative;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+
+        .optimized-code-header {
+            padding: 8px 12px;
+            background: rgba(9, 13, 22, 0.4);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang-tag {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            font-family: monospace;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .btn-copy-code {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-copy-code:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .optimized-code-block {
+            margin: 0;
+            padding: 12px;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.82rem;
+            color: #e2e8f0;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.5;
+            background: transparent;
+        }
+        /* Mentor Loading State */
+        .mentor-loader {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            gap: 16px;
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .mentor-spinner {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.08);
+            border-top-color: var(--primary);
+            animation: mentorSpin 0.8s linear infinite;
+        }
+
+        .mentor-loader p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        @keyframes mentorSpin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Mentor Error State */
+        .mentor-error {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            gap: 12px;
+            text-align: center;
+            padding: 24px;
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .mentor-error-icon {
+            font-size: 2.2rem;
+        }
+
+        .mentor-error p {
+            font-size: 0.9rem;
+            color: #fca5a5;
+            max-width: 260px;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .btn-mentor-retry {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-mentor-retry:hover {
+            background: rgba(56, 189, 248, 0.18);
+            border-color: rgba(56, 189, 248, 0.4);
+        }
+
+        /* Slide animations */
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(24px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         /* Responsive Rules */
         @media (max-width: 992px) {
             body {
@@ -951,6 +1331,12 @@
                 min-height: 250px;
                 max-height: none;
                 flex: none;
+            }
+            .mentor-pane {
+                width: 100%;
+                min-height: 400px;
+                flex: none;
+                margin-top: 12px;
             }
             #ai-sidebar {
                 width: 100% !important;
@@ -1067,7 +1453,7 @@
                     <div class="toolbar-controls">
                         <button id="btn-run" class="btn-toolbar btn-run-code">⚡ Run Code</button>
                         <button id="btn-submit" class="btn-toolbar btn-submit-code">🚀 Submit Solution</button>
-                        <button id="btn-ask-ai" class="btn-toolbar btn-ai-ask">✨ Ask AI</button>
+                        <button id="btn-ask-mentor" class="btn-toolbar btn-ai-ask">✨ Ask Mentor</button>
                     </div>
                 </div>
                 
@@ -1109,6 +1495,118 @@
                 </div>
             </div>
 
+        </div>
+
+        <!-- Right Panel: AI Mentor Workspace -->
+        <div class="panel mentor-pane" id="mentor-pane" style="display: none;">
+            <div class="mentor-header">
+                <h5>✨ AI Mentor Guidance</h5>
+                <button class="btn-close btn-close-white" id="close-mentor" title="Close AI Mentor Panel"></button>
+            </div>
+            
+            <div class="mentor-body" id="mentor-body">
+                <!-- Initial State: Placeholder Message -->
+                <div class="mentor-placeholder" id="mentor-placeholder">
+                    <div class="mentor-placeholder-icon">🤖</div>
+                    <h5>AI Mentor Guidance</h5>
+                    <p>Run your code and click 'Ask Mentor' to receive AI guidance.</p>
+                </div>
+                
+                <!-- Feedback Content State (initially hidden) -->
+                <div id="mentor-feedback-content" style="display: none;">
+                    <div class="d-flex flex-column gap-3">
+                        
+                        <!-- Compilation Status -->
+                        <div class="mentor-card compilation-card" style="animation-delay: 0.05s;">
+                            <div class="compilation-success-title">
+                                🟢 Compilation: Success
+                            </div>
+                        </div>
+
+                        <!-- Approach Explanation -->
+                        <div class="mentor-card" style="animation-delay: 0.15s;">
+                            <div class="mentor-card-title">
+                                💡 Approach Explanation
+                            </div>
+                            <div class="mentor-card-content" id="mentor-explanation">
+                                Using a Hash Map to keep track of the complement values and their indices. This allows us to resolve the target sum in a single linear pass instead of nested loops.
+                            </div>
+                        </div>
+
+                        <!-- Hint (Interactive blur-to-reveal) -->
+                        <div class="mentor-card hint-card" id="mentor-hint-card" style="animation-delay: 0.25s;">
+                            <div class="hint-blur-overlay" id="hint-overlay">
+                                🔑 Click to Reveal Mentor Hint
+                            </div>
+                            <div class="mentor-card-title">
+                                🔑 Mentor Hint
+                            </div>
+                            <div class="mentor-card-content" id="mentor-hint">
+                                Try to store the numbers you have seen so far in a hash map along with their indices. For each number, check if `target - num` already exists in the map.
+                            </div>
+                        </div>
+
+                        <!-- Code Review -->
+                        <div class="mentor-card" style="animation-delay: 0.35s;">
+                            <div class="mentor-card-title">
+                                🔍 Code Review
+                            </div>
+                            <div class="mentor-card-content" id="mentor-review">
+                                Your current implementation is optimal! It correctly handles complement checking in O(N) time and space. Make sure to consider edge cases where array sizes are small.
+                            </div>
+                        </div>
+
+                        <!-- Complexity Analysis -->
+                        <div class="mentor-card" style="animation-delay: 0.45s;">
+                            <div class="mentor-card-title">
+                                📊 Complexity Analysis
+                            </div>
+                            <div class="complexity-row">
+                                <div class="complexity-badge">
+                                    <span class="lbl">Time Complexity</span>
+                                    <span class="val" id="complexity-time">O(N)</span>
+                                </div>
+                                <div class="complexity-badge">
+                                    <span class="lbl">Space Complexity</span>
+                                    <span class="val" id="complexity-space">O(N)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Edge Cases -->
+                        <div class="mentor-card" style="animation-delay: 0.55s;">
+                            <div class="mentor-card-title">
+                                ⚠️ Edge Cases to Consider
+                            </div>
+                            <div class="mentor-card-content">
+                                <ul class="edge-cases-list" id="mentor-edge-cases">
+                                    <li>Input array with fewer than 2 elements.</li>
+                                    <li>Array containing negative numbers and zero.</li>
+                                    <li>No two elements sum up to the target.</li>
+                                    <li>Duplicate values present in the array.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Optimized Code -->
+                        <div class="mentor-card" style="animation-delay: 0.65s;">
+                            <div class="mentor-card-title">
+                                🚀 Optimized Solution
+                            </div>
+                            <div class="optimized-code-container">
+                                <div class="optimized-code-header">
+                                    <span class="code-lang-tag" id="opt-code-lang">python</span>
+                                    <button class="btn-copy-code" id="btn-copy-opt-code">
+                                        📋 Copy Code
+                                    </button>
+                                </div>
+                                <pre class="optimized-code-block" id="opt-code-block"></pre>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
