@@ -94,7 +94,7 @@ require(['vs/editor/editor.main'], function () {
     // Toggle Mentor Panel visibility & re-layout editor
     const toggleMentorPane = (show = true) => {
         mentorPane.style.display = show ? 'flex' : 'none';
-        if (window.editor) window.editor.layout();
+        if (editor && typeof editor.layout === 'function') editor.layout();
     };
 
     // ── Loading State ──
@@ -1050,8 +1050,8 @@ window.addEventListener('DOMContentLoaded', () => {
             outputPane.style.flex = `0 0 ${newHeight}px`;
 
             // Let Monaco layout trigger if automaticLayout doesn't catch it instantly
-            if (window.editor) {
-                window.editor.layout();
+            if (editor && typeof editor.layout === 'function') {
+                editor.layout();
             }
         };
 

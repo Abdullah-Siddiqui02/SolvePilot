@@ -1,4 +1,5 @@
 import os
+import json
 from typing import Dict, Any, List, Optional
 from abc import ABC, abstractmethod
 from services.prompt_builder import PromptBuilder
@@ -345,18 +346,40 @@ class GroqProvider(BaseAIProvider):
     """Groq AI Provider."""
 
     def get_mentor_feedback(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        # Generate the prompts to demonstrate PromptBuilder usage
+        if not groq_client:
+            raise RuntimeError("Groq client is not initialized.")
+
+        # Build prompt messages dynamically using PromptBuilder
         system_prompt = PromptBuilder.build_mentor_system_prompt()
         user_prompt = PromptBuilder.build_mentor_user_prompt(context)
 
-        # (In the future, we would call the Groq client here with these prompts)
-        # messages = [
-        #     {"role": "system", "content": system_prompt},
-        #     {"role": "user", "content": user_prompt}
-        # ]
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ]
 
-        # Return dummy feedback for now (placeholder implementation)
-        return DummyProvider().get_mentor_feedback(context)
+        completion = groq_client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=messages,
+            response_format={"type": "json_object"},
+            temperature=0.2,
+            max_tokens=2000
+        )
+
+        raw_response = completion.choices[0].message.content
+        response_data = json.loads(raw_response)
+
+        # Reconstruct standardized schema response
+        return {
+            "status": "success",
+            "error_type": response_data.get("error_type"),
+            "explanation": response_data.get("explanation"),
+            "hint": response_data.get("hint"),
+            "review": response_data.get("review"),
+            "complexity": response_data.get("complexity", {"time": "—", "space": "—"}),
+            "edge_cases": response_data.get("edge_cases", []),
+            "optimized_code": response_data.get("optimized_code", "")
+        }
 
     def ask_question(
         self,
