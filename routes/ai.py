@@ -1,9 +1,11 @@
 from flask import Blueprint, jsonify, request, session
-from extensions import get_db, groq_client
-import json
+from extensions import get_db
+from services.ai_service import AIService
 import traceback
 
 ai_bp = Blueprint("ai", __name__)
+ai_service = AIService()
+
 
 @ai_bp.route("/api/ai/ask", methods=["POST"])
 def ask_ai():
@@ -21,7 +23,6 @@ def ask_ai():
         user_query = data.get("query")
         chat_history = data.get("history", [])
 
-        
         if not user_query:
             return jsonify({"error": "Missing user query"}), 400
 
@@ -41,55 +42,15 @@ def ask_ai():
         
         cursor.close()
 
-        # 2. Build system instructions
-        system_instructions = f"""You are 'SolvePilot AI', an expert coding mentor. Your goal is to help students learn and improve.
-
-CAPABILITIES:
-- Provide HINTS and EXPLANATIONS for logic issues.
-- Provide LINE-BY-LINE EXPLANATIONS of code if requested.
-- Suggest BETTER/OPTIMIZED SOLUTIONS if the student asks for improvements.
-- Identify syntax or logical errors clearly.
-
-CONTEXT:
-Problem Title: {problem_title}
-Problem Description: {problem_desc}
-
-GUIDELINES:
-- Be encouraging and helpful.
-- DO NOT just give the full solution immediately unless they are very stuck; prioritize teaching.
-- Use Markdown for code snippets and formatting.
-- Keep responses focused and readable.
-"""
-
-        user_content = f"""STUDENT'S CURRENT CODE ({language}):
-```
-{code}
-```
-
-STUDENT'S QUESTION:
-{user_query}"""
-
-        # 3. Build messages array for Groq
-        messages = [{"role": "system", "content": system_instructions}]
-        
-        # Add historical messages (max last 10 to keep context window clean)
-        for msg in chat_history[-10:]:
-            messages.append({"role": msg["role"], "content": msg["content"]})
-            
-        # Add current user message
-        messages.append({"role": "user", "content": user_content})
-
-
-        # 3. Call Groq
-        completion = groq_client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=messages,
-            temperature=0.7,
-            max_tokens=1000
+        # 2. Call AI Service
+        ai_response = ai_service.ask_question(
+            problem_title=problem_title,
+            problem_desc=problem_desc,
+            code=code,
+            language=language,
+            user_query=user_query,
+            chat_history=chat_history
         )
-
-        
-        ai_response = completion.choices[0].message.content
         
         return jsonify({
             "response": ai_response
@@ -98,3 +59,40 @@ STUDENT'S QUESTION:
     except Exception as e:
         traceback.print_exc()
         return jsonify({"error": f"System error: {str(e)}"}), 500
+
+
+@ai_bp.route("/api/ai/mentor", methods=["POST"])
+def mentor_review():
+    """Return structured, context-aware AI mentor feedback.
+
+    Accepts the full execution/submission context:
+        problem_id (str|int):     The problem's database ID.
+        problem_statement (str):  The problem description text.
+        code (str):               The student's current editor code.
+        language (str):           Programming language.
+        action_type (str):        'run' or 'submit'.
+        execution_status (str):   Status from the last run/submit.
+        compiler_output (str):    Stderr / compiler error text.
+        runtime_output (str):     Stdout from the execution.
+        stdin (str):              Input provided for the run.
+        message (str):            Submission verdict message.
+        expected_output (str):    Expected output (submissions only).
+        actual_output (str):      Actual output (submissions only).
+
+    Returns a single, consistent JSON schema regardless of status.
+    The response shape is intentionally stable so that a future AI model
+    can be swapped in without any frontend changes.
+    """
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"status": "error", "error": "No data provided"}), 400
+
+        # Delegate execution details classification and response building to AI Service
+        response_payload = ai_service.get_mentor_feedback(data)
+
+        return jsonify(response_payload)
+
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"status": "error", "error": f"Mentor service error: {str(e)}"}), 500

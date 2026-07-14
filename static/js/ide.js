@@ -43,7 +43,7 @@ require(['vs/editor/editor.main'], function () {
         editor.setValue(defaultCode);
     });
 
-    document.getElementById('snippet-select').addEventListener('change', function(e) {
+    document.getElementById('snippet-select').addEventListener('change', function (e) {
         const val = e.target.value;
         if (!val) return;
 
@@ -82,156 +82,265 @@ require(['vs/editor/editor.main'], function () {
         e.target.value = ""; // Reset
     });
 
-    // AI Mentor Pane Toggle & Content Populate Logic
-    const dummySolutions = {
-        python: `def twoSum(nums, target):
-    seen = {}
-    for i, num in enumerate(nums):
-        complement = target - num
-        if complement in seen:
-            return [seen[complement], i]
-        seen[num] = i
-    return []`,
-        cpp: `#include <vector>
-#include <unordered_map>
-
-class Solution {
-public:
-    std::vector<int> twoSum(std::vector<int>& nums, int target) {
-        std::unordered_map<int, int> seen;
-        for (int i = 0; i < nums.size(); ++i) {
-            int complement = target - nums[i];
-            if (seen.find(complement) != seen.end()) {
-                return {seen[complement], i};
-            }
-            seen[nums[i]] = i;
-        }
-        return {};
-    }
-};`,
-        java: `import java.util.HashMap;
-import java.util.Map;
-
-class Solution {
-    public int[] twoSum(int[] nums, int target) {
-        Map<Integer, Integer> seen = new HashMap<>();
-        for (int i = 0; i < nums.length; i++) {
-            int complement = target - nums[i];
-            if (seen.containsKey(complement)) {
-                return new int[] { seen.get(complement), i };
-            }
-            seen.put(nums[i], i);
-        }
-        return new int[] {};
-    }
-}`,
-        javascript: `function twoSum(nums, target) {
-    const seen = new Map();
-    for (let i = 0; i < nums.length; i++) {
-        const complement = target - nums[i];
-        if (seen.has(complement)) {
-            return [seen.get(complement), i];
-        }
-        seen.set(nums[i], i);
-    }
-    return [];
-}`
-    };
+    // ─── AI Mentor Pane – Backend Integration ───────────────────
 
     const mentorPane = document.getElementById('mentor-pane');
     const mentorPlaceholder = document.getElementById('mentor-placeholder');
     const mentorFeedback = document.getElementById('mentor-feedback-content');
+    const mentorBody = document.getElementById('mentor-body');
     const optCodeBlock = document.getElementById('opt-code-block');
     const optCodeLang = document.getElementById('opt-code-lang');
 
-    // Toggle Mentor Panel Function
+    // Toggle Mentor Panel visibility & re-layout editor
     const toggleMentorPane = (show = true) => {
-        if (show) {
-            mentorPane.style.display = 'flex';
-        } else {
-            mentorPane.style.display = 'none';
+        mentorPane.style.display = show ? 'flex' : 'none';
+        if (window.editor) window.editor.layout();
+    };
+
+    // ── Loading State ──
+    const showMentorLoading = () => {
+        mentorPlaceholder.style.display = 'none';
+        mentorFeedback.style.display = 'none';
+        // Remove any previous loader / error
+        const old = mentorBody.querySelector('.mentor-loader, .mentor-error');
+        if (old) old.remove();
+
+        const loader = document.createElement('div');
+        loader.className = 'mentor-loader';
+        loader.innerHTML = `
+            <div class="mentor-spinner"></div>
+            <p>Consulting AI Mentor…</p>
+        `;
+        mentorBody.appendChild(loader);
+    };
+
+    const hideMentorLoading = () => {
+        const loader = mentorBody.querySelector('.mentor-loader');
+        if (loader) loader.remove();
+    };
+
+    // ── Error State ──
+    const showMentorError = (message) => {
+        hideMentorLoading();
+        mentorPlaceholder.style.display = 'none';
+        mentorFeedback.style.display = 'none';
+
+        const old = mentorBody.querySelector('.mentor-error');
+        if (old) old.remove();
+
+        const errDiv = document.createElement('div');
+        errDiv.className = 'mentor-error';
+        errDiv.innerHTML = `
+            <span class="mentor-error-icon">⚠️</span>
+            <p>${message}</p>
+            <button class="btn-mentor-retry" id="btn-mentor-retry">↻ Retry</button>
+        `;
+        mentorBody.appendChild(errDiv);
+
+        document.getElementById('btn-mentor-retry').addEventListener('click', () => {
+            errDiv.remove();
+            requestMentorFeedback();
+        });
+    };
+
+    // ── Populate panel from API response ──
+    const populateMentorPanel = (data) => {
+        console.log('[MentorTrace] populateMentorPanel() entered', data);
+        // Compilation status card
+        const compCard = mentorFeedback.querySelector('.compilation-card');
+        const compTitle = compCard?.querySelector('.compilation-success-title');
+        console.log('[MentorTrace] populateMentorPanel(): compilation elements', { compCard, compTitle });
+        if (compTitle) {
+            if (data.error_type) {
+                compTitle.innerHTML = `🔴 Compilation: ${data.error_type}`;
+                compCard.style.borderColor = 'rgba(239, 68, 68, 0.25)';
+                compCard.style.background = 'rgba(239, 68, 68, 0.04)';
+            } else {
+                compTitle.innerHTML = '🟢 Compilation: Success';
+                compCard.style.borderColor = 'rgba(16, 185, 129, 0.15)';
+                compCard.style.background = 'rgba(16, 185, 129, 0.04)';
+            }
         }
-        if (window.editor) {
-            window.editor.layout();
+
+        // Text sections
+        console.log('[MentorTrace] populateMentorPanel(): updating text sections');
+        document.getElementById('mentor-explanation').innerText = data.explanation || '';
+        document.getElementById('mentor-hint').innerText = data.hint || '';
+        document.getElementById('mentor-review').innerText = data.review || '';
+
+        // Complexity badges
+        console.log('[MentorTrace] populateMentorPanel(): updating complexity', data.complexity);
+        if (data.complexity) {
+            document.getElementById('complexity-time').innerText = data.complexity.time || '—';
+            document.getElementById('complexity-space').innerText = data.complexity.space || '—';
+        }
+
+        // Edge cases
+        const edgeCasesList = document.getElementById('mentor-edge-cases');
+        console.log('[MentorTrace] populateMentorPanel(): updating edge cases', { edgeCasesList, edgeCases: data.edge_cases });
+        if (edgeCasesList && data.edge_cases) {
+            edgeCasesList.innerHTML = data.edge_cases.map(c => `<li>${c}</li>`).join('');
+        }
+
+        // Optimized code block
+        const lang = document.getElementById('language-select').value;
+        console.log('[MentorTrace] populateMentorPanel(): updating optimized code', { lang, optCodeLang, optCodeBlock });
+        optCodeLang.innerText = lang;
+        optCodeBlock.innerText = data.optimized_code || '';
+
+        // Reset hint card
+        const hintCard = document.getElementById('mentor-hint-card');
+        console.log('[MentorTrace] populateMentorPanel(): resetting hint card', hintCard);
+        if (hintCard) hintCard.classList.remove('revealed');
+
+        // Re-trigger staggered card animations
+        const cards = mentorFeedback.querySelectorAll('.mentor-card');
+        console.log('[MentorTrace] populateMentorPanel(): re-triggering card animations', { count: cards.length });
+        cards.forEach(card => {
+            const delay = card.style.animationDelay;
+            card.style.animation = 'none';
+            card.offsetHeight; // reflow
+            card.style.animation = '';
+            card.style.animationDelay = delay;
+        });
+        console.log('[MentorTrace] populateMentorPanel() completed');
+    };
+
+    // ── Core: POST to /api/ai/mentor ──
+    const requestMentorFeedback = async () => {
+        console.log('[MentorTrace] requestMentorFeedback() entered', {
+            codeHasRun,
+            latestExecutionContext: window.latestExecutionContext
+        });
+        toggleMentorPane(true);
+        console.log('[MentorTrace] mentor pane opened');
+
+        if (!codeHasRun) {
+            console.log('[MentorTrace] stopping before fetch: codeHasRun is false');
+            mentorPlaceholder.style.display = 'flex';
+            mentorFeedback.style.display = 'none';
+            return;
+        }
+
+        showMentorLoading();
+        console.log('[MentorTrace] loading state shown');
+
+        // Gather full execution context from the page
+        const code = editor.getValue();
+        const language = document.getElementById('language-select').value;
+        const problemDesc = document.getElementById('detail-description')?.innerText || '';
+        const problemId = window.currentProblemId || '';
+        const ctx = window.latestExecutionContext || {};
+        console.log('[MentorTrace] gathered request context', {
+            language,
+            problemId,
+            codeLength: code.length,
+            problemDescLength: problemDesc.length,
+            ctx
+        });
+
+        try {
+            console.log('[MentorTrace] fetch /api/ai/mentor starting');
+            const response = await fetch('/api/ai/mentor', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    problem_id: problemId,
+                    problem_statement: problemDesc,
+                    code: code,
+                    language: language,
+                    action_type: ctx.action_type || 'run',
+                    execution_status: ctx.status || '',
+                    compiler_output: ctx.stderr || '',
+                    runtime_output: ctx.stdout || '',
+                    stdin: ctx.stdin || '',
+                    message: ctx.message || '',
+                    expected_output: ctx.expected_output || '',
+                    actual_output: ctx.actual_output || ''
+                })
+            });
+            console.log('[MentorTrace] fetch /api/ai/mentor completed', {
+                ok: response.ok,
+                status: response.status,
+                statusText: response.statusText
+            });
+
+            console.log('[MentorTrace] parsing mentor JSON response');
+            const data = await response.json();
+            console.log('[MentorTrace] mentor JSON parsed', data);
+
+            hideMentorLoading();
+            console.log('[MentorTrace] loading state hidden');
+
+            if (!response.ok || data.status === 'error') {
+                console.log('[MentorTrace] stopping before populateMentorPanel(): mentor response error', {
+                    ok: response.ok,
+                    status: response.status,
+                    dataStatus: data.status,
+                    error: data.error
+                });
+                showMentorError(data.error || 'Unexpected error from mentor service.');
+                return;
+            }
+
+            // Populate & reveal
+            console.log('[MentorTrace] calling populateMentorPanel()');
+            populateMentorPanel(data);
+            console.log('[MentorTrace] returned from populateMentorPanel()');
+            mentorFeedback.style.display = 'block';
+            mentorPlaceholder.style.display = 'none';
+            console.log('[MentorTrace] mentor feedback revealed');
+
+        } catch (err) {
+            console.error('[MentorTrace] requestMentorFeedback() caught error', err);
+            hideMentorLoading();
+            showMentorError('Failed to connect to AI Mentor. Please try again.');
         }
     };
 
-    // Ask Mentor Button Handler
+    // Ask Mentor button
     const btnAskMentor = document.getElementById('btn-ask-mentor');
+    console.log('[MentorTrace] Ask Mentor button lookup', btnAskMentor);
     if (btnAskMentor) {
         btnAskMentor.addEventListener('click', () => {
-            toggleMentorPane(true);
-
-            if (codeHasRun) {
-                // Show feedback content, hide placeholder
-                mentorPlaceholder.style.display = 'none';
-                mentorFeedback.style.display = 'block';
-
-                // Populate code snippet based on selected language
-                const selectedLang = document.getElementById('language-select').value;
-                const formattedLang = selectedLang === 'cpp' ? 'cpp' : (selectedLang === 'javascript' ? 'javascript' : selectedLang);
-                optCodeLang.innerText = formattedLang;
-                optCodeBlock.innerText = dummySolutions[formattedLang] || dummySolutions['python'];
-                
-                // Reset Hint card revealed state
-                const hintCard = document.getElementById('mentor-hint-card');
-                if (hintCard) {
-                    hintCard.classList.remove('revealed');
-                }
-
-                // Staggered card animation reset by re-applying active animations
-                const cards = mentorFeedback.querySelectorAll('.mentor-card');
-                cards.forEach(card => {
-                    const originalDelay = card.style.animationDelay;
-                    card.style.animation = 'none';
-                    card.offsetHeight; // Trigger reflow to restart animation
-                    card.style.animation = '';
-                    card.style.animationDelay = originalDelay;
-                });
-            } else {
-                // Show placeholder content, hide feedback
-                mentorPlaceholder.style.display = 'flex';
-                mentorFeedback.style.display = 'none';
-            }
+            console.log('[MentorTrace] Ask Mentor button clicked');
+            requestMentorFeedback();
         });
+        console.log('[MentorTrace] Ask Mentor click listener attached');
+    } else {
+        console.log('[MentorTrace] Ask Mentor click listener not attached: button missing');
     }
 
-    // Close Mentor Button Handler
+    // Close Mentor button
     const btnCloseMentor = document.getElementById('close-mentor');
     if (btnCloseMentor) {
-        btnCloseMentor.addEventListener('click', () => {
-            toggleMentorPane(false);
-        });
+        btnCloseMentor.addEventListener('click', () => toggleMentorPane(false));
     }
 
-    // Hint Reveal Card Click Handler
+    // Hint card – click to reveal
     const hintCard = document.getElementById('mentor-hint-card');
     if (hintCard) {
-        hintCard.addEventListener('click', function() {
+        hintCard.addEventListener('click', function () {
             this.classList.add('revealed');
         });
     }
 
-    // Copy Code Button Click Handler
+    // Copy optimized code
     const btnCopyOptCode = document.getElementById('btn-copy-opt-code');
     if (btnCopyOptCode) {
         btnCopyOptCode.addEventListener('click', (e) => {
-            e.stopPropagation(); // prevent card container events
+            e.stopPropagation();
             const codeText = optCodeBlock.innerText;
             navigator.clipboard.writeText(codeText).then(() => {
-                const originalText = btnCopyOptCode.innerHTML;
+                const orig = btnCopyOptCode.innerHTML;
                 btnCopyOptCode.innerHTML = '✅ Copied!';
-                setTimeout(() => {
-                    btnCopyOptCode.innerHTML = originalText;
-                }, 2000);
-            }).catch(err => {
-                console.error('Failed to copy code: ', err);
-            });
+                setTimeout(() => { btnCopyOptCode.innerHTML = orig; }, 2000);
+            }).catch(err => console.error('Copy failed:', err));
         });
     }
 
     // Synced Output/Stdin Tabs and Custom Input Checkbox
-    window.switchOutputTab = function(tabName) {
+    window.switchOutputTab = function (tabName) {
         ensureConsoleExpanded();
         document.querySelectorAll('.output-tab-btn').forEach(btn => btn.classList.remove('active'));
         const consolePane = document.getElementById('console-pane');
@@ -252,7 +361,7 @@ class Solution {
 
     const checkCustomInput = document.getElementById('check-custom-input');
     if (checkCustomInput) {
-        checkCustomInput.addEventListener('change', function() {
+        checkCustomInput.addEventListener('change', function () {
             if (this.checked) {
                 switchOutputTab('stdin');
             } else {
@@ -264,7 +373,7 @@ class Solution {
     // Reset Code Logic
     const btnReset = document.getElementById('btn-reset');
     if (btnReset) {
-        btnReset.addEventListener('click', function() {
+        btnReset.addEventListener('click', function () {
             if (confirm("Are you sure you want to reset the editor to the default template? This will discard your current code.")) {
                 const langSelect = document.getElementById('language-select');
                 langSelect.dispatchEvent(new Event('change'));
@@ -273,7 +382,7 @@ class Solution {
     }
 
     // Problem Pane Tabs Logic
-    window.switchProblemTab = function(tabName) {
+    window.switchProblemTab = function (tabName) {
         const descTab = document.getElementById('tab-btn-desc');
         const listTab = document.getElementById('tab-btn-list');
         const descPanel = document.getElementById('problem-desc-panel');
@@ -302,7 +411,7 @@ class Solution {
         const container = document.getElementById('chat-messages');
         const msgDiv = document.createElement('div');
         msgDiv.className = `message ${role}`;
-        
+
         // Use a library for markdown if available, else simple replacement
         // For now, let's just use textContent and handle line breaks
         msgDiv.innerText = text;
@@ -316,7 +425,7 @@ class Solution {
 
         appendMessage(query, 'user');
         chatInput.value = '';
-        
+
         const code = editor.getValue();
         const language = document.getElementById('language-select').value;
         const problemId = window.currentProblemId;
@@ -382,7 +491,7 @@ function ensureConsoleExpanded() {
 function appendInlineStdinPrompt(consolePane) {
     if (!consolePane) return;
     if (isInteractiveMode) return; // Skip if in interactive session
-    
+
     // Check if inline prompt already exists in consolePane
     const existingPrompt = consolePane.querySelector('.console-input-prompt');
     if (existingPrompt) {
@@ -413,7 +522,7 @@ function appendInlineStdinPrompt(consolePane) {
         const val = textarea.value;
         const customStdin = document.getElementById('custom-stdin');
         const checkCustomInput = document.getElementById('check-custom-input');
-        
+
         if (customStdin) customStdin.value = val;
         if (checkCustomInput) checkCustomInput.checked = true;
 
@@ -427,8 +536,8 @@ function appendInlineStdinPrompt(consolePane) {
                 triggerReRun();
             }
         });
-        
-        textarea.addEventListener('input', function() {
+
+        textarea.addEventListener('input', function () {
             this.style.height = 'auto';
             this.style.height = (this.scrollHeight > 120 ? 120 : this.scrollHeight) + 'px';
             consolePane.scrollTop = consolePane.scrollHeight;
@@ -455,12 +564,12 @@ function renderInteractiveTerminal(consolePane, history, code, language) {
     const inputField = document.getElementById('terminal-active-input');
     if (inputField) {
         inputField.focus();
-        
+
         inputField.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 const val = inputField.value;
                 inputField.disabled = true;
-                
+
                 terminalHistory += val + '\n';
                 currentInputs.push(val);
 
@@ -493,6 +602,18 @@ async function executeCodeStep(code, language) {
 
         const data = await response.json();
 
+        // Store full execution context for AI Mentor
+        window.latestExecutionContext = {
+            action_type: 'run',
+            status: data.status || '',
+            stdout: data.output || '',
+            stderr: data.stderr || '',
+            stdin: stdin || '',
+            message: '',
+            expected_output: '',
+            actual_output: data.output || ''
+        };
+
         if (data.error) {
             const isServerBusy = data.error.includes('temporarily busy') || response.status === 503;
             if (isServerBusy) {
@@ -506,8 +627,8 @@ async function executeCodeStep(code, language) {
         }
 
         const isEOFError = data.stderr && (
-            data.stderr.includes("EOFError") || 
-            data.stderr.includes("NoSuchElementException") || 
+            data.stderr.includes("EOFError") ||
+            data.stderr.includes("NoSuchElementException") ||
             data.stderr.includes("EOF when reading a line")
         );
 
@@ -529,7 +650,7 @@ async function executeCodeStep(code, language) {
             isInteractiveMode = false;
             let outputHtml = `<div class="${data.status === 'Success' ? 'status-success' : 'status-error'}">Status: ${data.status}</div>`;
             outputHtml += `<pre class="terminal-output mt-2 p-3" style="background: rgba(9, 13, 22, 0.9); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace; white-space: pre-wrap; word-wrap: break-word; color: #cbd5e1; line-height: 1.6; max-height: 240px; overflow-y: auto;">${terminalHistory.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
-            
+
             if (data.stderr && !isEOFError) {
                 outputHtml += `<pre class="status-error mt-2" style="white-space: pre-wrap; word-wrap: break-word; background-color: rgba(239, 68, 68, 0.04); border: 1px dashed rgba(239, 68, 68, 0.2); color: #fca5a5; padding: 12px 16px; font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 0.85rem; border-radius: 8px;">${data.stderr.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
             }
@@ -576,7 +697,7 @@ document.getElementById('btn-run').addEventListener('click', async function () {
     }
 
     consolePane.innerHTML = '<div style="color: #aaa;">Running code...</div>';
-    
+
     executeCodeStep(code, language);
 });
 
@@ -586,7 +707,7 @@ document.getElementById('btn-submit').addEventListener('click', async function (
     const code = editor.getValue();
     const language = document.getElementById('language-select').value;
     const consolePane = document.getElementById('console-pane');
-    
+
     // Get the current active problem ID from global scope or details pane
     const activeProblemId = window.currentProblemId;
     if (!activeProblemId) {
@@ -600,14 +721,34 @@ document.getElementById('btn-submit').addEventListener('click', async function (
         const response = await fetch('/api/submit', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                problem_id: activeProblemId, 
-                code: code, 
-                language: language 
+            body: JSON.stringify({
+                problem_id: activeProblemId,
+                code: code,
+                language: language
             })
         });
 
         const data = await response.json();
+
+        // Store full submission context for AI Mentor
+        window.latestExecutionContext = {
+            action_type: 'submit',
+            status: data.status || '',
+            stdout: data.output || '',
+            stderr: data.stderr || '',
+            stdin: '',
+            message: data.message || '',
+            expected_output: '',
+            actual_output: data.output || ''
+        };
+
+        // Try to extract expected/actual from the rejection message
+        if (data.message) {
+            const expMatch = data.message.match(/Expected:\s*(.+)/i);
+            const gotMatch = data.message.match(/Got:\s*(.+)/i);
+            if (expMatch) window.latestExecutionContext.expected_output = expMatch[1].trim();
+            if (gotMatch) window.latestExecutionContext.actual_output = gotMatch[1].trim();
+        }
 
         if (data.error) {
             consolePane.innerHTML = `<div class="status-error">Submission Error: ${data.error}</div>`;
@@ -655,7 +796,7 @@ async function loadProblems() {
             problemList.innerHTML = '';
             data.problems.forEach(p => {
                 // Metadata cached, but description is now fetched on-demand
-                globalProblems[p.id] = p; 
+                globalProblems[p.id] = p;
                 const isSolved = solvedProblemIds.has(p.id);
                 const card = document.createElement('div');
                 card.className = 'problem-card d-flex justify-content-between align-items-center';
@@ -727,7 +868,7 @@ async function loadMyCollection() {
                 collectionList.appendChild(card);
             });
             // Re-render global list to show ticks if needed
-            loadProblems(); 
+            loadProblems();
         } else {
             collectionList.innerHTML = '<p>Your collection is empty.</p>';
         }
@@ -787,13 +928,13 @@ async function loadMyQuestions() {
 async function showProblemDetails(problemId) {
     window.currentProblemId = problemId; // Store for submission
     let p = globalProblems[problemId];
-    
+
     // Hide empty state and show details container
     const emptyState = document.getElementById('active-problem-empty');
     if (emptyState) emptyState.style.display = 'none';
     const detailsPane = document.getElementById('active-problem-details');
     if (detailsPane) detailsPane.style.display = 'block';
-    
+
     // If description is missing, fetch full details
     if (!p || !p.description) {
         document.getElementById('detail-title').innerText = "Loading details...";

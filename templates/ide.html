@@ -1205,6 +1205,77 @@
             line-height: 1.5;
             background: transparent;
         }
+        /* Mentor Loading State */
+        .mentor-loader {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            gap: 16px;
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .mentor-spinner {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.08);
+            border-top-color: var(--primary);
+            animation: mentorSpin 0.8s linear infinite;
+        }
+
+        .mentor-loader p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        @keyframes mentorSpin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Mentor Error State */
+        .mentor-error {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            gap: 12px;
+            text-align: center;
+            padding: 24px;
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .mentor-error-icon {
+            font-size: 2.2rem;
+        }
+
+        .mentor-error p {
+            font-size: 0.9rem;
+            color: #fca5a5;
+            max-width: 260px;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .btn-mentor-retry {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-mentor-retry:hover {
+            background: rgba(56, 189, 248, 0.18);
+            border-color: rgba(56, 189, 248, 0.4);
+        }
 
         /* Slide animations */
         @keyframes slideInRight {
