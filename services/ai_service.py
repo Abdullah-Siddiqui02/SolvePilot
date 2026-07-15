@@ -21,20 +21,22 @@ def _classify_status(execution_status: str, compiler_output: str, action_type: s
 
     Returns one of:
         'compilation_error', 'runtime_error', 'wrong_answer',
-        'time_limit_exceeded', 'success'
+        'time_limit_exceeded', 'memory_limit_exceeded', 'accepted'
     """
     s = (execution_status or "").lower().strip()
 
-    if s in ("compilation error",):
+    if s in ("compilation error", "compilation_error", "compile error", "compile_error"):
         return "compilation_error"
-    if s in ("runtime error",):
+    if s in ("runtime error", "runtime_error"):
         return "runtime_error"
-    if s in ("rejected", "wrong answer"):
+    if s in ("rejected", "wrong answer", "wrong_answer"):
         return "wrong_answer"
     if "time" in s and ("limit" in s or "exceeded" in s):
         return "time_limit_exceeded"
+    if "memory" in s and ("limit" in s or "exceeded" in s):
+        return "memory_limit_exceeded"
     if s in ("accepted", "success"):
-        return "success"
+        return "accepted"
 
     # Fallback heuristic: check stderr content
     stderr = (compiler_output or "").lower()
@@ -43,66 +45,10 @@ def _classify_status(execution_status: str, compiler_output: str, action_type: s
     if "error" in stderr:
         return "runtime_error"
 
-    return "success"
+    return "accepted"
 
 
-OPTIMIZED_CODE_SNIPPETS = {
-    "python": """def twoSum(nums, target):
-    seen = {}
-    for i, num in enumerate(nums):
-        complement = target - num
-        if complement in seen:
-            return [seen[complement], i]
-        seen[num] = i
-    return []""",
-
-    "cpp": """#include <vector>
-#include <unordered_map>
-
-class Solution {
-public:
-    std::vector<int> twoSum(std::vector<int>& nums, int target) {
-        std::unordered_map<int, int> seen;
-        for (int i = 0; i < nums.size(); ++i) {
-            int complement = target - nums[i];
-            if (seen.count(complement)) {
-                return {seen[complement], i};
-            }
-            seen[nums[i]] = i;
-        }
-        return {};
-    }
-};""",
-
-    "java": """import java.util.HashMap;
-import java.util.Map;
-
-class Solution {
-    public int[] twoSum(int[] nums, int target) {
-        Map<Integer, Integer> seen = new HashMap<>();
-        for (int i = 0; i < nums.length; i++) {
-            int complement = target - nums[i];
-            if (seen.containsKey(complement)) {
-                return new int[] { seen.get(complement), i };
-            }
-            seen.put(nums[i], i);
-        }
-        return new int[] {};
-    }
-}""",
-
-    "javascript": """function twoSum(nums, target) {
-    const seen = new Map();
-    for (let i = 0; i < nums.length; i++) {
-        const complement = target - nums[i];
-        if (seen.has(complement)) {
-            return [seen.get(complement), i];
-        }
-        seen.set(nums[i], i);
-    }
-    return [];
-}"""
-}
+# Removed hardcoded optimized code snippets
 
 
 MENTOR_RESPONSES = {
@@ -218,36 +164,53 @@ MENTOR_RESPONSES = {
         ],
     },
 
-    "success": {
-        "error_type": None,
+    "memory_limit_exceeded": {
+        "error_type": "Memory Limit Exceeded",
         "explanation": (
-            "The approach uses a Hash Map to store each number's complement "
-            "as we iterate through the array. For every element, we check "
-            "whether its complement (target − current) already exists in the "
-            "map, giving us an O(N) lookup instead of a nested loop."
+            "Your code used more memory than the limit allowed. This usually happens "
+            "due to deep recursion causing a stack overflow, creating extremely large "
+            "arrays, or storing unnecessary data in memory."
         ),
         "hint": (
-            "Think about what value you need to find for each element to "
-            "reach the target. Store the numbers you've already seen in a "
-            "data structure that supports O(1) lookup, and check the "
-            "complement on each iteration."
+            "Consider using an iterative approach instead of recursion to save stack space. "
+            "Check if you can optimize your data structures or perform operations in-place."
         ),
         "review": (
-            "Your implementation correctly uses a hash-based approach. "
-            "Consider adding an early return if the input array has fewer "
-            "than two elements, and make sure duplicate values are handled "
-            "properly (the map stores the latest index for each value)."
+            "The memory usage of your approach is too high. Look for ways to reduce spatial overhead."
+        ),
+        "complexity": {"time": "—", "space": "—"},
+        "edge_cases": [
+            "Input size reaching the maximum limit.",
+            "Deep recursive call trees.",
+            "Creation of large multi-dimensional arrays."
+        ],
+    },
+
+    "accepted": {
+        "error_type": None,
+        "explanation": (
+            "Congratulations! Your solution was accepted. It successfully passes all test cases "
+            "within the time and memory limits."
+        ),
+        "hint": (
+            "Great job! Try to see if you can implement the solution in a different way, "
+            "or optimize the existing code for better readability."
+        ),
+        "review": (
+            "Your implementation is correct. Review your variable naming and ensure there "
+            "are no redundant checks."
         ),
         "complexity": {"time": "O(N)", "space": "O(N)"},
         "edge_cases": [
-            "Input array with fewer than 2 elements.",
-            "Array containing negative numbers and zero.",
-            "No valid pair sums to the target.",
-            "Duplicate values present in the array.",
-            "Very large input approaching constraint limits."
+            "Empty or null inputs.",
+            "Single element inputs.",
+            "Maximum input constraints."
         ],
     },
 }
+
+# Keep success as an alias to accepted for backward compatibility
+MENTOR_RESPONSES["success"] = MENTOR_RESPONSES["accepted"]
 
 
 # ──────────────────────────────────────────────────────────────
@@ -319,9 +282,7 @@ class DummyProvider(BaseAIProvider):
             "review": template["review"],
             "complexity": template["complexity"],
             "edge_cases": template["edge_cases"],
-            "optimized_code": OPTIMIZED_CODE_SNIPPETS.get(
-                language, OPTIMIZED_CODE_SNIPPETS["python"]
-            )
+            "optimized_code": ""
         }
 
     def ask_question(
@@ -350,7 +311,7 @@ class GroqProvider(BaseAIProvider):
             raise RuntimeError("Groq client is not initialized.")
 
         # Build prompt messages dynamically using PromptBuilder
-        system_prompt = PromptBuilder.build_mentor_system_prompt()
+        system_prompt = PromptBuilder.build_mentor_system_prompt(context)
         user_prompt = PromptBuilder.build_mentor_user_prompt(context)
 
         messages = [
@@ -420,7 +381,7 @@ class GeminiProvider(BaseAIProvider):
 
     def get_mentor_feedback(self, context: Dict[str, Any]) -> Dict[str, Any]:
         # Generate the prompts to demonstrate PromptBuilder usage
-        system_prompt = PromptBuilder.build_mentor_system_prompt()
+        system_prompt = PromptBuilder.build_mentor_system_prompt(context)
         user_prompt = PromptBuilder.build_mentor_user_prompt(context)
 
         # Return dummy feedback for now (placeholder implementation)
@@ -448,7 +409,7 @@ class OpenAIProvider(BaseAIProvider):
 
     def get_mentor_feedback(self, context: Dict[str, Any]) -> Dict[str, Any]:
         # Generate the prompts to demonstrate PromptBuilder usage
-        system_prompt = PromptBuilder.build_mentor_system_prompt()
+        system_prompt = PromptBuilder.build_mentor_system_prompt(context)
         user_prompt = PromptBuilder.build_mentor_user_prompt(context)
 
         # Return dummy feedback for now (placeholder implementation)
@@ -515,7 +476,22 @@ class AIService:
             Dict containing feedback keys: error_type, explanation, hint,
             review, complexity, edge_cases, optimized_code.
         """
-        return self.provider.get_mentor_feedback(context)
+        response_payload = self.provider.get_mentor_feedback(context)
+
+        execution_status = context.get("execution_status", "")
+        compiler_output = context.get("compiler_output", "")
+        action_type = context.get("action_type", "run")
+
+        category = _classify_status(execution_status, compiler_output, action_type)
+
+        if category == "compilation_error":
+            response_payload["optimized_code"] = "Optimized solution is not generated because the code has compilation errors. Please fix the compilation errors to see the optimized solution."
+        else:
+            opt_code = response_payload.get("optimized_code")
+            if not opt_code or not opt_code.strip():
+                response_payload["optimized_code"] = "An optimized solution could not be generated by the AI mentor for this session."
+
+        return response_payload
 
     def ask_question(
         self,
