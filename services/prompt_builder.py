@@ -40,8 +40,9 @@ Your objective is to:
 2. Point directly to the line and likely mistake in the code.
 3. Suggest how the student can fix the error.
 4. Do NOT review the algorithm logic or correctness.
-5. Do NOT generate or suggest optimized/solution code. The "optimized_code" field MUST be an empty string ("").
-6. Mark both "time" and "space" complexities exactly as "Not Applicable".
+5. Explain that optimization is not applicable until compilation succeeds.
+6. The "optimized_code" field MUST be an empty string ("").
+7. Mark both "time" and "space" complexities exactly as "Not Applicable".
 
 Response Format:
 You MUST respond with a single, valid JSON object matching the following structure:
@@ -49,7 +50,7 @@ You MUST respond with a single, valid JSON object matching the following structu
   "error_type": "Compilation Error",
   "explanation": "string. Explain the compiler or syntax error.",
   "hint": "string. A tip pointing to the specific line or syntax issue and how to fix it.",
-  "review": "string. A friendly message stating that code logic cannot be reviewed until compilation errors are resolved.",
+  "review": "string. A friendly message stating that code logic and optimization cannot be reviewed until compilation errors are resolved.",
   "complexity": {
     "time": "Not Applicable",
     "space": "Not Applicable"
@@ -127,12 +128,13 @@ Your objective is to:
 2. Compare their current time complexity against the expected optimal complexity (e.g., O(N^2) vs O(N log N)).
 3. Suggest concrete optimization strategies (e.g., using a hash map, two pointers, binary search, sorting).
 4. Generate the optimized approach code in the "optimized_code" field.
+5. Explain why the optimized approach improves performance.
 
 Response Format:
 You MUST respond with a single, valid JSON object matching the following structure:
 {
   "error_type": "Time Limit Exceeded",
-  "explanation": "string. Analysis of why the current approach is slow and a comparison of complexities.",
+  "explanation": "string. Analysis of why the current approach is slow, a comparison of complexities, and an explanation of why the optimized approach improves performance.",
   "hint": "string. Guidance on how to optimize the algorithm to run faster.",
   "review": "string. Assessment of the bottleneck loops or redundant computations.",
   "complexity": {
