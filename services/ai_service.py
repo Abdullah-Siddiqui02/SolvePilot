@@ -257,6 +257,20 @@ class BaseAIProvider(ABC):
         """
         pass
 
+    @abstractmethod
+    def solve_problem(self, question: str, technique: str, language: str) -> Dict[str, Any]:
+        """Generate a structured JSON solution to a given problem.
+        
+        Args:
+            question: The problem statement.
+            technique: The specific technique to use (optional).
+            language: The programming language to use.
+            
+        Returns:
+            Dict containing the structured problem solution.
+        """
+        pass
+
 
 # ──────────────────────────────────────────────────────────────
 # Concrete Provider Implementations
@@ -301,6 +315,16 @@ class DummyProvider(BaseAIProvider):
             f"And your question: \"{user_query}\"\n\n"
             f"This is a placeholder response. To enable real AI responses, configure the Groq provider."
         )
+
+    def solve_problem(self, question: str, technique: str, language: str) -> Dict[str, Any]:
+        return {
+            "classification": "Dummy Classification",
+            "key_observation": "This is a placeholder observation.",
+            "approach": "This is a placeholder approach.",
+            "complexity": {"time": "O(1)", "space": "O(1)"},
+            "implementation": f"print('Dummy solution for {language}')",
+            "explanation": "This is a dummy explanation."
+        }
 
 
 class GroqProvider(BaseAIProvider):
@@ -375,6 +399,29 @@ class GroqProvider(BaseAIProvider):
         )
         return completion.choices[0].message.content
 
+    def solve_problem(self, question: str, technique: str, language: str) -> Dict[str, Any]:
+        if not groq_client:
+            raise RuntimeError("Groq client is not initialized.")
+            
+        system_prompt = PromptBuilder.build_solver_system_prompt()
+        user_prompt = PromptBuilder.build_solver_user_prompt(question, technique, language)
+        
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ]
+        
+        completion = groq_client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=messages,
+            response_format={"type": "json_object"},
+            temperature=0.2,
+            max_tokens=4000
+        )
+        
+        raw_response = completion.choices[0].message.content
+        return json.loads(raw_response)
+
 
 class GeminiProvider(BaseAIProvider):
     """Gemini AI Provider (Placeholder)."""
@@ -402,6 +449,9 @@ class GeminiProvider(BaseAIProvider):
             f"Problem: '{problem_title}'\n"
             f"Question: '{user_query}'"
         )
+
+    def solve_problem(self, question: str, technique: str, language: str) -> Dict[str, Any]:
+        return DummyProvider().solve_problem(question, technique, language)
 
 
 class OpenAIProvider(BaseAIProvider):
@@ -431,6 +481,9 @@ class OpenAIProvider(BaseAIProvider):
             f"Question: '{user_query}'"
         )
 
+    def solve_problem(self, question: str, technique: str, language: str) -> Dict[str, Any]:
+        return DummyProvider().solve_problem(question, technique, language)
+
 
 # ──────────────────────────────────────────────────────────────
 # AIService Single Entry Point
@@ -445,8 +498,8 @@ class AIService:
 
     def __init__(self, provider_name: Optional[str] = None):
         if not provider_name:
-            # Load provider from environment variable, default to 'dummy'
-            provider_name = os.getenv("AI_PROVIDER", "dummy").lower()
+            # Load provider from environment variable, default to 'groq'
+            provider_name = os.getenv("AI_PROVIDER", "groq").lower()
 
         self.provider_name = provider_name
         self.provider = self._get_provider(provider_name)
@@ -520,3 +573,7 @@ class AIService:
             user_query=user_query,
             chat_history=chat_history
         )
+
+    def solve_problem(self, question: str, technique: str, language: str) -> Dict[str, Any]:
+        """Delegate solving a problem to the active provider."""
+        return self.provider.solve_problem(question, technique, language)

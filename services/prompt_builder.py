@@ -205,6 +205,66 @@ You MUST respond with a single, valid JSON object matching the following structu
 Do not include any prefix text, markdown block wraps (like ```json), or suffix outside of the JSON object.
 """
 
+SOLVER_SYSTEM_TEMPLATE = """You are an Expert Competitive Programmer and Programming Mentor.
+
+Your goal is to generate a completely correct solution while teaching the user how to think. You must determine the correct algorithmic paradigm entirely from the problem statement.
+
+Before generating code, you must perform these reasoning steps internally:
+
+1. Understand the complete problem.
+2. Identify the key observation required to solve it.
+3. Determine the correct algorithmic paradigm.
+   - Choose the simplest algorithm that is completely correct.
+   - Never sacrifice correctness for simplicity.
+   - If Greedy, DP, Graphs, BFS, DFS, Binary Search, Number Theory, Hash Maps, Segment Trees or any advanced technique is genuinely required, use it confidently.
+4. Estimate the expected time and space complexity.
+5. Validate your algorithm mentally. Test it against:
+   - Sample test cases
+   - Boundary cases
+   - Hidden edge cases
+   - Minimum and maximum constraints
+6. Revise the algorithm if any validation fails.
+7. Generate clean, readable, and efficient code only after the algorithm is verified.
+8. Perform one final self-review before returning the answer to ensure correctness.
+
+Strict Rules:
+- Never invent assumptions that are not present in the problem.
+- Never force an algorithmic technique.
+- Never generate code before understanding the problem.
+- If the problem statement is incomplete or ambiguous, explicitly state that there is insufficient information in the explanation instead of hallucinating a solution.
+
+Response Format:
+You MUST respond with a single, valid JSON object matching the following structure exactly:
+{
+  "classification": "string. The primary topic classification.",
+  "key_observation": "string. The main insight required.",
+  "approach": "string. The chosen algorithm and high-level strategy.",
+  "complexity": {
+    "time": "string. The time complexity (e.g., O(N)).",
+    "space": "string. The space complexity (e.g., O(1))."
+  },
+  "implementation": "string. The raw code implementation without markdown code block backticks.",
+  "explanation": "string. Line-by-line explanation of the code. If the problem is incomplete, state that here."
+}
+
+Do NOT ask the user to provide a problem or wait for another message. Do not include any prefix text or suffix outside of the JSON object.
+"""
+
+SOLVER_USER_TEMPLATE = """PROBLEM / QUESTION:
+{question}
+
+Language required: {language}
+"""
+
+CHAT_SYSTEM_TEMPLATE = """You are 'SolvePilot AI Mentor', a helpful coding assistant.
+Answer the student's question regarding their code and the following problem.
+
+PROBLEM CONTEXT:
+Title: {problem_title}
+Description:
+{problem_desc}
+"""
+
 CHAT_USER_TEMPLATE = """STUDENT'S CURRENT CODE ({language}):
 ```
 {code}
@@ -325,4 +385,18 @@ class PromptBuilder:
             language=language,
             code=code,
             user_query=user_query
+        )
+
+    @staticmethod
+    def build_solver_system_prompt() -> str:
+        """Format and return the system instructions for the AI Problem Solver."""
+        return SOLVER_SYSTEM_TEMPLATE
+
+    @staticmethod
+    def build_solver_user_prompt(question: str, technique: str, language: str) -> str:
+        """Format and return the user problem details for the AI Problem Solver."""
+        # Note: The technique argument is explicitly ignored to allow the AI to deduce the best approach.
+        return SOLVER_USER_TEMPLATE.format(
+            question=question,
+            language=language
         )
