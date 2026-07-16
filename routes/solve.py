@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, session, jsonify
-from extensions import groq_client
+from services.ai_service import AIService
 
 solve_bp = Blueprint("solve", __name__)
 
@@ -17,32 +17,28 @@ def solve():
         if not question:
             return jsonify({"error": "Please enter a question."}), 400
 
-        # Build the prompt
-        prompt = f"""You are an expert coding interview coach.
-
-Question: {question}
-{f"Technique/Approach to use: {technique}" if technique else ""}
-Language: {language}
-
-Please provide a complete, structured solution with the following sections:
-
-1. **Approach** – Explain the high-level strategy in 2-3 sentences.
-2. **Technique** – Explain why "{technique if technique else 'the chosen technique'}" works best here.
-3. **Code** – Write clean, well-commented {language} code.
-4. **Line-by-Line Explanation** – Go through each important line of code and explain what it does and why.
-5. **Time & Space Complexity** – State the Big-O analysis.
-
-Format your response using Markdown."""
-
         try:
-            chat = groq_client.chat.completions.create(
-                model="llama-3.3-70b-versatile",
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.3,
-                max_tokens=4096,
-            )
-            answer = chat.choices[0].message.content
-            return jsonify({"answer": answer})
+            ai_service = AIService()
+            json_data = ai_service.solve_problem(question, technique, language)
+            
+            # Assemble the structured JSON into Markdown for the existing frontend
+            answer = f"### 1. Problem Classification\n{json_data.get('classification', '')}\n\n"
+            answer += f"### 2. Key Observation\n{json_data.get('key_observation', '')}\n\n"
+            answer += f"### 3. Algorithm / Approach\n{json_data.get('approach', '')}\n\n"
+            answer += f"### 4. Time & Space Complexity\n"
+            
+            complexity = json_data.get('complexity', {})
+            answer += f"- **Time:** {complexity.get('time', 'N/A')}\n"
+            answer += f"- **Space:** {complexity.get('space', 'N/A')}\n\n"
+            
+            answer += f"### 5. Implementation\n```{language.lower()}\n{json_data.get('implementation', '')}\n```\n\n"
+            answer += f"### 6. Line-by-line Explanation\n{json_data.get('explanation', '')}\n"
+
+            # Return both the parsed answer (for backward compatibility) and the raw JSON (for future usage)
+            return jsonify({
+                "answer": answer,
+                "raw_data": json_data
+            })
 
         except Exception as e:
             return jsonify({"error": f"AI service error: {str(e)}"}), 500
