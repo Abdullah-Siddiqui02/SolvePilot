@@ -205,6 +205,38 @@ You MUST respond with a single, valid JSON object matching the following structu
 Do not include any prefix text, markdown block wraps (like ```json), or suffix outside of the JSON object.
 """
 
+MENTOR_USER_TEMPLATE = """PROBLEM CONTEXT:
+Title: {problem_title}
+Description:
+{problem_statement}
+
+STUDENT'S SUBMISSION ({language}):
+```
+{code}
+```
+
+EXECUTION CONTEXT:
+Action: {action_type}
+Status: {execution_status}
+Message: {message}
+
+INPUT/OUTPUT:
+Standard Input (stdin):
+{stdin}
+
+Compiler Output (stderr):
+{compiler_output}
+
+Runtime Output (stdout):
+{runtime_output}
+
+Expected Output:
+{expected_output}
+
+Actual Output:
+{actual_output}
+"""
+
 SOLVER_SYSTEM_TEMPLATE = """You are an Expert Competitive Programmer and Programming Mentor.
 
 Your goal is to generate a completely correct solution while teaching the user how to think. You must determine the correct algorithmic paradigm entirely from the problem statement.
