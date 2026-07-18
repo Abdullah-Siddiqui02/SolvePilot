@@ -1388,7 +1388,12 @@
                         <div id="detail-tags"></div>
                         
                         <div style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 16px; margin-top: 16px;">
-                            <h5 style="margin-bottom: 12px; color: var(--primary); font-size: 0.95rem;">📄 Problem Description</h5>
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                                <h5 style="margin: 0; color: var(--primary); font-size: 0.95rem;">📄 Problem Description</h5>
+                                <button id="btn-copy-problem" title="Copy problem description with math formulas preserved" style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); color: var(--primary); font-size: 0.75rem; font-weight: 600; padding: 4px 12px; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 4px;">
+                                    📋 Copy Problem
+                                </button>
+                            </div>
                             <div id="detail-description"></div>
                         </div>
 

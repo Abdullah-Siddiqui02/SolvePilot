@@ -131,7 +131,11 @@ def get_problems():
 import cloudscraper
  
 def scrape_problem_data(url):
-    """Scrape problem description and samples from Codeforces."""
+    """Scrape problem description and samples from Codeforces.
+
+    Preserves original LaTeX delimiters ($$$...$$$) used by Codeforces
+    so that MathJax can re-render them on the SolvePilot frontend.
+    """
     try:
         scraper = cloudscraper.create_scraper()
         response = scraper.get(url, timeout=10)
@@ -139,15 +143,28 @@ def scrape_problem_data(url):
             soup = BeautifulSoup(response.text, 'html.parser')
             statement = soup.find('div', class_='problem-statement')
             if not statement: return None, None
-            
+
             # Extract samples before cleaning up description
             samples_html = ""
             samples_div = statement.find('div', class_='sample-tests')
             if samples_div:
                 samples_html = str(samples_div)
-                samples_div.decompose() # Remove from main statement for description text
-            
+                samples_div.decompose()  # Remove from main statement for description text
+
+            # Remove the header div (title, time/memory limits, I/O info)
+            # to avoid duplicating metadata already shown in the UI
+            header_div = statement.find('div', class_='header')
+            if header_div:
+                header_div.decompose()
+
+            # get_text() preserves $$$...$$$  LaTeX delimiters since they
+            # are plain text nodes in the Codeforces HTML source.
             description = statement.get_text(separator='\n').strip()
+
+            # Collapse excessive blank lines into single blank lines
+            import re
+            description = re.sub(r'\n{3,}', '\n\n', description)
+
             return description, samples_html
     except Exception as e:
         print(f"Scraping error: {e}")
