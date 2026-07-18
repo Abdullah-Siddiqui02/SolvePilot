@@ -1,3 +1,4 @@
+import json
 from typing import Dict, Any, List
 
 # ──────────────────────────────────────────────────────────────
@@ -275,7 +276,7 @@ You MUST respond with a single, valid JSON object matching the following structu
     "time": "string. The time complexity (e.g., O(N)).",
     "space": "string. The space complexity (e.g., O(1))."
   },
-  "implementation": "string. The raw code implementation without markdown code block backticks.",
+  "implementation": "string. The raw code implementation without markdown code block backticks. You MUST preserve proper indentation and use \\n for newlines so the code is readable.",
   "explanation": "string. Line-by-line explanation of the code. If the problem is incomplete, state that here."
 }
 
@@ -284,6 +285,60 @@ Do NOT ask the user to provide a problem or wait for another message. Do not inc
 
 SOLVER_USER_TEMPLATE = """PROBLEM / QUESTION:
 {question}
+
+Language required: {language}
+"""
+
+PLANNER_SYSTEM_TEMPLATE = """You are an expert competitive programmer planning a correct solution.
+
+Analyze the problem before any code is written. Choose the simplest algorithm that is fully correct for the stated constraints. Do not invent missing constraints or assumptions.
+
+Return only one valid JSON object with this exact structure:
+{
+  "classification": "string. Primary algorithmic topic.",
+  "key_observation": "string. Core insight that makes the solution work.",
+  "algorithm": "string. Specific chosen algorithm/paradigm.",
+  "steps": ["string. Ordered high-level algorithm steps."],
+  "complexity": {
+    "time": "string. Expected time complexity.",
+    "space": "string. Expected space complexity."
+  },
+  "edge_cases": ["string. Important boundary or correctness cases."],
+  "implementation_notes": "string. Details the implementation must respect."
+}
+
+Do not include code, markdown, or text outside the JSON object.
+"""
+
+PLANNER_USER_TEMPLATE = """PROBLEM / QUESTION:
+{question}
+"""
+
+GENERATOR_SYSTEM_TEMPLATE = """You are an expert competitive programmer implementing a planned solution.
+
+Use the supplied plan as guidance, but ensure the implementation remains consistent with the original problem statement. Produce a correct, efficient solution in the requested language. Do not add markdown code fences around the implementation.
+
+Return only one valid JSON object with this exact structure:
+{
+  "classification": "string. The primary topic classification.",
+  "key_observation": "string. The main insight required.",
+  "approach": "string. The chosen algorithm and high-level strategy.",
+  "complexity": {
+    "time": "string. The time complexity.",
+    "space": "string. The space complexity."
+  },
+  "implementation": "string. The raw code implementation without markdown code block backticks. You MUST preserve proper indentation and use \\n for newlines so the code is readable.",
+  "explanation": "string. Line-by-line explanation of the code."
+}
+
+Do not include any text outside the JSON object.
+"""
+
+GENERATOR_USER_TEMPLATE = """PROBLEM / QUESTION:
+{question}
+
+PLANNING JSON:
+{plan}
 
 Language required: {language}
 """
@@ -430,5 +485,29 @@ class PromptBuilder:
         # Note: The technique argument is explicitly ignored to allow the AI to deduce the best approach.
         return SOLVER_USER_TEMPLATE.format(
             question=question,
+            language=language
+        )
+
+    @staticmethod
+    def build_planner_system_prompt() -> str:
+        """Return the system instructions for the planning stage."""
+        return PLANNER_SYSTEM_TEMPLATE
+
+    @staticmethod
+    def build_planner_user_prompt(question: str) -> str:
+        """Format the problem statement for the planning stage."""
+        return PLANNER_USER_TEMPLATE.format(question=question)
+
+    @staticmethod
+    def build_generator_system_prompt() -> str:
+        """Return the system instructions for the solution generation stage."""
+        return GENERATOR_SYSTEM_TEMPLATE
+
+    @staticmethod
+    def build_generator_user_prompt(question: str, plan: Dict[str, Any], language: str) -> str:
+        """Format the problem and approved plan for the generation stage."""
+        return GENERATOR_USER_TEMPLATE.format(
+            question=question,
+            plan=json.dumps(plan),
             language=language
         )

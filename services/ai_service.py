@@ -1,8 +1,14 @@
 import os
 import json
+import hashlib
+import logging
+from time import perf_counter
 from typing import Dict, Any, List, Optional
 from abc import ABC, abstractmethod
 from services.prompt_builder import PromptBuilder
+
+
+logger = logging.getLogger(__name__)
 
 
 # Gracefully import database and AI clients from extensions
@@ -344,7 +350,7 @@ class GroqProvider(BaseAIProvider):
         ]
 
         completion = groq_client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model="openai/gpt-oss-120b",
             messages=messages,
             response_format={"type": "json_object"},
             temperature=0.2,
@@ -392,7 +398,7 @@ class GroqProvider(BaseAIProvider):
         messages.append({"role": "user", "content": user_prompt})
 
         completion = groq_client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model="openai/gpt-oss-120b",
             messages=messages,
             temperature=0.7,
             max_tokens=1000
@@ -402,25 +408,110 @@ class GroqProvider(BaseAIProvider):
     def solve_problem(self, question: str, technique: str, language: str) -> Dict[str, Any]:
         if not groq_client:
             raise RuntimeError("Groq client is not initialized.")
-            
+
+        return self._solve_with_pipeline(question, technique, language)
+
+    def _solve_with_pipeline(self, question: str, technique: str, language: str) -> Dict[str, Any]:
+        """Run the experimental planner-to-generator flow with a single-call fallback."""
+        started_at = perf_counter()
+        problem_id = hashlib.sha256(question.encode("utf-8")).hexdigest()[:12]
+        planner_algorithm = "unavailable"
+        generator_algorithm = "unavailable"
+        fallback_used = False
+
+        try:
+            try:
+                plan = self._plan_problem(question)
+                planner_algorithm = plan["algorithm"]
+            except Exception:
+                fallback_used = True
+                solution = self._solve_problem_single_call(question, technique, language)
+                generator_algorithm = solution.get("approach", "unavailable")
+                return solution
+
+            solution = self._generate_solution(question, plan, language)
+            generator_algorithm = solution.get("approach", "unavailable")
+            return solution
+        finally:
+            logger.info(
+                "solve_benchmark %s",
+                json.dumps({
+                    "problem_id": problem_id,
+                    "planner_algorithm": planner_algorithm,
+                    "generator_algorithm": generator_algorithm,
+                    "fallback_used": fallback_used,
+                    "latency_ms": round((perf_counter() - started_at) * 1000, 2),
+                }),
+            )
+
+    def _plan_problem(self, question: str) -> Dict[str, Any]:
+        """Request and minimally validate the planner's structured algorithm plan."""
+        completion = groq_client.chat.completions.create(
+            model="openai/gpt-oss-120b",
+            messages=[
+                {"role": "system", "content": PromptBuilder.build_planner_system_prompt()},
+                {"role": "user", "content": PromptBuilder.build_planner_user_prompt(question)},
+            ],
+            response_format={"type": "json_object"},
+            temperature=0.2,
+            max_tokens=2000,
+        )
+        plan = json.loads(completion.choices[0].message.content)
+        self._validate_plan(plan)
+        return plan
+
+    def _generate_solution(self, question: str, plan: Dict[str, Any], language: str) -> Dict[str, Any]:
+        """Generate the existing solution JSON from the original problem and plan."""
+        completion = groq_client.chat.completions.create(
+            model="openai/gpt-oss-120b",
+            messages=[
+                {"role": "system", "content": PromptBuilder.build_generator_system_prompt()},
+                {"role": "user", "content": PromptBuilder.build_generator_user_prompt(question, plan, language)},
+            ],
+            response_format={"type": "json_object"},
+            temperature=0.2,
+            max_tokens=4000,
+        )
+        return json.loads(completion.choices[0].message.content)
+
+    def _solve_problem_single_call(self, question: str, technique: str, language: str) -> Dict[str, Any]:
+        """Execute the original single-call solver used when planning is unavailable."""
         system_prompt = PromptBuilder.build_solver_system_prompt()
         user_prompt = PromptBuilder.build_solver_user_prompt(question, technique, language)
-        
         messages = [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
         ]
-        
         completion = groq_client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model="openai/gpt-oss-120b",
             messages=messages,
             response_format={"type": "json_object"},
             temperature=0.2,
             max_tokens=4000
         )
-        
         raw_response = completion.choices[0].message.content
         return json.loads(raw_response)
+
+    @staticmethod
+    def _validate_plan(plan: Dict[str, Any]) -> None:
+        """Reject malformed plans so the request can use the existing solver instead."""
+        required_text_fields = ("classification", "key_observation", "algorithm", "implementation_notes")
+        if not isinstance(plan, dict):
+            raise ValueError("Planner response must be a JSON object.")
+        if any(not isinstance(plan.get(field), str) or not plan[field].strip() for field in required_text_fields):
+            raise ValueError("Planner response is missing required text fields.")
+        if not isinstance(plan.get("steps"), list) or not plan["steps"]:
+            raise ValueError("Planner response is missing algorithm steps.")
+
+        complexity = plan.get("complexity")
+        if (
+            not isinstance(complexity, dict)
+            or not isinstance(complexity.get("time"), str)
+            or not complexity["time"].strip()
+            or not isinstance(complexity.get("space"), str)
+            or not complexity["space"].strip()
+        ):
+            raise ValueError("Planner response is missing complexity information.")
 
 
 class GeminiProvider(BaseAIProvider):
