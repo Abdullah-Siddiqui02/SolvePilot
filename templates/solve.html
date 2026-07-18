@@ -199,6 +199,30 @@
         color: var(--text-secondary);
         margin: 1rem 0;
     }
+    
+    /* Table Styling for Markdown Tables */
+    .solution-rendered table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1.5rem 0;
+        background: rgba(15, 23, 42, 0.4);
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid var(--surface-border);
+    }
+    .solution-rendered th, .solution-rendered td {
+        padding: 0.8rem 1rem;
+        border-bottom: 1px solid var(--surface-border);
+        text-align: left;
+    }
+    .solution-rendered th {
+        background: rgba(0, 0, 0, 0.2);
+        color: var(--primary);
+        font-weight: 600;
+    }
+    .solution-rendered tr:last-child td {
+        border-bottom: none;
+    }
 </style>
 
 <script>
