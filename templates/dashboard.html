@@ -319,7 +319,7 @@
                     <div class="streak-days-row">
                         {% for day in ['M', 'T', 'W', 'T', 'F', 'S', 'S'] %}
                         <div class="streak-day-item">
-                            <span class="streak-day-dot {% if loop.index <= [user_streak, 7] | min %}active{% endif %}"></span>
+                            <span class="streak-day-dot {% if (current_weekday - loop.index0) % 7 < user_streak %}active{% endif %}"></span>
                             <small>{{ day }}</small>
                         </div>
                         {% endfor %}
