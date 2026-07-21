@@ -1,247 +1,133 @@
 {% extends "base.html" %}
 
-{% block title %}AI Solve – SolvePilot{% endblock %}
+{% block title %}AI Solve â€“ SolvePilot{% endblock %}
 
 {% block head %}
-<!-- Markdown rendering -->
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<!-- Code syntax highlighting -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+<script>
+    window.MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        },
+        svg: {
+            fontCache: 'global'
+        }
+    };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='solve-polish.css') }}">
 {% endblock %}
 
 {% block content %}
-<div style="max-width: 900px; margin: 0 auto;">
-
-    <h2 style="margin-bottom: 0.25rem;">🤖 AI Solution Generator</h2>
-    <p style="color: var(--text-secondary); margin-bottom: 2rem;">
-        Enter a coding question, pick a technique, and get a detailed line-by-line solution.
-    </p>
-
-    <!-- Input Form -->
-    <div class="glass" style="padding: 2rem; border-radius: 16px; margin-bottom: 2rem;">
-        <form id="solve-form">
-            <div class="form-group">
-                <label for="question">Question / Problem Statement</label>
-                <textarea id="question" name="question" rows="4"
-                    placeholder="e.g. Given an array of integers, return indices of the two numbers such that they add up to a specific target."
-                    required
-                    style="width: 100%; padding: 0.8rem 1rem; background: rgba(15,23,42,0.8);
-                           border: 1px solid var(--surface-border); border-radius: 8px;
-                           color: var(--text-primary); font-family: var(--font-body);
-                           box-sizing: border-box; resize: vertical;
-                           transition: border-color 0.3s ease, box-shadow 0.3s ease;"></textarea>
+<section class="solve-page">
+    <div class="solve-shell">
+        <header class="solve-hero">
+            <div>
+                <h2>🤖 AI Solution Generator</h2>
+                <p>Enter a coding question, pick a technique, and get a detailed line-by-line solution.</p>
             </div>
+        </header>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+        <div class="solve-panel solve-panel-form">
+            <form id="solve-form">
                 <div class="form-group">
-                    <label for="technique">Technique / Approach</label>
-                    <select id="technique" name="technique">
-                        <option value="">Auto-detect best approach</option>
-                        <option value="Brute Force">Brute Force</option>
-                        <option value="Two Pointers">Two Pointers</option>
-                        <option value="Sliding Window">Sliding Window</option>
-                        <option value="Hash Map">Hash Map</option>
-                        <option value="Binary Search">Binary Search</option>
-                        <option value="Recursion">Recursion</option>
-                        <option value="Dynamic Programming">Dynamic Programming</option>
-                        <option value="Backtracking">Backtracking</option>
-                        <option value="BFS">BFS (Breadth-First Search)</option>
-                        <option value="DFS">DFS (Depth-First Search)</option>
-                        <option value="Greedy">Greedy</option>
-                        <option value="Divide and Conquer">Divide and Conquer</option>
-                        <option value="Stack">Stack</option>
-                        <option value="Queue">Queue</option>
-                        <option value="Linked List Manipulation">Linked List Manipulation</option>
-                        <option value="Tree Traversal">Tree Traversal</option>
-                        <option value="Graph Algorithms">Graph Algorithms</option>
-                        <option value="Bit Manipulation">Bit Manipulation</option>
-                        <option value="Math / Number Theory">Math / Number Theory</option>
-                    </select>
+                    <label for="question">Question / Problem Statement</label>
+                    <textarea
+                        id="question"
+                        name="question"
+                        rows="4"
+                        class="solve-textarea"
+                        placeholder="e.g. Given an array of integers, return indices of the two numbers such that they add up to a specific target."
+                        required></textarea>
                 </div>
 
-                <div class="form-group">
-                    <label for="language">Language</label>
-                    <select id="language" name="language">
-                        <option value="Python">Python</option>
-                        <option value="Java">Java</option>
-                        <option value="C++">C++</option>
-                        <option value="JavaScript">JavaScript</option>
-                        <option value="C">C</option>
-                    </select>
+                <div class="solve-controls-grid">
+                    <div class="form-group">
+                        <label for="technique">Technique / Approach</label>
+                        <select id="technique" name="technique" class="solve-select">
+                            <option value="">Auto-detect best approach</option>
+                            <option value="Brute Force">Brute Force</option>
+                            <option value="Two Pointers">Two Pointers</option>
+                            <option value="Sliding Window">Sliding Window</option>
+                            <option value="Hash Map">Hash Map</option>
+                            <option value="Binary Search">Binary Search</option>
+                            <option value="Recursion">Recursion</option>
+                            <option value="Dynamic Programming">Dynamic Programming</option>
+                            <option value="Backtracking">Backtracking</option>
+                            <option value="BFS">BFS (Breadth-First Search)</option>
+                            <option value="DFS">DFS (Depth-First Search)</option>
+                            <option value="Greedy">Greedy</option>
+                            <option value="Divide and Conquer">Divide and Conquer</option>
+                            <option value="Stack">Stack</option>
+                            <option value="Queue">Queue</option>
+                            <option value="Linked List Manipulation">Linked List Manipulation</option>
+                            <option value="Tree Traversal">Tree Traversal</option>
+                            <option value="Graph Algorithms">Graph Algorithms</option>
+                            <option value="Bit Manipulation">Bit Manipulation</option>
+                            <option value="Math / Number Theory">Math / Number Theory</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="language">Language</label>
+                        <select id="language" name="language" class="solve-select">
+                            <option value="Python">Python</option>
+                            <option value="Java">Java</option>
+                            <option value="C++">C++</option>
+                            <option value="JavaScript">JavaScript</option>
+                            <option value="C">C</option>
+                        </select>
+                    </div>
                 </div>
-            </div>
 
-            <button type="submit" class="btn btn-primary" id="solve-btn" style="width: 100%; margin-top: 0.5rem;">
-                ⚡ Generate Solution
-            </button>
-        </form>
-    </div>
-
-    <!-- Loading Indicator -->
-    <div id="loading" style="display: none; text-align: center; padding: 3rem 0;">
-        <div class="spinner"></div>
-        <p style="color: var(--text-secondary); margin-top: 1rem;">Generating your solution...</p>
-    </div>
-
-    <!-- Error Message -->
-    <div id="error-box" style="display: none;" class="alert alert-error"></div>
-
-    <!-- Solution Output -->
-    <div id="solution-box" style="display: none;">
-        <div class="glass" style="padding: 2rem; border-radius: 16px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <h3 style="margin: 0; color: var(--primary);">💡 Solution</h3>
-                <button class="btn btn-outline" onclick="copySolution()" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
-                    📋 Copy
+                <button type="submit" class="btn btn-primary solve-submit" id="solve-btn">
+                    ⚡ Generate Solution
                 </button>
+            </form>
+        </div>
+
+        <div id="loading" class="solve-loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Generating your solution...</p>
+        </div>
+
+        <div id="error-box" style="display: none;" class="alert alert-error solve-alert"></div>
+
+        <div id="solution-box" style="display: none;">
+            <div class="solve-panel solve-panel-output">
+                <div class="solve-output-head">
+                    <h3>💡 Solution</h3>
+                    <button class="btn btn-outline solve-copy-btn" onclick="copySolution()" type="button">
+                        📋 Copy
+                    </button>
+                </div>
+                <div id="solution-content" class="solution-rendered"></div>
             </div>
-            <div id="solution-content" class="solution-rendered"></div>
         </div>
     </div>
-</div>
+</section>
+{% endblock %}
 
-<style>
-    /* Textarea focus */
-    textarea:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
-    }
-
-    /* Spinner */
-    .spinner {
-        width: 40px;
-        height: 40px;
-        border: 3px solid var(--surface-border);
-        border-top: 3px solid var(--primary);
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
-        margin: 0 auto;
-    }
-    @keyframes spin {
-        to { transform: rotate(360deg); }
-    }
-
-    /* Solution content styling */
-    .solution-rendered {
-        line-height: 1.8;
-        color: var(--text-primary);
-    }
-    .solution-rendered h1,
-    .solution-rendered h2,
-    .solution-rendered h3,
-    .solution-rendered h4 {
-        color: var(--primary);
-        margin-top: 1.5rem;
-    }
-    .solution-rendered p {
-        margin: 0.5rem 0;
-    }
-    .solution-rendered ul, .solution-rendered ol {
-        padding-left: 1.5rem;
-    }
-    .solution-rendered code {
-        background: rgba(0,0,0,0.4);
-        padding: 0.2rem 0.4rem;
-        border-radius: 4px;
-        font-size: 0.9rem;
-    }
-    .solution-rendered pre {
-        background: rgba(0,0,0,0.5);
-        padding: 1.25rem;
-        padding-top: 2.5rem;
-        border-radius: 10px;
-        overflow-x: auto;
-        border: 1px solid var(--surface-border);
-        position: relative;
-    }
-    .solution-rendered pre code {
-        background: transparent;
-        padding: 0;
-    }
-
-    /* Copy Code button on each code block */
-    .copy-code-btn {
-        position: absolute;
-        top: 0.5rem;
-        right: 0.5rem;
-        background: rgba(56, 189, 248, 0.15);
-        color: var(--primary);
-        border: 1px solid rgba(56, 189, 248, 0.3);
-        padding: 0.3rem 0.7rem;
-        border-radius: 6px;
-        font-size: 0.75rem;
-        cursor: pointer;
-        transition: all 0.25s ease;
-        font-family: var(--font-body);
-        display: flex;
-        align-items: center;
-        gap: 0.3rem;
-        z-index: 2;
-    }
-    .copy-code-btn:hover {
-        background: rgba(56, 189, 248, 0.3);
-        border-color: var(--primary);
-        transform: translateY(-1px);
-    }
-    .copy-code-btn.copied {
-        background: rgba(52, 211, 153, 0.2);
-        color: #34d399;
-        border-color: rgba(52, 211, 153, 0.4);
-    }
-    .solution-rendered strong {
-        color: #e2e8f0;
-    }
-    .solution-rendered blockquote {
-        border-left: 3px solid var(--primary);
-        padding-left: 1rem;
-        color: var(--text-secondary);
-        margin: 1rem 0;
-    }
-    
-    /* Table Styling for Markdown Tables */
-    .solution-rendered table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 1.5rem 0;
-        background: rgba(15, 23, 42, 0.4);
-        border-radius: 8px;
-        overflow: hidden;
-        border: 1px solid var(--surface-border);
-    }
-    .solution-rendered th, .solution-rendered td {
-        padding: 0.8rem 1rem;
-        border-bottom: 1px solid var(--surface-border);
-        text-align: left;
-    }
-    .solution-rendered th {
-        background: rgba(0, 0, 0, 0.2);
-        color: var(--primary);
-        font-weight: 600;
-    }
-    .solution-rendered tr:last-child td {
-        border-bottom: none;
-    }
-</style>
-
+{% block scripts %}
 <script>
-    const form      = document.getElementById('solve-form');
-    const loading   = document.getElementById('loading');
-    const errorBox  = document.getElementById('error-box');
-    const solBox    = document.getElementById('solution-box');
+    const form = document.getElementById('solve-form');
+    const loading = document.getElementById('loading');
+    const errorBox = document.getElementById('error-box');
+    const solBox = document.getElementById('solution-box');
     const solContent = document.getElementById('solution-content');
-    const solveBtn  = document.getElementById('solve-btn');
+    const solveBtn = document.getElementById('solve-btn');
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // Reset UI
-        loading.style.display   = 'block';
-        errorBox.style.display  = 'none';
-        solBox.style.display    = 'none';
-        solveBtn.disabled       = true;
-        solveBtn.textContent    = '⏳ Generating...';
+        loading.style.display = 'block';
+        errorBox.style.display = 'none';
+        solBox.style.display = 'none';
+        solveBtn.disabled = true;
+        solveBtn.textContent = '⏳ Generating...';
 
         const formData = new FormData(form);
 
@@ -257,32 +143,35 @@
                 throw new Error(data.error || 'Something went wrong.');
             }
 
-            // Render markdown
-            const rawHtml = marked.parse(data.answer);
-            solContent.innerHTML = rawHtml;
+            solContent.innerHTML = marked.parse(data.answer);
 
-            // Highlight code blocks & inject copy buttons
-            solContent.querySelectorAll('pre code').forEach(block => {
+            solContent.querySelectorAll('pre code').forEach((block) => {
                 hljs.highlightElement(block);
             });
-            solContent.querySelectorAll('pre').forEach(pre => {
+
+            solContent.querySelectorAll('pre').forEach((pre) => {
+                if (pre.querySelector('.copy-code-btn')) return;
                 const btn = document.createElement('button');
                 btn.className = 'copy-code-btn';
+                btn.type = 'button';
                 btn.innerHTML = '📋 Copy Code';
                 btn.addEventListener('click', () => copyCodeBlock(btn, pre));
                 pre.style.position = 'relative';
                 pre.insertBefore(btn, pre.firstChild);
             });
 
-            solBox.style.display = 'block';
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise([solContent]).catch(() => {});
+            }
 
+            solBox.style.display = 'block';
         } catch (err) {
-            errorBox.textContent   = err.message;
+            errorBox.textContent = err.message;
             errorBox.style.display = 'block';
         } finally {
             loading.style.display = 'none';
-            solveBtn.disabled     = false;
-            solveBtn.textContent  = '⚡ Generate Solution';
+            solveBtn.disabled = false;
+            solveBtn.textContent = '⚡ Generate Solution';
         }
     });
 
@@ -296,7 +185,6 @@
     }
 
     function copyCodeBlock(btn, pre) {
-        // Get only the code text, skip the button text
         const code = pre.querySelector('code');
         const text = code ? code.innerText : pre.innerText;
         navigator.clipboard.writeText(text).then(() => {
