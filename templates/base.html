@@ -36,9 +36,8 @@
       {% if session.get('user_id') %}
       <a href="/dashboard" class="nav-item {{ 'active' if request.path == '/dashboard' }}">Dashboard</a>
       <a href="/add" class="nav-item {{ 'active' if request.path == '/add' }}">Add Question</a>
-      <a href="/solve" class="nav-item {{ 'active' if request.path == '/solve' }}">🤖 AI Mentor</a>
-      <a href="/ide" class="nav-item {{ 'active' if request.path.startswith('/ide') }}">💻 IDE</a>
-      <a href="/explore" class="nav-item {{ 'active' if request.path == '/explore' }}">Explore</a>
+      <a href="/solve" class="nav-item {{ 'active' if request.path == '/solve' }}">AI Mentor</a>
+      <a href="/ide" class="nav-item {{ 'active' if request.path.startswith('/ide') }}">IDE</a>
       <a href="/logout" class="btn btn-logout">Logout</a>
       {% else %}
       <a href="/" class="nav-item">Login</a>
