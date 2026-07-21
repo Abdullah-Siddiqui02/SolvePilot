@@ -1348,6 +1348,7 @@
         }
     </style>
     <link rel="stylesheet" href="{{ url_for('static', filename='design-system.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='ide-polish.css') }}">
 </head>
 
 <body>
@@ -1356,16 +1357,25 @@
     <div class="blob blob-2"></div>
 
     <!-- Main Navigation Bar -->
-    <nav class="navbar glass px-4" style="height: 60px; padding: 0.5rem 1.5rem; position: relative;">
+    <nav class="navbar glass px-4 ide-navbar" style="height: 60px; padding: 0.45rem 1.25rem; position: relative;">
         <div class="nav-brand">
             <div class="nav-brand-logo">
                 <span class="logo-iq">Solve</span><span class="logo-accent">Pilot</span>
             </div>
             <span class="tagline" style="font-size: 0.6rem; margin-top: -6px;">Navigate your coding journey</span>
         </div>
-        <div class="nav-links d-flex align-items-center" style="gap: 1rem;">
-            <button id="btn-sync" class="btn-toolbar btn-run-code" style="font-size: 0.85rem; padding: 0.45rem 1rem;">Sync Daily Problems</button>
-            <a href="/dashboard" class="btn btn-toolbar btn-reset-code" style="font-size: 0.85rem; padding: 0.45rem 1rem; text-decoration: none;">Back to Dashboard</a>
+        <div class="ide-navbar-actions">
+            <div class="nav-links ide-main-links">
+                <a href="/dashboard" class="nav-item {{ 'active' if request.path == '/dashboard' }}">Dashboard</a>
+                <a href="/add" class="nav-item {{ 'active' if request.path == '/add' }}">Add Question</a>
+                <a href="/solve" class="nav-item {{ 'active' if request.path == '/solve' }}">AI Mentor</a>
+                <a href="/ide" class="nav-item {{ 'active' if request.path.startswith('/ide') }}">IDE</a>
+                <a href="/logout" class="btn btn-logout">Logout</a>
+            </div>
+            <div class="ide-utility-links">
+                <button id="btn-sync" class="btn-toolbar btn-run-code ide-sync-btn">Sync Daily Problems</button>
+                <a href="/dashboard" class="btn btn-toolbar btn-reset-code ide-back-btn" style="text-decoration: none;">Back to Dashboard</a>
+            </div>
         </div>
     </nav>
 
