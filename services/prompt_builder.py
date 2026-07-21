@@ -31,7 +31,7 @@ You MUST respond with a single, valid JSON object matching the following structu
   "optimized_code": "string. An optimized reference implementation in the student's programming language. Note: If there are compilation/syntax errors in the student's code, do not generate the optimized code; instead, set this field to an empty string."
 }
 
-Do not include any prefix text, markdown block wraps (like ```json), or suffix outside of the JSON object.
+CRITICAL: Return ONLY valid JSON. No markdown code fences. No conversational text. Do not escape single quotes (\'). Escape only characters required by the JSON specification.
 """
 
 MENTOR_COMPILATION_ERROR_TEMPLATE = """You are 'SolvePilot AI Mentor', an expert software engineer and supportive coding coach. The student's code failed to compile.
@@ -62,7 +62,7 @@ You MUST respond with a single, valid JSON object matching the following structu
   "optimized_code": ""
 }
 
-Do not include any prefix text, markdown block wraps (like ```json), or suffix outside of the JSON object.
+CRITICAL: Return ONLY valid JSON. No markdown code fences. No conversational text. Do not escape single quotes (\'). Escape only characters required by the JSON specification.
 """
 
 MENTOR_RUNTIME_ERROR_TEMPLATE = """You are 'SolvePilot AI Mentor', an expert software engineer and supportive coding coach. The student's code crashed during execution.
@@ -90,7 +90,7 @@ You MUST respond with a single, valid JSON object matching the following structu
   "optimized_code": "string. Code snippet showing proper boundary/error checks ONLY if it directly helps fix the runtime issue. Otherwise, set to empty string."
 }
 
-Do not include any prefix text, markdown block wraps (like ```json), or suffix outside of the JSON object.
+CRITICAL: Return ONLY valid JSON. No markdown code fences. No conversational text. Do not escape single quotes (\'). Escape only characters required by the JSON specification.
 """
 
 MENTOR_WRONG_ANSWER_TEMPLATE = """You are 'SolvePilot AI Mentor', an expert software engineer and supportive coding coach. The student's code ran successfully but returned incorrect results.
@@ -119,7 +119,7 @@ You MUST respond with a single, valid JSON object matching the following structu
   "optimized_code": "string. Code for a significantly better algorithmic approach ONLY if one exists. Otherwise, set to empty string."
 }
 
-Do not include any prefix text, markdown block wraps (like ```json), or suffix outside of the JSON object.
+CRITICAL: Return ONLY valid JSON. No markdown code fences. No conversational text. Do not escape single quotes (\'). Escape only characters required by the JSON specification.
 """
 
 MENTOR_TIME_LIMIT_EXCEEDED_TEMPLATE = """You are 'SolvePilot AI Mentor', an expert software engineer and supportive coding coach. The student's code is too slow and exceeded the time limit.
@@ -148,7 +148,7 @@ You MUST respond with a single, valid JSON object matching the following structu
   "optimized_code": "string. The optimized reference implementation code."
 }
 
-Do not include any prefix text, markdown block wraps (like ```json), or suffix outside of the JSON object.
+CRITICAL: Return ONLY valid JSON. No markdown code fences. No conversational text. Do not escape single quotes (\'). Escape only characters required by the JSON specification.
 """
 
 MENTOR_MEMORY_LIMIT_EXCEEDED_TEMPLATE = """You are 'SolvePilot AI Mentor', an expert software engineer and supportive coding coach. The student's code exceeded the memory limit.
@@ -175,7 +175,7 @@ You MUST respond with a single, valid JSON object matching the following structu
   "optimized_code": "string. A memory-efficient reference implementation code, or empty string if not applicable."
 }
 
-Do not include any prefix text, markdown block wraps (like ```json), or suffix outside of the JSON object.
+CRITICAL: Return ONLY valid JSON. No markdown code fences. No conversational text. Do not escape single quotes (\'). Escape only characters required by the JSON specification.
 """
 
 MENTOR_ACCEPTED_TEMPLATE = """You are 'SolvePilot AI Mentor', an expert software engineer and supportive coding coach. The student's code was accepted!
@@ -203,7 +203,7 @@ You MUST respond with a single, valid JSON object matching the following structu
   "optimized_code": "string. A cleaner/more elegant/alternative implementation code ONLY if meaningful. If their solution is near-optimal, set this to an empty string."
 }
 
-Do not include any prefix text, markdown block wraps (like ```json), or suffix outside of the JSON object.
+CRITICAL: Return ONLY valid JSON. No markdown code fences. No conversational text. Do not escape single quotes (\'). Escape only characters required by the JSON specification.
 """
 
 MENTOR_USER_TEMPLATE = """PROBLEM CONTEXT:
@@ -280,7 +280,7 @@ You MUST respond with a single, valid JSON object matching the following structu
   "explanation": "string. Line-by-line explanation of the code. If the problem is incomplete, state that here."
 }
 
-Do NOT ask the user to provide a problem or wait for another message. Do not include any prefix text or suffix outside of the JSON object.
+CRITICAL: Return ONLY valid JSON. No markdown code fences. No conversational text. Do not escape single quotes (\'). Escape only characters required by the JSON specification.
 """
 
 SOLVER_USER_TEMPLATE = """PROBLEM / QUESTION:
@@ -307,7 +307,7 @@ Return only one valid JSON object with this exact structure:
   "implementation_notes": "string. Details the implementation must respect."
 }
 
-Do not include code, markdown, or text outside the JSON object.
+CRITICAL: Return ONLY valid JSON. No markdown code fences. No conversational text. Do not escape single quotes (\'). Escape only characters required by the JSON specification.
 """
 
 PLANNER_USER_TEMPLATE = """PROBLEM / QUESTION:
@@ -331,7 +331,7 @@ Return only one valid JSON object with this exact structure:
   "explanation": "string. Line-by-line explanation of the code."
 }
 
-Do not include any text outside the JSON object.
+CRITICAL: Return ONLY valid JSON. No markdown code fences. No conversational text. Do not escape single quotes (\'). Escape only characters required by the JSON specification.
 """
 
 GENERATOR_USER_TEMPLATE = """PROBLEM / QUESTION:
