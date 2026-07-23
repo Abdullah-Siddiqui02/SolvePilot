@@ -62,30 +62,6 @@
             background: rgba(255, 255, 255, 0.25);
         }
 
-        /* Background Blobs (reduced opacity to avoid distracting developers) */
-        .blob {
-            position: absolute;
-            filter: blur(120px);
-            z-index: -1;
-            border-radius: 50%;
-            opacity: 0.12;
-            pointer-events: none;
-        }
-        .blob-1 {
-            top: 5%;
-            left: 5%;
-            width: 300px;
-            height: 300px;
-            background: var(--blob-1);
-        }
-        .blob-2 {
-            bottom: 5%;
-            right: 5%;
-            width: 350px;
-            height: 350px;
-            background: var(--blob-2);
-        }
-
         .main-container {
             display: flex;
             flex: 1;
@@ -1363,10 +1339,6 @@
 </head>
 
 <body>
-    <!-- Background Blobs for Visual Interest -->
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-
     <!-- Main Navigation Bar -->
     <nav class="navbar glass px-4 ide-navbar" style="height: 60px; padding: 0.45rem 1.25rem; position: relative;">
         <div class="nav-brand">

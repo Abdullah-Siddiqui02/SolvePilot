@@ -718,68 +718,6 @@ class GroqProvider(BaseAIProvider):
             raise ValueError("Planner response is missing complexity information.")
 
 
-class GeminiProvider(BaseAIProvider):
-    """Gemini AI Provider (Placeholder)."""
-
-    def get_mentor_feedback(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        # Generate the prompts to demonstrate PromptBuilder usage
-        system_prompt = PromptBuilder.build_mentor_system_prompt(context)
-        user_prompt = PromptBuilder.build_mentor_user_prompt(context)
-
-        # Return dummy feedback for now (placeholder implementation)
-        return DummyProvider().get_mentor_feedback(context)
-
-    def ask_question(
-        self,
-        problem_title: str,
-        problem_desc: str,
-        code: str,
-        language: str,
-        user_query: str,
-        chat_history: List[Dict[str, str]]
-    ) -> str:
-        return (
-            f"[Gemini Provider Placeholder]\n"
-            f"Hello! I am the Gemini SolvePilot AI mentor placeholder.\n"
-            f"Problem: '{problem_title}'\n"
-            f"Question: '{user_query}'"
-        )
-
-    def solve_problem(self, question: str, technique: str, language: str) -> Dict[str, Any]:
-        return DummyProvider().solve_problem(question, technique, language)
-
-
-class OpenAIProvider(BaseAIProvider):
-    """OpenAI AI Provider (Placeholder)."""
-
-    def get_mentor_feedback(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        # Generate the prompts to demonstrate PromptBuilder usage
-        system_prompt = PromptBuilder.build_mentor_system_prompt(context)
-        user_prompt = PromptBuilder.build_mentor_user_prompt(context)
-
-        # Return dummy feedback for now (placeholder implementation)
-        return DummyProvider().get_mentor_feedback(context)
-
-    def ask_question(
-        self,
-        problem_title: str,
-        problem_desc: str,
-        code: str,
-        language: str,
-        user_query: str,
-        chat_history: List[Dict[str, str]]
-    ) -> str:
-        return (
-            f"[OpenAI Provider Placeholder]\n"
-            f"Hello! I am the OpenAI SolvePilot AI mentor placeholder.\n"
-            f"Problem: '{problem_title}'\n"
-            f"Question: '{user_query}'"
-        )
-
-    def solve_problem(self, question: str, technique: str, language: str) -> Dict[str, Any]:
-        return DummyProvider().solve_problem(question, technique, language)
-
-
 # ──────────────────────────────────────────────────────────────
 # AIService Single Entry Point
 # ──────────────────────────────────────────────────────────────
@@ -803,8 +741,6 @@ class AIService:
         providers = {
             "dummy": DummyProvider,
             "groq": GroqProvider,
-            "gemini": GeminiProvider,
-            "openai": OpenAIProvider
         }
 
         provider_cls = providers.get(provider_name)

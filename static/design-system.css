@@ -302,7 +302,6 @@ textarea {
 .dashboard-modern-feature,
 .dashboard-modern-topic-item,
 .dashboard-modern-empty-state,
-.contest-card,
 .topic-item,
 .stat-card,
 .chart-container,
@@ -488,7 +487,6 @@ textarea {
 .feature-card,
 .why-card,
 .step-card,
-.contest-card,
 .topic-item,
 .dashboard-modern-topic-card,
 .dashboard-modern-topic-group,
@@ -512,7 +510,6 @@ textarea {
 }
 
 .steps-flow::before,
-.contest-card,
 .dashboard-modern-tab::after,
 .dashboard-modern-stat::after {
   background: none !important;

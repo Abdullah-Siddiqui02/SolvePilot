@@ -15,9 +15,6 @@
 </head>
 
 <body>
-  <div class="blob blob-1"></div>
-  <div class="blob blob-2"></div>
-
   <nav class="navbar glass">
     <div class="nav-brand">
       <div class="nav-brand-logo">
@@ -61,7 +58,24 @@
     {% block content %}{% endblock %}
   </main>
 
-  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const hamburger = document.getElementById('nav-hamburger');
+      const navLinks = document.getElementById('nav-links');
+      if (hamburger && navLinks) {
+        hamburger.addEventListener('click', () => {
+          hamburger.classList.toggle('active');
+          navLinks.classList.toggle('open');
+        });
+        navLinks.querySelectorAll('a').forEach(link => {
+          link.addEventListener('click', () => {
+            hamburger.classList.remove('active');
+            navLinks.classList.remove('open');
+          });
+        });
+      }
+    });
+  </script>
   {% block scripts %}{% endblock %}
 </body>
 
