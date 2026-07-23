@@ -2,15 +2,61 @@
 
 {% block title %}Dashboard - SolvePilot{% endblock %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='dashboard-polish.css') }}">
+{% endblock %}
+
 {% block content %}
 <section class="dashboard-modern">
     <header class="dashboard-modern-hero">
-        <div>
-            <h1>Hello, {{ username }}!</h1>
-            <p>Ready to solve some amazing problems today?</p>
+        <div class="dashboard-modern-hero-copy">
+            <span class="dashboard-modern-eyebrow">YOUR PRACTICE HQ</span>
+            <h1>Welcome back, {{ username }}.</h1>
+            <p>Build momentum with one focused solve at a time.</p>
         </div>
-        <a href="/add" class="dashboard-modern-add">+ Add Question</a>
+        <div class="dashboard-modern-hero-actions">
+            <a href="/add" class="dashboard-modern-add">+ Add Question</a>
+        </div>
     </header>
+
+    <section class="dashboard-modern-journey" aria-labelledby="journey-title">
+        <div class="dashboard-modern-journey-mark" aria-hidden="true">
+            <span></span>
+        </div>
+        <div class="dashboard-modern-journey-copy">
+            <span class="dashboard-modern-eyebrow">CONTINUE YOUR JOURNEY</span>
+            {% if recommended_problem %}
+            <h2 id="journey-title">{{ recommended_problem[1] }}</h2>
+            <p>Picked from your weak topics so your next session has a clear direction.</p>
+            <div class="dashboard-modern-journey-meta">
+                <span class="dashboard-mini-badge {{ recommended_problem[2]|lower }}">{{ recommended_problem[2] }}</span>
+                <span>{{ recommended_problem[3] }}</span>
+            </div>
+            <a href="/ide?id={{ recommended_problem[0] }}&title={{ recommended_problem[1]|urlencode }}" class="dashboard-modern-add journey-action">Continue Problem <span aria-hidden="true">-&gt;</span></a>
+            {% elif daily_challenge %}
+            <h2 id="journey-title">{{ daily_challenge[1] }}</h2>
+            <p>Today's challenge is ready when you are. Keep your practice streak moving.</p>
+            <div class="dashboard-modern-journey-meta">
+                <span class="dashboard-mini-badge {{ daily_challenge[2]|lower }}">{{ daily_challenge[2] }}</span>
+                <span>Daily challenge</span>
+            </div>
+            <a href="/ide?id={{ daily_challenge[0] }}&title={{ daily_challenge[1]|urlencode }}" class="dashboard-modern-add journey-action">Start Challenge <span aria-hidden="true">-&gt;</span></a>
+            {% else %}
+            <h2 id="journey-title">Start your next practice session</h2>
+            <p>Use AI Mentor to break down an algorithm, then turn the idea into a confident solve.</p>
+            <div class="dashboard-modern-journey-meta">
+                <span class="dashboard-mini-badge purple">AI Mentor</span>
+                <span>Learn, explain, practice</span>
+            </div>
+            <a href="/solve" class="dashboard-modern-add journey-action">Open AI Mentor <span aria-hidden="true">-&gt;</span></a>
+            {% endif %}
+        </div>
+        <div class="dashboard-modern-journey-side" aria-hidden="true">
+            <span class="journey-side-label">NEXT</span>
+            <span class="journey-side-line"></span>
+            <span class="journey-side-dot"></span>
+        </div>
+    </section>
 
     <div class="dashboard-modern-summary">
         <article class="dashboard-modern-stat stat-blue dashboard-modern-trigger" data-detail-target="solved-questions-panel">
@@ -319,7 +365,7 @@
                     <div class="streak-days-row">
                         {% for day in ['M', 'T', 'W', 'T', 'F', 'S', 'S'] %}
                         <div class="streak-day-item">
-                            <span class="streak-day-dot {% if loop.index <= [user_streak, 7] | min %}active{% endif %}"></span>
+                            <span class="streak-day-dot {% if (current_weekday - loop.index0) % 7 < user_streak %}active{% endif %}"></span>
                             <small>{{ day }}</small>
                         </div>
                         {% endfor %}

@@ -335,4 +335,5 @@ def dashboard():
         weak_topics=weak_topics,
         recommended_problem=recommended_problem,
         recent_activity=recent_activity,
+        current_weekday=today.weekday(),
     )

@@ -9,6 +9,7 @@
     href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Inter:wght@400;500;700&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='design-system.css') }}">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   {% block head %}{% endblock %}
 </head>
@@ -35,9 +36,8 @@
       {% if session.get('user_id') %}
       <a href="/dashboard" class="nav-item {{ 'active' if request.path == '/dashboard' }}">Dashboard</a>
       <a href="/add" class="nav-item {{ 'active' if request.path == '/add' }}">Add Question</a>
-      <a href="/solve" class="nav-item {{ 'active' if request.path == '/solve' }}">🤖 AI Mentor</a>
-      <a href="/ide" class="nav-item {{ 'active' if request.path.startswith('/ide') }}">💻 IDE</a>
-      <a href="/explore" class="nav-item {{ 'active' if request.path == '/explore' }}">Explore</a>
+      <a href="/solve" class="nav-item {{ 'active' if request.path == '/solve' }}">AI Mentor</a>
+      <a href="/ide" class="nav-item {{ 'active' if request.path.startswith('/ide') }}">IDE</a>
       <a href="/logout" class="btn btn-logout">Logout</a>
       {% else %}
       <a href="/" class="nav-item">Login</a>

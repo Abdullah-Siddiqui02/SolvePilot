@@ -25,11 +25,13 @@ def solve():
             answer = f"### 1. Problem Classification\n{json_data.get('classification', '')}\n\n"
             answer += f"### 2. Key Observation\n{json_data.get('key_observation', '')}\n\n"
             answer += f"### 3. Algorithm / Approach\n{json_data.get('approach', '')}\n\n"
-            answer += f"### 4. Time & Space Complexity\n"
+            answer += f"### 4. Time & Space Complexity\n\n"
             
             complexity = json_data.get('complexity', {})
-            answer += f"- **Time:** {complexity.get('time', 'N/A')}\n"
-            answer += f"- **Space:** {complexity.get('space', 'N/A')}\n\n"
+            answer += f"| Metric | Complexity Analysis |\n"
+            answer += f"| :--- | :--- |\n"
+            answer += f"| ⏱️ **Time** | `{complexity.get('time', 'N/A')}` |\n"
+            answer += f"| 💾 **Space** | `{complexity.get('space', 'N/A')}` |\n\n"
             
             answer += f"### 5. Implementation\n```{language.lower()}\n{json_data.get('implementation', '')}\n```\n\n"
             answer += f"### 6. Line-by-line Explanation\n{json_data.get('explanation', '')}\n"

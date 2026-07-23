@@ -1,8 +1,15 @@
 import os
 import json
+import re
+import hashlib
+import logging
+from time import perf_counter
 from typing import Dict, Any, List, Optional
 from abc import ABC, abstractmethod
 from services.prompt_builder import PromptBuilder
+
+
+logger = logging.getLogger(__name__)
 
 
 # Gracefully import database and AI clients from extensions
@@ -330,6 +337,238 @@ class DummyProvider(BaseAIProvider):
 class GroqProvider(BaseAIProvider):
     """Groq AI Provider."""
 
+    @staticmethod
+    def _extract_json_object(text: str) -> Optional[str]:
+        """Extract the first complete top-level JSON object from *text*.
+
+        Uses brace-depth tracking and correctly ignores braces that appear
+        inside JSON-quoted strings (handling escaped quotes too).
+        This safely handles conversational prefixes/suffixes the model may
+        wrap around its JSON output.
+
+        Returns the extracted JSON substring, or None if no complete
+        top-level object is found.
+        """
+        start = text.find("{")
+        if start == -1:
+            return None
+
+        depth = 0
+        in_string = False
+        i = start
+
+        while i < len(text):
+            ch = text[i]
+
+            # Inside a quoted string, a backslash means the next character
+            # is escaped — skip both so that \" does not end the string
+            # and \{ / \} do not affect depth.
+            if in_string and ch == "\\":
+                i += 2
+                continue
+
+            # Unescaped double-quote toggles string state
+            if ch == '"':
+                in_string = not in_string
+                i += 1
+                continue
+
+            # Track braces only outside strings
+            if not in_string:
+                if ch == "{":
+                    depth += 1
+                elif ch == "}":
+                    depth -= 1
+                    if depth == 0:
+                        return text[start:i + 1]
+
+            i += 1
+
+        return None
+
+    @staticmethod
+    def _repair_json_escapes(text: str) -> str:
+        """Repair invalid escape sequences inside JSON string values.
+
+        Walks through *text* character-by-character, tracking whether
+        the scanner is inside a JSON string (between unescaped double
+        quotes).  Inside a string, every backslash is checked:
+
+        • If the next character is a VALID JSON escape target
+          (\", \\\\, /, b, f, n, r, t, or u for \\uXXXX), keep both
+          the backslash and the target character.
+        • If the next character is anything else (commonly ' from C++
+          char literals), the backslash is DROPPED and only the
+          following character is kept.
+
+        Outside of JSON strings the text is passed through unchanged.
+        This approach is safe for embedded C++ code because it only
+        modifies characters inside JSON string values and never touches
+        structural JSON syntax.
+        """
+        # The set of characters that may legally follow a backslash
+        # inside a JSON string, per RFC 8259 §7.
+        VALID_ESCAPE_CHARS = frozenset('"\\bfnrtu/')
+
+        result = []
+        in_string = False
+        i = 0
+        length = len(text)
+
+        while i < length:
+            ch = text[i]
+
+            if not in_string:
+                # Outside a JSON string — pass through unchanged
+                result.append(ch)
+                if ch == '"':
+                    in_string = True
+                i += 1
+            else:
+                # Inside a JSON string
+                if ch == '\\':
+                    if i + 1 < length:
+                        next_ch = text[i + 1]
+                        if next_ch in VALID_ESCAPE_CHARS:
+                            # Valid escape — keep backslash + target
+                            result.append(ch)
+                            result.append(next_ch)
+                            i += 2
+                            # For \uXXXX, also copy the four hex digits
+                            if next_ch == 'u':
+                                hex_end = min(i + 4, length)
+                                while i < hex_end:
+                                    result.append(text[i])
+                                    i += 1
+                        else:
+                            # INVALID escape (e.g. \' from C++ code) —
+                            # drop the backslash, keep the character
+                            result.append(next_ch)
+                            i += 2
+                    else:
+                        # Trailing lone backslash at end of input — drop it
+                        i += 1
+                elif ch == '"':
+                    # Unescaped quote ends the string
+                    result.append(ch)
+                    in_string = False
+                    i += 1
+                else:
+                    result.append(ch)
+                    i += 1
+
+        return "".join(result)
+
+    def _execute_json_completion(self, messages: List[Dict[str, str]], max_tokens: int, temperature: float = 0.2, is_retry: bool = False) -> Dict[str, Any]:
+        """Execute chat completion, sanitize raw text, parse JSON, and handle retries.
+
+        Pipeline:
+            Raw Response → Trim whitespace → Remove markdown fences
+            → Extract first complete JSON object → Repair malformed
+            escape sequences → json.loads() → [retry on failure]
+        """
+        try:
+            completion = groq_client.chat.completions.create(
+                model="openai/gpt-oss-120b",
+                messages=messages,
+                temperature=temperature,
+                max_tokens=max_tokens
+            )
+            raw_response = completion.choices[0].message.content
+
+            # ── Sanitization Pipeline ──
+
+            # Step 1: Trim leading/trailing whitespace
+            sanitized = raw_response.strip()
+
+            # Step 2: Remove markdown code fences (```json ... ``` or ``` ... ```)
+            if sanitized.startswith("```"):
+                sanitized = re.sub(r"^```[a-zA-Z]*\n", "", sanitized)
+            if sanitized.endswith("```"):
+                sanitized = sanitized[:-3].strip()
+
+            # Step 3: Extract the first complete JSON object using
+            #         brace-depth tracking.  This strips any
+            #         conversational prefix/suffix text the model may
+            #         have wrapped around the JSON.
+            extracted = self._extract_json_object(sanitized)
+            extracted_text = extracted if extracted is not None else sanitized
+
+            # Step 4: Repair malformed escape sequences inside JSON
+            #         string values (e.g. \' → ', \x → x for any
+            #         non-JSON-spec escape character).
+            repaired = self._repair_json_escapes(extracted_text)
+
+            # Step 5: Attempt JSON parsing
+            try:
+                return json.loads(repaired)
+            except json.JSONDecodeError as parse_error:
+                # ── Diagnostic logging ──
+                error_pos = parse_error.pos or 0
+                context_start = max(0, error_pos - 50)
+                context_end = min(len(repaired), error_pos + 50)
+                surrounding = repaired[context_start:context_end]
+
+                logger.error("=" * 80)
+                logger.error("JSON PARSE FAILURE — diagnostic dump")
+                logger.error("=" * 80)
+                logger.error("RAW MODEL RESPONSE:\n%s", raw_response)
+                logger.error("-" * 40)
+                logger.error("EXTRACTED JSON:\n%s", extracted_text)
+                logger.error("-" * 40)
+                logger.error("REPAIRED JSON:\n%s", repaired)
+                logger.error("-" * 40)
+                logger.error(
+                    "JSONDecodeError: %s  (char offset %d)",
+                    parse_error.msg, error_pos
+                )
+                logger.error(
+                    "Context (±50 chars around offset %d):\n...%s...",
+                    error_pos, surrounding
+                )
+                logger.error("=" * 80)
+
+                if not is_retry:
+                    logger.info("Retrying model once with strict JSON instruction...")
+                    retry_messages = messages.copy()
+                    retry_messages.append({
+                        "role": "user",
+                        "content": (
+                            "CRITICAL: The previous response failed JSON validation. "
+                            "Return ONLY a single valid JSON object. "
+                            "Do not use markdown wrappers like ```json. "
+                            "Do not escape single quotes (\\') — that is invalid JSON. "
+                            "Only use escapes defined by the JSON specification: "
+                            '\\"  \\\\  \\/  \\b  \\f  \\n  \\r  \\t  \\uXXXX'
+                        )
+                    })
+                    return self._execute_json_completion(retry_messages, max_tokens, temperature, is_retry=True)
+                else:
+                    logger.error("JSON Parsing failed after retry — returning fallback.")
+                    return {
+                        "error_type": "Internal Error",
+                        "explanation": "The AI service encountered an internal formatting error after multiple attempts.",
+                        "hint": "Try regenerating the solution or modifying your request slightly.",
+                        "review": "N/A",
+                        "complexity": {"time": "N/A", "space": "N/A"},
+                        "edge_cases": [],
+                        "optimized_code": "",
+                        "classification": "Internal Error",
+                        "key_observation": "Formatting failure.",
+                        "approach": "Parsing failed.",
+                        "implementation": "",
+                        "steps": [],
+                        "implementation_notes": ""
+                    }
+        except Exception as e:
+            logger.error(f"API Error in _execute_json_completion: {e}")
+            return {
+                "error_type": "Internal API Error",
+                "explanation": f"API request failed: {str(e)}",
+                "classification": "Internal Error",
+                "implementation": ""
+            }
+
     def get_mentor_feedback(self, context: Dict[str, Any]) -> Dict[str, Any]:
         if not groq_client:
             raise RuntimeError("Groq client is not initialized.")
@@ -343,16 +582,7 @@ class GroqProvider(BaseAIProvider):
             {"role": "user", "content": user_prompt}
         ]
 
-        completion = groq_client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=messages,
-            response_format={"type": "json_object"},
-            temperature=0.2,
-            max_tokens=2000
-        )
-
-        raw_response = completion.choices[0].message.content
-        response_data = json.loads(raw_response)
+        response_data = self._execute_json_completion(messages, max_tokens=2000, temperature=0.2)
 
         # Reconstruct standardized schema response
         return {
@@ -392,7 +622,7 @@ class GroqProvider(BaseAIProvider):
         messages.append({"role": "user", "content": user_prompt})
 
         completion = groq_client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model="openai/gpt-oss-120b",
             messages=messages,
             temperature=0.7,
             max_tokens=1000
@@ -402,25 +632,90 @@ class GroqProvider(BaseAIProvider):
     def solve_problem(self, question: str, technique: str, language: str) -> Dict[str, Any]:
         if not groq_client:
             raise RuntimeError("Groq client is not initialized.")
-            
+
+        return self._solve_with_pipeline(question, technique, language)
+
+    def _solve_with_pipeline(self, question: str, technique: str, language: str) -> Dict[str, Any]:
+        """Run the experimental planner-to-generator flow with a single-call fallback."""
+        started_at = perf_counter()
+        problem_id = hashlib.sha256(question.encode("utf-8")).hexdigest()[:12]
+        planner_algorithm = "unavailable"
+        generator_algorithm = "unavailable"
+        fallback_used = False
+
+        try:
+            try:
+                plan = self._plan_problem(question)
+                planner_algorithm = plan["algorithm"]
+            except Exception:
+                fallback_used = True
+                solution = self._solve_problem_single_call(question, technique, language)
+                generator_algorithm = solution.get("approach", "unavailable")
+                return solution
+
+            solution = self._generate_solution(question, plan, language)
+            generator_algorithm = solution.get("approach", "unavailable")
+            return solution
+        finally:
+            logger.info(
+                "solve_benchmark %s",
+                json.dumps({
+                    "problem_id": problem_id,
+                    "planner_algorithm": planner_algorithm,
+                    "generator_algorithm": generator_algorithm,
+                    "fallback_used": fallback_used,
+                    "latency_ms": round((perf_counter() - started_at) * 1000, 2),
+                }),
+            )
+
+    def _plan_problem(self, question: str) -> Dict[str, Any]:
+        """Request and minimally validate the planner's structured algorithm plan."""
+        messages = [
+            {"role": "system", "content": PromptBuilder.build_planner_system_prompt()},
+            {"role": "user", "content": PromptBuilder.build_planner_user_prompt(question)},
+        ]
+        plan = self._execute_json_completion(messages, max_tokens=2000, temperature=0.2)
+        self._validate_plan(plan)
+        return plan
+
+    def _generate_solution(self, question: str, plan: Dict[str, Any], language: str) -> Dict[str, Any]:
+        """Generate the existing solution JSON from the original problem and plan."""
+        messages = [
+            {"role": "system", "content": PromptBuilder.build_generator_system_prompt()},
+            {"role": "user", "content": PromptBuilder.build_generator_user_prompt(question, plan, language)},
+        ]
+        return self._execute_json_completion(messages, max_tokens=4000, temperature=0.2)
+
+    def _solve_problem_single_call(self, question: str, technique: str, language: str) -> Dict[str, Any]:
+        """Execute the original single-call solver used when planning is unavailable."""
         system_prompt = PromptBuilder.build_solver_system_prompt()
         user_prompt = PromptBuilder.build_solver_user_prompt(question, technique, language)
-        
         messages = [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
         ]
-        
-        completion = groq_client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=messages,
-            response_format={"type": "json_object"},
-            temperature=0.2,
-            max_tokens=4000
-        )
-        
-        raw_response = completion.choices[0].message.content
-        return json.loads(raw_response)
+        return self._execute_json_completion(messages, max_tokens=4000, temperature=0.2)
+
+    @staticmethod
+    def _validate_plan(plan: Dict[str, Any]) -> None:
+        """Reject malformed plans so the request can use the existing solver instead."""
+        required_text_fields = ("classification", "key_observation", "algorithm", "implementation_notes")
+        if not isinstance(plan, dict):
+            raise ValueError("Planner response must be a JSON object.")
+        if any(not isinstance(plan.get(field), str) or not plan[field].strip() for field in required_text_fields):
+            raise ValueError("Planner response is missing required text fields.")
+        if not isinstance(plan.get("steps"), list) or not plan["steps"]:
+            raise ValueError("Planner response is missing algorithm steps.")
+
+        complexity = plan.get("complexity")
+        if (
+            not isinstance(complexity, dict)
+            or not isinstance(complexity.get("time"), str)
+            or not complexity["time"].strip()
+            or not isinstance(complexity.get("space"), str)
+            or not complexity["space"].strip()
+        ):
+            raise ValueError("Planner response is missing complexity information.")
 
 
 class GeminiProvider(BaseAIProvider):

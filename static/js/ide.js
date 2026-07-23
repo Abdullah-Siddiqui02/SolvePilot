@@ -967,7 +967,9 @@ async function showProblemDetails(problemId) {
         <span>${p.platform}</span> | 
         <a href="${p.url}" target="_blank" style="color: #4daaf1;">External Link</a>
     `;
-    document.getElementById('detail-description').innerText = p.description || "No description available.";
+    // Store the raw description (with $$$..$$$ LaTeX delimiters) for the Copy button
+    window.currentProblemRawDescription = p.description || "No description available.";
+    document.getElementById('detail-description').innerText = window.currentProblemRawDescription;
 
     // Render tags
     const tagsContainer = document.getElementById('detail-tags');
@@ -1010,6 +1012,37 @@ async function showProblemDetails(problemId) {
         switchProblemTab('desc');
     }
 }
+
+// Copy Problem button – copies raw description with LaTeX math delimiters preserved
+document.addEventListener('DOMContentLoaded', () => {
+    const btnCopyProblem = document.getElementById('btn-copy-problem');
+    if (btnCopyProblem) {
+        btnCopyProblem.addEventListener('click', () => {
+            const rawDesc = window.currentProblemRawDescription;
+            if (!rawDesc || rawDesc === 'No description available.') {
+                alert('No problem loaded. Select a problem first.');
+                return;
+            }
+            // Build full text: title + description
+            const title = document.getElementById('detail-title')?.innerText || '';
+            const fullText = title + '\n\n' + rawDesc;
+            navigator.clipboard.writeText(fullText).then(() => {
+                const orig = btnCopyProblem.innerHTML;
+                btnCopyProblem.innerHTML = '✅ Copied!';
+                btnCopyProblem.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+                btnCopyProblem.style.color = '#10b981';
+                setTimeout(() => {
+                    btnCopyProblem.innerHTML = orig;
+                    btnCopyProblem.style.borderColor = '';
+                    btnCopyProblem.style.color = '';
+                }, 2000);
+            }).catch(err => {
+                console.error('Copy failed:', err);
+                alert('Failed to copy. Please try again.');
+            });
+        });
+    }
+});
 
 // Initial load
 window.addEventListener('DOMContentLoaded', () => {

@@ -12,6 +12,6 @@ class Config:
     # MySQL settings
     DB_HOST = "localhost"
     DB_USER = "root"
-    DB_PASSWORD = os.getenv("DB_PASSWORD", "Abdullah@#")
+    DB_PASSWORD = os.getenv("DB_PASSWORD")
     DB_NAME = "interview_prep1"
 
