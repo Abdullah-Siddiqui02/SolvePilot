@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, session, jsonify
+from extensions import generate_csrf_token, validate_csrf_token
 from services.ai_service import AIService
 
 solve_bp = Blueprint("solve", __name__)
@@ -10,6 +11,8 @@ def solve():
         return redirect("/")
 
     if request.method == "POST":
+        if not validate_csrf_token(request.form.get("csrf_token", "")):
+            return jsonify({"error": "Invalid or missing CSRF token"}), 400
         question  = request.form.get("question", "").strip()
         technique = request.form.get("technique", "").strip()
         language  = request.form.get("language", "Python").strip()
@@ -45,4 +48,4 @@ def solve():
         except Exception as e:
             return jsonify({"error": f"AI service error: {str(e)}"}), 500
 
-    return render_template("solve.html")
+    return render_template("solve.html", csrf_token=generate_csrf_token())

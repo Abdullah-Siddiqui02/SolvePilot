@@ -1,4 +1,5 @@
 let editor;
+const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 let globalProblems = {}; // Store descriptions
 let solvedProblemIds = new Set();
 let codeHasRun = false;
@@ -263,7 +264,8 @@ require(['vs/editor/editor.main'], function () {
                     stdin: ctx.stdin || '',
                     message: ctx.message || '',
                     expected_output: ctx.expected_output || '',
-                    actual_output: ctx.actual_output || ''
+                    actual_output: ctx.actual_output || '',
+                    csrf_token: CSRF_TOKEN
                 })
             });
             console.log('[MentorTrace] fetch /api/ai/mentor completed', {
@@ -452,7 +454,8 @@ require(['vs/editor/editor.main'], function () {
                     code: code,
                     language: language,
                     problem_id: problemId,
-                    history: chatHistory
+                    history: chatHistory,
+                    csrf_token: CSRF_TOKEN
                 })
             });
 
@@ -604,7 +607,7 @@ async function executeCodeStep(code, language) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ code: code, language: language, stdin: stdin })
+            body: JSON.stringify({ code: code, language: language, stdin: stdin, csrf_token: CSRF_TOKEN })
         });
 
         const data = await response.json();
@@ -731,7 +734,8 @@ document.getElementById('btn-submit').addEventListener('click', async function (
             body: JSON.stringify({
                 problem_id: activeProblemId,
                 code: code,
-                language: language
+                language: language,
+                csrf_token: CSRF_TOKEN
             })
         });
 
@@ -835,7 +839,7 @@ async function addToCollection(problemId) {
         const response = await fetch('/api/collection/add', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ problem_id: problemId })
+            body: JSON.stringify({ problem_id: problemId, csrf_token: CSRF_TOKEN })
         });
         const data = await response.json();
         alert(data.message || data.error);
@@ -888,7 +892,7 @@ async function toggleStatus(problemId, currentStatus) {
         const response = await fetch('/api/collection/toggle-status', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ problem_id: problemId, status: currentStatus })
+            body: JSON.stringify({ problem_id: problemId, status: currentStatus, csrf_token: CSRF_TOKEN })
         });
         const data = await response.json();
         if (!data.error) {

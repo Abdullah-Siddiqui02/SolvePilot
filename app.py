@@ -1,8 +1,7 @@
-from flask import Flask, flash, redirect, render_template
+from flask import Flask, flash, jsonify, redirect, render_template, request
 from config import Config
-from extensions import limiter
+from extensions import limiter, generate_csrf_token
 from routes import register_blueprints
-from routes.auth import generate_csrf_token
 
 
 def create_app():
@@ -22,6 +21,30 @@ def create_app():
 
     # Register all route blueprints
     register_blueprints(app)
+
+    # Inject csrf_token into all templates for JS consumption
+    @app.context_processor
+    def inject_csrf_token():
+        return dict(csrf_token=generate_csrf_token())
+
+    # Error handlers
+    @app.errorhandler(404)
+    def not_found(e):
+        if request.path.startswith("/api/"):
+            return jsonify({"error": "Not found"}), 404
+        return render_template("errors.html", code=404, message="Page not found"), 404
+
+    @app.errorhandler(403)
+    def forbidden(e):
+        if request.path.startswith("/api/"):
+            return jsonify({"error": "Forbidden"}), 403
+        return render_template("errors.html", code=403, message="Access denied"), 403
+
+    @app.errorhandler(500)
+    def server_error(e):
+        if request.path.startswith("/api/"):
+            return jsonify({"error": "Internal server error"}), 500
+        return render_template("errors.html", code=500, message="Something went wrong"), 500
 
     # Rate-limit exceeded handler
     @app.errorhandler(429)

@@ -1,8 +1,7 @@
 from flask import Blueprint, current_app, jsonify, request, session
-from extensions import get_db, groq_client
+from extensions import get_db, groq_client, validate_csrf_token
 import requests
 import json
-import traceback
 from bs4 import BeautifulSoup
 from datetime import date, timedelta
 import re
@@ -238,9 +237,9 @@ def submit_solution():
     db = None
     cursor = None
     try:
-        data = request.get_json()
-        if not data:
-            return jsonify({"error": "No data provided"}), 400
+        data = request.get_json(silent=True)
+        if not data or not validate_csrf_token(data.get("csrf_token", "")):
+            return jsonify({"error": "Invalid or missing CSRF token"}), 400
             
         problem_id = data.get("problem_id")
         code = data.get("code")
@@ -476,7 +475,7 @@ Respond ONLY with JSON: {{"decision": "Accepted" or "Rejected", "reason": "brief
             })
 
     except Exception as e:
-        traceback.print_exc()
+        current_app.logger.exception("Submit solution failed")
         return jsonify({"error": f"System error: {str(e)}"}), 500
     finally:
         if cursor is not None:

@@ -1,21 +1,9 @@
-import secrets
 from flask import Blueprint, render_template, request, redirect, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
-from extensions import get_db, limiter
+from extensions import get_db, limiter, generate_csrf_token, validate_csrf_token
 
 auth_bp = Blueprint("auth", __name__)
 
-
-def generate_csrf_token():
-    if "_csrf_token" not in session:
-        session["_csrf_token"] = secrets.token_hex(32)
-    return session["_csrf_token"]
-
-def validate_csrf_token(token):
-    stored = session.get("_csrf_token")
-    if not stored or not secrets.compare_digest(stored, token):
-        return False
-    return True
 
 #  Login 
 
