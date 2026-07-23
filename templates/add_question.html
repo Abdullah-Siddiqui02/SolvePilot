@@ -26,6 +26,7 @@
 </div>
 
 <script>
+    const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     let allProblems = [];
     let userCollectionIds = new Set();
     let solvedIds = new Set();
@@ -135,7 +136,7 @@
             const res = await fetch(endpoint, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ problem_id: problemId })
+                body: JSON.stringify({ problem_id: problemId, csrf_token: CSRF_TOKEN })
             });
             const data = await res.json();
             if (data.message) {

@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request, session
+from extensions import validate_csrf_token
 import requests
 import re
 
@@ -77,7 +78,9 @@ def execute_code():
     if "user_id" not in session:
         return jsonify({"error": "Unauthorized"}), 401
 
-    data = request.get_json()
+    data = request.get_json(silent=True)
+    if not data or not validate_csrf_token(data.get("csrf_token", "")):
+        return jsonify({"error": "Invalid or missing CSRF token"}), 400
     if not data:
         return jsonify({"error": "No data provided"}), 400
 

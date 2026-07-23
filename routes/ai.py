@@ -1,7 +1,6 @@
-from flask import Blueprint, jsonify, request, session
-from extensions import get_db
+from flask import Blueprint, current_app, jsonify, request, session
+from extensions import get_db, validate_csrf_token
 from services.ai_service import AIService
-import traceback
 
 ai_bp = Blueprint("ai", __name__)
 ai_service = AIService()
@@ -11,6 +10,10 @@ ai_service = AIService()
 def ask_ai():
     if "user_id" not in session:
         return jsonify({"error": "Unauthorized"}), 401
+    
+    data = request.get_json(silent=True)
+    if not data or not validate_csrf_token(data.get("csrf_token", "")):
+        return jsonify({"error": "Invalid or missing CSRF token"}), 400
     
     try:
         data = request.get_json()
@@ -58,14 +61,18 @@ def ask_ai():
         })
 
     except Exception as e:
-        traceback.print_exc()
+        current_app.logger.exception("AI ask failed")
         return jsonify({"error": f"System error: {str(e)}"}), 500
 
 
 @ai_bp.route("/api/ai/mentor", methods=["POST"])
 def mentor_review():
     if "user_id" not in session:
-        return jsonify({"status": "error", "error": "Unauthorized"}), 401
+        return jsonify({"error": "Unauthorized"}), 401
+    
+    data = request.get_json(silent=True)
+    if not data or not validate_csrf_token(data.get("csrf_token", "")):
+        return jsonify({"status": "error", "error": "Invalid or missing CSRF token"}), 400
 
     """Return structured, context-aware AI mentor feedback.
 
@@ -98,5 +105,5 @@ def mentor_review():
         return jsonify(response_payload)
 
     except Exception as e:
-        traceback.print_exc()
+        current_app.logger.exception("Mentor review failed")
         return jsonify({"status": "error", "error": f"Mentor service error: {str(e)}"}), 500

@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, session, flash
-from extensions import get_db
+from extensions import get_db, generate_csrf_token, validate_csrf_token
 
 questions_bp = Blueprint("questions", __name__)
 
@@ -10,6 +10,9 @@ def add():
         return redirect("/")
 
     if request.method == "POST":
+        if not validate_csrf_token(request.form.get("csrf_token", "")):
+            flash("Session expired. Please try again.", "error")
+            return redirect("/add")
         title      = request.form["title"]
         topic      = request.form["topic"]
         difficulty = request.form["difficulty"]
@@ -29,7 +32,7 @@ def add():
         flash("Question added successfully!", "success")
         return redirect("/dashboard")
 
-    return render_template("add_question.html")
+    return render_template("add_question.html", csrf_token=generate_csrf_token())
 
 
 @questions_bp.route("/api/my-questions", methods=["GET"])

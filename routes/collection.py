@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, session
-from extensions import get_db
+from extensions import get_db, validate_csrf_token
 
 collection_bp = Blueprint("collection", __name__)
 
@@ -8,7 +8,9 @@ def add_to_collection():
     if "user_id" not in session:
         return jsonify({"error": "Unauthorized"}), 401
     
-    data = request.json
+    data = request.get_json(silent=True)
+    if not data or not validate_csrf_token(data.get("csrf_token", "")):
+        return jsonify({"error": "Invalid or missing CSRF token"}), 400
     problem_id = data.get("problem_id")
     user_id = session["user_id"]
     
@@ -61,7 +63,9 @@ def toggle_status():
     if "user_id" not in session:
         return jsonify({"error": "Unauthorized"}), 401
     
-    data = request.json
+    data = request.get_json(silent=True)
+    if not data or not validate_csrf_token(data.get("csrf_token", "")):
+        return jsonify({"error": "Invalid or missing CSRF token"}), 400
     problem_id = data.get("problem_id")
     current_status = data.get("status")
     user_id = session["user_id"]
@@ -112,7 +116,9 @@ def remove_from_collection():
     if "user_id" not in session:
         return jsonify({"error": "Unauthorized"}), 401
     
-    data = request.json
+    data = request.get_json(silent=True)
+    if not data or not validate_csrf_token(data.get("csrf_token", "")):
+        return jsonify({"error": "Invalid or missing CSRF token"}), 400
     problem_id = data.get("problem_id")
     user_id = session["user_id"]
     

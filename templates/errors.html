@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}{{ code }} – SolvePilot{% endblock %}
+{% block content %}
+<section style="display: flex; align-items: center; justify-content: center; min-height: 60vh; text-align: center;">
+  <div>
+    <h1 style="font-size: 4rem; margin: 0; color: var(--primary);">{{ code }}</h1>
+    <p style="font-size: 1.2rem; color: var(--text-secondary); margin: 1rem 0 2rem;">{{ message }}</p>
+    <a href="/dashboard" class="btn btn-primary">Go to Dashboard</a>
+  </div>
+</section>
+{% endblock %}
