@@ -29,6 +29,7 @@ def add_to_collection():
         return jsonify({"error": str(e)}), 500
     finally:
         cursor.close()
+        db.close()
 
 @collection_bp.route("/api/collection", methods=["GET"])
 def get_collection():
@@ -52,6 +53,7 @@ def get_collection():
     problems = [dict(zip(column_names, row)) for row in rows]
     
     cursor.close()
+    db.close()
     return jsonify({"problems": problems})
 
 @collection_bp.route("/api/collection/toggle-status", methods=["POST"])
@@ -104,6 +106,7 @@ def toggle_status():
         return jsonify({"error": str(e)}), 500
     finally:
         cursor.close()
+        db.close()
 @collection_bp.route("/api/collection/remove", methods=["POST"])
 def remove_from_collection():
     if "user_id" not in session:
@@ -128,3 +131,4 @@ def remove_from_collection():
         return jsonify({"error": str(e)}), 500
     finally:
         cursor.close()
+        db.close()

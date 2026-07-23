@@ -41,6 +41,7 @@ def ask_ai():
                 problem_title, problem_desc = problem
         
         cursor.close()
+        db.close()
 
         # 2. Call AI Service
         ai_response = ai_service.ask_question(

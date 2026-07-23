@@ -234,7 +234,9 @@ def mark_solved(db, cursor, user_id, problem_id):
 def submit_solution():
     if "user_id" not in session:
         return jsonify({"error": "Unauthorized"}), 401
-    
+
+    db = None
+    cursor = None
     try:
         data = request.get_json()
         if not data:
@@ -259,7 +261,6 @@ def submit_solution():
         )
         problem = cursor.fetchone()
         if not problem:
-            cursor.close()
             return jsonify({"error": "Problem not found"}), 404
         
         problem_title, problem_desc, problem_url, samples_html = problem
@@ -331,7 +332,6 @@ def submit_solution():
                 error_text = str(first["actual"])
                 if is_transient_error(error_text):
                     # Server overload — not the user's fault
-                    cursor.close()
                     return jsonify({
                         "status": "Server Busy",
                         "output": "",
@@ -341,7 +341,6 @@ def submit_solution():
                 elif first["actual"] in (None, "") or "error" in error_text.lower():
                     # Actual compile/runtime error
                     formatted_err = format_error_with_lines(error_text, language)
-                    cursor.close()
                     return jsonify({
                         "status": "Runtime Error",
                         "output": "",
@@ -352,7 +351,6 @@ def submit_solution():
             # FAST PATH: If ALL sample outputs match exactly, accept immediately
             if all_samples_passed:
                 mark_solved(db, cursor, user_id, problem_id)
-                cursor.close()
                 return jsonify({
                     "status": "Accepted",
                     "output": sample_results[0]["actual"] if sample_results else "",
@@ -370,7 +368,6 @@ def submit_solution():
 
             exec_response = requests.post(WANDBOX_COMPILE_URL, json=payload, timeout=30)
             if exec_response.status_code != 200:
-                cursor.close()
                 return jsonify({"error": "Execution engine unavailable"}), 503
                 
             exec_result = exec_response.json()
@@ -381,7 +378,6 @@ def submit_solution():
                 stderr = exec_result.get("compiler_error") or exec_result.get("program_error") or ""
                 # Check for transient server errors
                 if is_transient_error(stderr):
-                    cursor.close()
                     return jsonify({
                         "status": "Server Busy",
                         "output": "",
@@ -389,7 +385,6 @@ def submit_solution():
                         "message": "Execution server is temporarily busy. Please try again in a few seconds."
                     })
                 formatted_err = format_error_with_lines(stderr, language)
-                cursor.close()
                 return jsonify({
                     "status": "Runtime Error",
                     "output": exec_result.get("program_output", ""),
@@ -441,20 +436,17 @@ Respond ONLY with JSON: {{"decision": "Accepted" or "Rejected", "reason": "brief
             # If AI fails but samples all passed, accept anyway
             if sample_pairs and all_samples_passed:
                 mark_solved(db, cursor, user_id, problem_id)
-                cursor.close()
                 return jsonify({
                     "status": "Accepted",
                     "output": exec_output,
                     "message": "Sample tests passed. AI judge unavailable but accepting based on test results."
                 })
-            cursor.close()
             return jsonify({"error": f"AI Judge failed: {str(ai_err)}"}), 500
             
         is_accepted = ai_response.get("decision") == "Accepted"
 
         if is_accepted:
             mark_solved(db, cursor, user_id, problem_id)
-            cursor.close()
             
             # Build result message
             msg = f"AI Judge: {ai_response.get('reason')}"
@@ -468,7 +460,6 @@ Respond ONLY with JSON: {{"decision": "Accepted" or "Rejected", "reason": "brief
                 "message": msg
             })
         else:
-            cursor.close()
             
             # Build detailed rejection message
             msg = f"Logic Mismatch: {ai_response.get('reason')}"
@@ -487,3 +478,8 @@ Respond ONLY with JSON: {{"decision": "Accepted" or "Rejected", "reason": "brief
     except Exception as e:
         traceback.print_exc()
         return jsonify({"error": f"System error: {str(e)}"}), 500
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if db is not None:
+            db.close()

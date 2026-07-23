@@ -82,6 +82,7 @@ def sync_problems():
                 
         db.commit()
         cursor.close()
+        db.close()
         
         return jsonify({
             "message": "Successfully synced problems.",
@@ -124,6 +125,7 @@ def get_problems():
     problem_dicts = [dict(zip(column_names, row)) for row in problems]
     
     cursor.close()
+    db.close()
     
     return jsonify({"problems": problem_dicts})
  
@@ -182,6 +184,7 @@ def get_problem_details(problem_id):
     row = cursor.fetchone()
     if not row:
         cursor.close()
+        db.close()
         return jsonify({"error": "Problem not found"}), 404
  
     column_names = [col[0] for col in cursor.description]
@@ -201,4 +204,5 @@ def get_problem_details(problem_id):
             db.commit()
  
     cursor.close()
+    db.close()
     return jsonify(problem_dict)
