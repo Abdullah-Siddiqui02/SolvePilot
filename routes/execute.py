@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, session
 import requests
 import re
 
@@ -74,6 +74,9 @@ def _format_error(error_text, language):
 
 @execute_bp.route("/api/execute", methods=["POST"])
 def execute_code():
+    if "user_id" not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+
     data = request.get_json()
     if not data:
         return jsonify({"error": "No data provided"}), 400
