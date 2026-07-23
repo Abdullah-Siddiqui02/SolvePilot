@@ -14,22 +14,11 @@
 
   <br>
 
-  <p><strong>▶️ <a href="#demo">Live Demo</a> &nbsp;·&nbsp; 📖 <a href="#highlights">Features</a> &nbsp;·&nbsp; 🚀 <a href="#quick-start">Quick Start</a></strong></p>
+  <p><strong>📖 <a href="#highlights">Features</a> &nbsp;·&nbsp; 🚀 <a href="#quick-start">Quick Start</a></strong></p>
 
   <br>
 
-  <!-- Demo GIF placeholder -->
-  <p>
-    <a name="demo">
-      <img src="screenshots/demo.gif" alt="SolvePilot Demo" width="720">
-    </a>
-    <br>
-    <sub><em>Demo GIF — shows IDE, AI Mentor, and dashboard workflow (coming soon)</em></sub>
-  </p>
-
-  <br>
-
-  <!-- Screenshot placeholders -->
+  <!-- Screenshot previews -->
   <table>
     <tr>
       <td align="center"><img src="screenshots/dashboard.png" alt="Dashboard" width="400"><br><sub>Dashboard</sub></td>
