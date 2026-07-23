@@ -41,6 +41,7 @@ def ask_ai():
                 problem_title, problem_desc = problem
         
         cursor.close()
+        db.close()
 
         # 2. Call AI Service
         ai_response = ai_service.ask_question(
@@ -63,6 +64,9 @@ def ask_ai():
 
 @ai_bp.route("/api/ai/mentor", methods=["POST"])
 def mentor_review():
+    if "user_id" not in session:
+        return jsonify({"status": "error", "error": "Unauthorized"}), 401
+
     """Return structured, context-aware AI mentor feedback.
 
     Accepts the full execution/submission context:

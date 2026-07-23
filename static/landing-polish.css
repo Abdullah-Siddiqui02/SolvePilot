@@ -292,7 +292,8 @@
   inset: 0 0 auto 0;
   height: 2px;
   background: var(--card-accent, var(--color-primary));
-  opacity: 0.75;
+  opacity: 0;
+  transition: opacity 180ms ease;
 }
 
 .feature-card:hover {
@@ -343,7 +344,15 @@
 }
 
 .steps-flow::before {
-  content: none;
+  content: '';
+  position: absolute;
+  top: 1.5rem;
+  left: calc(12.5% + 1.5rem);
+  right: calc(12.5% + 1.5rem);
+  height: 2px;
+  background: linear-gradient(90deg, rgba(122, 162, 255, 0.15), rgba(167, 139, 250, 0.1), transparent);
+  z-index: 0;
+  pointer-events: none;
 }
 
 .step-card {
@@ -616,13 +625,142 @@
 
 .reveal {
   opacity: 0;
-  transform: translateY(12px);
-  transition: opacity 220ms ease, transform 220ms ease;
+  transform: translateY(20px);
+  transition: opacity 600ms cubic-bezier(0.22, 1, 0.36, 1), transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .reveal.visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* === Visual Enhancements === */
+
+/* Hero — background depth via radial gradients */
+.landing-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(700px circle at 30% 20%, rgba(122, 162, 255, 0.07) 0%, transparent 70%),
+    radial-gradient(600px circle at 70% 80%, rgba(167, 139, 250, 0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Hero — refined glow orbs */
+.hero-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+.hero-glow-1 {
+  width: 500px;
+  height: 500px;
+  top: -15%;
+  left: -8%;
+  background: #7aa2ff;
+}
+
+.hero-glow-2 {
+  width: 450px;
+  height: 450px;
+  bottom: -10%;
+  right: -5%;
+  background: #a78bfa;
+}
+
+/* Gradient text — refined heading accent */
+.landing-hero .gradient-text {
+  background: linear-gradient(135deg, #7aa2ff 0%, #a78bfa 50%, #67e8f9 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Stats cards — hover depth */
+.hero-stat {
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.hero-stat:hover {
+  transform: translateY(-2px);
+  border-color: rgba(122, 162, 255, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* Feature cards — icon hover micro-interaction */
+.feature-icon {
+  border: 1px solid rgba(122, 162, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  transition: transform 180ms ease, border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
+}
+
+.feature-card:hover .feature-icon {
+  border-color: rgba(122, 162, 255, 0.25);
+  background: rgba(122, 162, 255, 0.06);
+  transform: scale(1.06);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Feature cards — accent line revealed on hover */
+.feature-card:hover::before {
+  opacity: 0.8;
+}
+
+/* Why cards — icon hover micro-interaction */
+.why-icon {
+  border: 1px solid rgba(122, 162, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  transition: transform 180ms ease, border-color 180ms ease, background-color 180ms ease;
+}
+
+.why-card:hover .why-icon {
+  border-color: rgba(122, 162, 255, 0.2);
+  background: rgba(122, 162, 255, 0.06);
+  transform: scale(1.06);
+}
+
+/* Step numbers — hover scale with ring */
+.step-number {
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.step-card:hover .step-number {
+  transform: scale(1.08);
+  border-color: rgba(122, 162, 255, 0.3);
+  box-shadow: 0 0 0 4px rgba(122, 162, 255, 0.08);
+}
+
+/* CTA section — subtle depth overlay */
+.landing-cta {
+  position: relative;
+  overflow: hidden;
+}
+
+.landing-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(600px circle at 50% 0%, rgba(122, 162, 255, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Buttons — active press state */
+.hero-buttons .btn:active,
+.landing-cta .btn:active,
+.landing-nav-links .btn:active,
+.login-modal .btn:active {
+  transform: translateY(0) scale(0.97);
+  transition-duration: 60ms;
+}
+
+/* Primary button — subtle glow on hover */
+.hero-buttons .btn-primary:hover,
+.landing-cta .btn-primary:hover {
+  box-shadow: 0 0 20px rgba(122, 162, 255, 0.2), var(--shadow-sm);
 }
 
 .hero-buttons .btn:hover,
@@ -649,6 +787,10 @@
 
   .steps-flow {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .steps-flow::before {
+    display: none;
   }
 
   .footer-grid {

@@ -840,7 +840,8 @@ async function addToCollection(problemId) {
         const data = await response.json();
         alert(data.message || data.error);
         if (!data.error) {
-            loadMyCollection();
+            await loadMyCollection();
+            loadProblems();
         }
     } catch (err) {
         alert('Failed to add: ' + err.message);
@@ -874,8 +875,6 @@ async function loadMyCollection() {
                 `;
                 collectionList.appendChild(card);
             });
-            // Re-render global list to show ticks if needed
-            loadProblems();
         } else {
             collectionList.innerHTML = '<p>Your collection is empty.</p>';
         }
@@ -893,7 +892,8 @@ async function toggleStatus(problemId, currentStatus) {
         });
         const data = await response.json();
         if (!data.error) {
-            loadMyCollection();
+            await loadMyCollection();
+            loadProblems();
         } else {
             alert(data.error);
         }
@@ -1047,6 +1047,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Initial load
 window.addEventListener('DOMContentLoaded', () => {
     loadMyCollection().then(() => {
+        loadProblems();
         if (typeof ACTIVE_PROBLEM_ID !== 'undefined' && ACTIVE_PROBLEM_ID) {
             showProblemDetails(ACTIVE_PROBLEM_ID);
         } else {

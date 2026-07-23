@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, render_template
+from flask import Blueprint, current_app, jsonify, request, render_template
 import requests
 from bs4 import BeautifulSoup
 from extensions import get_db
@@ -78,10 +78,11 @@ def sync_problems():
                 )
                 inserted_count += 1
             except Exception as e:
-                print(f"Error inserting problem {problem_id}: {e}")
+                current_app.logger.error("Error inserting problem %s: %s", problem_id, e)
                 
         db.commit()
         cursor.close()
+        db.close()
         
         return jsonify({
             "message": "Successfully synced problems.",
@@ -124,6 +125,7 @@ def get_problems():
     problem_dicts = [dict(zip(column_names, row)) for row in problems]
     
     cursor.close()
+    db.close()
     
     return jsonify({"problems": problem_dicts})
  
@@ -167,7 +169,7 @@ def scrape_problem_data(url):
 
             return description, samples_html
     except Exception as e:
-        print(f"Scraping error: {e}")
+        current_app.logger.warning("Scraping error for URL %s: %s", url, e)
     return None, None
  
  
@@ -182,6 +184,7 @@ def get_problem_details(problem_id):
     row = cursor.fetchone()
     if not row:
         cursor.close()
+        db.close()
         return jsonify({"error": "Problem not found"}), 404
  
     column_names = [col[0] for col in cursor.description]
@@ -201,4 +204,5 @@ def get_problem_details(problem_id):
             db.commit()
  
     cursor.close()
+    db.close()
     return jsonify(problem_dict)
