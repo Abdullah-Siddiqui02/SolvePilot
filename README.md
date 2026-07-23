@@ -21,12 +21,12 @@
   <!-- Screenshot previews -->
   <table>
     <tr>
-      <td align="center"><img src="screenshots/dashboard.png" alt="Dashboard" width="400"><br><sub>Dashboard</sub></td>
-      <td align="center"><img src="screenshots/ide.png" alt="Code Editor" width="400"><br><sub>Online IDE</sub></td>
+      <td align="center"><img src="screenshots/dashboard.png.jpeg" alt="Dashboard" width="400"><br><sub>Dashboard</sub></td>
+      <td align="center"><img src="screenshots/ide.png.jpeg" alt="Code Editor" width="400"><br><sub>Online IDE</sub></td>
     </tr>
     <tr>
-      <td align="center"><img src="screenshots/solve.png" alt="AI Solver" width="400"><br><sub>AI Problem Solver</sub></td>
-      <td align="center"><img src="screenshots/explorer.png" alt="Problem Explorer" width="400"><br><sub>Problem Explorer</sub></td>
+      <td align="center"><img src="screenshots/solve.png.jpeg" alt="AI Solver" width="400"><br><sub>AI Problem Solver</sub></td>
+      <td align="center"><img src="screenshots/explorer.png.jpeg" alt="Problem Explorer" width="400"><br><sub>Problem Explorer</sub></td>
     </tr>
   </table>
 </div>
