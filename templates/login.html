@@ -237,6 +237,7 @@
       <h2>Welcome Back</h2>
       <p class="modal-subtitle">Log in to continue your prep.</p>
       <form method="POST" id="login-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
         <div class="form-group">
           <label for="username">Username</label>
           <input type="text" id="username" name="username" placeholder="Enter your username" required>
