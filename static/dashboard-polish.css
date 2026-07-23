@@ -5,6 +5,7 @@
   width: min(1240px, calc(100% - 2rem));
   margin: 0 auto;
   padding: 2rem 0 2.75rem;
+  position: relative;
 }
 
 .dashboard-modern-hero {
@@ -1145,6 +1146,77 @@
 .dashboard-modern-link:focus-visible {
   outline: none;
   box-shadow: var(--shadow-focus);
+}
+
+/* === Dashboard Enhancements === */
+
+/* Dashboard container — subtle background depth */
+.dashboard-modern::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(900px circle at 50% -8%, rgba(122, 162, 255, 0.04) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Buttons — active press state */
+.dashboard-modern-add:active {
+  transform: translateY(0) scale(0.97);
+  transition-duration: 60ms;
+}
+
+.dashboard-modern-add.secondary:active {
+  transform: translateY(0) scale(0.97);
+  transition-duration: 60ms;
+}
+
+/* Journey card — hover lift */
+.dashboard-modern-journey {
+  transition: transform var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.dashboard-modern-journey:hover {
+  transform: translateY(-2px);
+  border-color: rgba(122, 162, 255, 0.4);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Stat cards — icon container hover micro-interaction */
+.stat-icon-wrap {
+  transition: transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base);
+}
+
+.dashboard-modern-stat:hover .stat-icon-wrap {
+  transform: scale(1.06);
+  background: rgba(122, 162, 255, 0.06);
+  border-color: rgba(122, 162, 255, 0.2);
+}
+
+/* Streak card — hover lift */
+.streak-card {
+  transition: transform var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.streak-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-md);
+}
+
+/* Mini stat badges — subtle floating depth */
+.mini-stat-badge {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Practice Details card — hover refinement */
+.dashboard-modern-details > .dashboard-modern-card {
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.dashboard-modern-details > .dashboard-modern-card:hover {
+  border-color: rgba(122, 162, 255, 0.35);
+  box-shadow: var(--shadow-lg);
 }
 
 @media (max-width: 1200px) {

@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, session
+from flask import Blueprint, current_app, jsonify, request, session
 from extensions import get_db, groq_client
 import requests
 import json
@@ -35,8 +35,8 @@ def fetch_problem_description(url):
                 for div in statement.find_all('div', class_='sample-tests'):
                     div.decompose()
                 return statement.get_text(separator='\n').strip()
-    except:
-        pass
+    except Exception as e:
+        current_app.logger.warning("Failed to fetch problem description from %s: %s", url, e)
     return None
 
 
@@ -81,7 +81,7 @@ def parse_sample_tests(samples_html):
         
         return pairs
     except Exception as e:
-        print(f"Error parsing sample tests: {e}")
+        current_app.logger.warning("Error parsing sample tests: %s", e)
         return []
 
 

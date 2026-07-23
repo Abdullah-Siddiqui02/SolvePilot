@@ -455,15 +455,15 @@ textarea {
 
 .blob,
 .hero-glow {
-  display: none !important;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .gradient-text {
-  background: none !important;
-  -webkit-background-clip: initial !important;
-  -webkit-text-fill-color: currentColor !important;
-  background-clip: initial !important;
-  color: var(--color-text) !important;
+  background: linear-gradient(135deg, #7aa2ff, #a78bfa, #67e8f9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .landing-nav,
@@ -476,6 +476,11 @@ textarea {
 .landing-nav.scrolled {
   background: rgba(11, 15, 23, 0.98);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.navbar.glass {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .dashboard-modern-stat,
@@ -506,7 +511,6 @@ textarea {
   box-shadow: var(--shadow-lg);
 }
 
-.feature-card::before,
 .steps-flow::before,
 .contest-card,
 .dashboard-modern-tab::after,
@@ -569,14 +573,14 @@ textarea {
 }
 
 .reveal {
-  opacity: 1 !important;
-  transform: none !important;
-  transition: none !important;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 600ms cubic-bezier(0.22, 1, 0.36, 1), transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .reveal.visible {
-  opacity: 1 !important;
-  transform: none !important;
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* Problem browser cards */

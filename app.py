@@ -1,4 +1,5 @@
-from flask import Flask, flash, redirect, render_template, request
+import os
+from flask import Flask, flash, redirect, render_template
 from config import Config
 from extensions import limiter
 from routes import register_blueprints
@@ -29,4 +30,4 @@ app = create_app()
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=os.getenv("FLASK_ENV") == "development")
