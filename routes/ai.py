@@ -63,6 +63,9 @@ def ask_ai():
 
 @ai_bp.route("/api/ai/mentor", methods=["POST"])
 def mentor_review():
+    if "user_id" not in session:
+        return jsonify({"status": "error", "error": "Unauthorized"}), 401
+
     """Return structured, context-aware AI mentor feedback.
 
     Accepts the full execution/submission context:
