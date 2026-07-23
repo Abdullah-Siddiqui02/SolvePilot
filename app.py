@@ -1,4 +1,3 @@
-import os
 from flask import Flask, flash, redirect, render_template
 from config import Config
 from extensions import limiter
@@ -9,7 +8,14 @@ from routes.auth import generate_csrf_token
 def create_app():
     """Application factory."""
     app = Flask(__name__)
-    app.secret_key = Config.SECRET_KEY
+    app.config.from_object(Config)
+
+    # Validate critical config at startup
+    if not app.secret_key:
+        raise RuntimeError(
+            "SECRET_KEY is not set. "
+            "Add SECRET_KEY=your-secret-key to the .env file."
+        )
 
     # Initialize rate limiter
     limiter.init_app(app)
@@ -30,4 +36,4 @@ app = create_app()
 
 
 if __name__ == "__main__":
-    app.run(debug=os.getenv("FLASK_ENV") == "development")
+    app.run()
