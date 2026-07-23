@@ -12,7 +12,6 @@ CREATE TABLE IF NOT EXISTS users (
     created_at      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
 );
 
-drop table users;
 
 CREATE TABLE IF NOT EXISTS questions (
     id          INT AUTO_INCREMENT PRIMARY KEY,
